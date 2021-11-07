@@ -22,8 +22,13 @@ class Note:
     @property
     def tags(self):
         """The note's tags (only those present in the frontmatter)"""
-        return self.frontmatter.tags        
-
+        return self.frontmatter.tags     
+    
+    @property
+    def metadata(self):
+        """The note's metadata (from the frontmatter)"""   
+        return self.frontmatter.metadata
+    
     def __repr__(self) -> str:
          return f"file path: {self.path}" + "\n" + f"{self.frontmatter.__repr__()}"
         
