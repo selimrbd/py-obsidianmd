@@ -7,6 +7,17 @@ I wanted to modify my notes' metadata in batch and couldn't find an existing plu
 If some of the functionalities you see here are already available in a plugin, please let me know.
 Open for contributions.
 
+## Current features
+
+* Create a Note object from a file path, that has a 'frontmatter', 'metadata', and 'tags' attributes
+* Add / remove tags from the note
+* Write back the updated note to disk
+
+## Warning
+
+* WARNING 1: This code hasn't been much tested yet, use at your own peril :)
+* WARNING 2: This code only ahndles tags present in the frontmatter, not the note body
+
 ## Basic usage
 
 
