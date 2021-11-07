@@ -1,4 +1,4 @@
-Python utilities for the personal knowledge management tool "Obsidian"
+Python utilities for the personal knowledge management tool [Obsidian](https://obsidian.md/)
 
 
 ## Motivation
