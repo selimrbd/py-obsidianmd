@@ -1,11 +1,15 @@
-from __future__ import annotations
-from dataclasses import dataclass, field
+#from __future__ import annotations
+
 import re
+import statistics
+from abc import ABC, abstractmethod, abstractstaticmethod
+from dataclasses import dataclass
+from multiprocessing.sharedctypes import Value
 from pathlib import Path
+from typing import Optional, Tuple, Union
 
-
-
-REGEX_FRONTMATTER = '(?s)(^---\n).*?(\n---\n)'
+UserInput = Union[str,int,float]
+MetaDict = dict[str, list[str]]
 
 class Note:
     """Represents a note (text file in obsidian)
@@ -15,44 +19,26 @@ class Note:
     """
     def __init__(self, path: Path|str):
         self.path = Path(path)
-        self.content = self.read_content()
-        self.frontmatter = Frontmatter.extract_frontmatter(self.content)
-        self.body = self.read_body()
-        
+        self.content = self._read_content()
+        #self.frontmatter = Frontmatter.extract(self.content)
+        #self.inline_metadata = InlineMetadata.extract_inline_metadata(self.content)
+        #self.body = self._read_body()
+        self.metadata_f = None #metadata in the frontmatter
+        self.metadata_i = None #inline metadata
+        self.metadata_b = None #metadata in the body (only tags)
+
+    def __repr__(self) -> str:
+         return f"file path: {self.path}" + "\n" + f"{self.frontmatter.__repr__()}"
+
     @property
-    def tags(self):
-        """The note's tags (only those present in the frontmatter)"""
-        return self.frontmatter.tags     
+    def metadata(self) -> dict[str, list[str]]:
+        """Returns all metadata (from body, inline and frontmatter)"""
+        ...
     
-    @property
-    def metadata(self):
+    def get_f_metadata(self) -> dict[str, Tuple[list[str], str]]:
         """The note's metadata (from the frontmatter)"""   
         return self.frontmatter.metadata
     
-    def __repr__(self) -> str:
-         return f"file path: {self.path}" + "\n" + f"{self.frontmatter.__repr__()}"
-        
-    def read_content(self) -> str:
-        """Opens the file and reads it's content"""
-        with open(self.path, 'r') as f:
-            return f.read()
-        
-    def read_body(self) -> str:
-        """Get's the note body by removing the frontmatter from the content"""
-        return re.sub(REGEX_FRONTMATTER, '', self.content)
-    
-    def add_tag(self, tag: str) -> None:
-        """Add a tag to the note's frontmatter"""
-        self.frontmatter.add_tag(tag)
-    
-    def remove_tag(self, tag: str) -> None:
-        """Removes a tag from the note's frontmatter"""
-        self.frontmatter.remove_tag(tag)
-        
-    def update_content(self):
-        """Updates the note content"""
-        self.content = f"{self.frontmatter.to_string()}{self.body}"
-        
     def to_string(self):
         """Renders the note as a string"""
         self.update_content()
@@ -62,59 +48,36 @@ class Note:
         """Write the current content to the note's path"""
         with open(self.path, 'w') as f:
             f.write(self.to_string())
-    
-@dataclass
-class Frontmatter:
-    """Represents the frontmatter of a note"""
-    yaml_str: str = None
-    metadata: dict = field(default_factory=lambda: dict(tags=list()))
+
+    def print(self):
+        print(self.content)
+
+    def sub(self, old: str, new: str) -> None:
+        self.body = re.sub(old, new, self.body)
+        self.update_content()
+
+    def _read_content(self) -> str:
+        """Opens the file and reads it's content"""
+        with open(self.path, 'r') as f:
+            return f.read()
         
-    def __repr__(self):
-        if self.yaml_str is None:
-            return 'Metadata: None'
-        return 'Metadata:\n' + ''.join([f'- {k}: {v}\n' for k,v in self.metadata.items()])
-        
+    def _read_body(self) -> str:
+        """Get's the note body by removing the frontmatter from the content"""
+        return re.sub(REGEX_FRONTMATTER, '', self.content)
+
+    def update_content(self):
+        """Updates the note content"""
+        self.content = f"{self.frontmatter.to_string()}{self.body}"
+
     @property
     def tags(self):
-        """List containing the note's tags present in the frontmatter"""
-        if self.metadata is None:
-            return list()
+        """The note's tags (only those present in the frontmatter)"""
         return self.metadata.get('tags', list())
-    
-    @staticmethod
-    def extract_frontmatter(content: str) -> Frontmatter:
-        """Extracts the frontmatter from the note's content"""
-        mtc = re.search(REGEX_FRONTMATTER, content)
-        if mtc is None:
-            return Frontmatter()
-        yaml_str = re.sub('---\n', '', mtc.group())
-        metadata = Frontmatter.yaml_str_to_dict(yaml_str)
-        return Frontmatter(yaml_str=yaml_str, metadata=metadata)
-        
-    @staticmethod
-    def yaml_str_to_dict(s: str) -> dict:
-        """Reads the yaml frontmatter information (string) and transforms it into a dictionary"""
-        x = re.sub('---', '', s)
-        x = x.split('\n')
-        metadata = {}
-        for e in x:
-            if ':' not in e: continue
-            k,v  = e.split(':', maxsplit=1)
-            metadata[k.strip()] = v.strip()
-            
-        ## read tags metadata
-        if 'tags' in metadata:
-            tags = [t.strip() for t in metadata['tags'].split(' ') if t.strip() != '']
-            metadata['tags'] = tags
-        else:
-            metadata['tags'] = list()
-        return metadata
-    
-    @staticmethod
-    def has_frontmatter(content: str) -> bool:
-        """Checks if a frontmatter is present in the content"""
-        return re.search(REGEX_FRONTMATTER, content) is not None
-    
+
+    def add_tag(self, tag: str) -> None:
+        """Add a tag to the note's frontmatter"""
+        self.frontmatter.add_tag(tag)
+
     def has_tag(self, tag: str) -> bool:
         """Returns true if the tag or one of its children is in the frontmatter, false otherwise
         Ex:
@@ -146,19 +109,146 @@ class Frontmatter:
     def remove_tag(self, tag: str) -> None:
         if self.has_exact_tag(tag):
             self.tags.remove(tag)
-            
-    def update_yaml_str(self):
-        """generates a string from self.metadata"""
-        metadata_repr = [f"{k}: {v}\n" for k,v in self.metadata.items() if k != 'tags']
+    
+    def remove_tag(self, tag: str) -> None:
+        """Removes a tag from the note's frontmatter"""
+        self.frontmatter.remove_tag(tag)
+
+    
+@dataclass
+class Metadata(ABC):
+
+    metadata: MetaDict
+    
+    def __repr__(self):
+        r = f"metadata of type {type(self)}:\n"
+        if self.to_string() is None:
+             r +=' None'
+        else:
+            r += ''.join([f'- {k}: {", ".join(v)}\n' for k,v in self.metadata.items()])
+        return r
+
+    @staticmethod
+    @abstractmethod
+    def _extract_str(note_content: str) -> list[str]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def _str_to_dict(meta_str: list[str]) -> MetaDict:
+        pass
+  
+    @abstractmethod
+    def to_string(self) -> Optional[str]:
+        pass
+
+    def _extract_metadata(self, note_content: str) -> MetaDict:
+        meta_str = self._extract_str(note_content)
+        return self._str_to_dict(meta_str)
+
+    def add(self, k: str, l: Union[UserInput, list[UserInput]], overwrite: bool=False) -> None:
+        """adds a metadata field, or new values if it already exists
         
-        ## add tag metadata
-        repr_tag = 'tags: '
-        if len(self.tags) > 0:
-            repr_tag += " ".join(self.tags)
-        metadata_repr.append(repr_tag)
-        self.yaml_str = '---\n' + ''.join(metadata_repr)+ '\n---\n'
+        If overwrite is set to True, the old value is overwritten. Otherwise, new elements are
+        appended.
+        """
+        nl = [str(l)] if isinstance(l, UserInput) else [str(x) for x in l]
+        if overwrite:
+            self.metadata[k] = nl
+        else:
+            if k in self.metadata:
+                self.metadata[k] += nl
+            else:
+                self.metadata[k] = nl        
+
+    def remove(self, k: str, l: Optional[Union[UserInput, list[UserInput]]]=None) -> None:
+        """removes a metadata field"""
+        if k not in self.metadata:
+            return 
+        if l is None:
+            del self.metadata[k]
+            return
+        nl = [str(l)] if isinstance(l, UserInput) else [str(x) for x in l]
+        self.metadata[k] = [e for e in self.metadata[k] if e not in nl]
+
+    def remove_duplicates(self, k: str) -> None:
+        ...
+
+class Frontmatter(Metadata):
+    """Represents the frontmatter of a note"""
+    REGEX_FRONTMATTER = '(?s)(^---\n).*?(\n---\n)'
+
+    def __init__(self, note_content: str):
+        self.metadata: MetaDict = self._extract_metadata(note_content)
+
+    @staticmethod
+    def has_frontmatter(note: Note) -> bool:
+        """Checks if a frontmatter is present in the content"""
+        return re.search(Frontmatter.REGEX_FRONTMATTER, note.content) is not None
+
+    @staticmethod
+    def _extract_str(note_content: str) -> list[str]:
+        """Returns the frontmatter detect as a string. (Empty string if not found)"""
+        mtc = re.search(Frontmatter.REGEX_FRONTMATTER, note_content)
+        if mtc is None: return ['']
+        fm_str = mtc.group()
+        return [fm_str]      
+
+    @staticmethod
+    def _str_to_dict(meta_str: list[str]) -> MetaDict:
+        """Reads the yaml frontmatter information (string) and transforms it into a dictionary"""
+        metadata: MetaDict = {}
+        ms = meta_str[0]
+        if len(ms) == 0: return {}
+        elements = ms.split('\n')
+        for e in elements:
+            if ':' not in e: continue
+            k,v  = e.split(':', maxsplit=1)
+            c = [v.strip()] if ',' not in v else [x.strip() for x in v.split(',')]
+            metadata[k.strip()] = c
+        if 'tags' in metadata:
+            mtags = ' '.join(metadata['tags'])
+            metadata['tags'] = [t.strip() for t in mtags.split(' ') if t.strip() != '']
+        return metadata
         
-    def to_string(self):
+    def to_string(self) -> Optional[str]:
         """Generates a string representation of the frontmatter"""
-        self.update_yaml_str()
-        return self.yaml_str
+        if len(self.metadata) == 0: return None
+        metadata_repr = [f"{k}: {', '.join(v)}\n" for k,v in self.metadata.items()]
+        out = '---\n' + ''.join(metadata_repr)+ '---\n'
+        return out
+
+
+class InlineMetadata(Metadata):
+    """Represents the inline metadata of a note"""
+
+    REGEX_INLINE_META = '[A-z]\w+ ?::.*'
+    def __init__(self, note_content: str):
+        self.metadata: MetaDict = self._extract_metadata(note_content)
+
+    @staticmethod
+    def _extract_str(note_content: str) -> list[str]:
+        return re.findall(InlineMetadata.REGEX_INLINE_META, note_content)
+
+    @staticmethod
+    def _str_to_dict(meta_str: list[str]) -> MetaDict:
+        metadata: MetaDict = dict()
+        tmp: dict[str, str] = dict()
+        for x in meta_str:
+            k, v = x.split('::')[0].strip(), x.split('::')[1].strip()
+            if k not in tmp:
+                tmp[k] = v
+            else:
+                tmp[k] += f', {v}' 
+        metadata = {k:[x.strip() for x in v.split(',')] for (k,v) in tmp.items()}
+        if 'tags' in metadata:
+            mtags = ' '.join(metadata['tags'])
+            metadata['tags'] = [t.strip() for t in mtags.split(' ') if t.strip() != '']
+        return metadata
+
+    def to_string(self) -> Optional[str]:
+        if len(self.metadata) == 0: return None
+        r = "# metadata\n"
+        for k,v in self.metadata.items(): r += f"- {k}:: {', '.join(v)}\n"
+        return r
+
