@@ -13,10 +13,10 @@ Open for contributions.
 * Add / remove tags from the note
 * Write back the updated note to disk
 
-## Warning
+## Warnings
 
-* WARNING 1: This code hasn't been much tested yet, use at your own peril :)
-* WARNING 2: This code only ahndles tags present in the frontmatter, not the note body
+* **This code hasn't been much tested yet**, use at your own peril
+* **This code only handles tags present in the frontmatter**, not the note body
 
 ## Basic usage
 
