@@ -1,6 +1,0 @@
----
-tags: t1, t2 t3
-meta2: 1,2,3
-meta3: foo, b bar
-meta4: "foo", "b bar"
----

@@ -1,0 +1,45 @@
+{
+    "inline": {
+        "metadata": {
+            "c1": [
+                "foo",
+                "foo bar"
+            ],
+            "c2": [
+                "foo",
+                "foo bar",
+                "biz",
+                "baz"
+            ],
+            "c3": [
+                "3",
+                "4",
+                "5"
+            ],
+            "tags": [
+                "t4",
+                "t5",
+                "t6"
+            ]
+        },
+        "str-extracted": [
+            "c1:: foo, foo bar",
+            "c2 ::foo, foo bar",
+            "c3 :: 3, 4, 5",
+            "tags :: t4, t5 t6",
+            "c2:: biz, baz"
+        ]
+    },
+    "frontmatter": {
+        "metadata": {
+            "tags": [
+                "t1",
+                "t2",
+                "t3"
+            ]
+        },
+        "str-extracted": [
+            "---\ntags: t1 t2, t3\n---\n"
+        ]
+    }
+}

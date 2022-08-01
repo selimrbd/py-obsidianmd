@@ -1,0 +1,141 @@
+{
+    "frontmatter": {
+        "metadata": {
+            "tags": [
+                "t1",
+                "t2",
+                "t3"
+            ],
+            "meta2": [
+                "1",
+                "2",
+                "3"
+            ],
+            "meta3": [
+                "foo",
+                "b bar"
+            ],
+            "meta4": [
+                "\"foo\"",
+                "\"b bar\""
+            ]
+        },
+        "str-extracted": [
+            "---\ntags: t1, t2 t3\nmeta2: 1,2,3\nmeta3: foo, b bar\nmeta4: \"foo\", \"b bar\"\n---\n"
+        ],
+        "add-tests": {
+            "a1": {
+                "desc": "add a string",
+                "k": "tags",
+                "v": "t4",
+                "overwrite": false,
+                "result": [
+                    "t1",
+                    "t2",
+                    "t3",
+                    "t4"
+                ]
+            },
+            "a2": {
+                "desc": "add a list of strings",
+                "k": "meta2",
+                "v": [
+                    "asd",
+                    "qzf"
+                ],
+                "overwrite": false,
+                "result": [
+                    "1",
+                    "2",
+                    "3",
+                    "asd",
+                    "qzf"
+                ]
+            },
+            "a3": {
+                "desc": "add an int",
+                "k": "meta3",
+                "v": 999,
+                "overwrite": false,
+                "result": [
+                    "foo",
+                    "b bar",
+                    "999"
+                ]
+            },
+            "a4": {
+                "desc": "add and overwrite",
+                "k": "meta3",
+                "v": 999,
+                "overwrite": true,
+                "result": [
+                    "999"
+                ]
+            },
+            "a5": {
+                "desc": "add a metadata that didn't exist, with no value",
+                "k": "newmeta",
+                "v": null,
+                "overwrite": false,
+                "result": []
+            },
+            "a6": {
+                "desc": "add a metadata that didn't exist, with values",
+                "k": "newmeta2",
+                "v": [
+                    1,
+                    2
+                ],
+                "overwrite": false,
+                "result": [
+                    "1",
+                    "2"
+                ]
+            }
+        },
+        "remove-tests": {
+            "r1": {
+                "desc": "remove one element",
+                "k": "tags",
+                "v": "t2",
+                "result": [
+                    "t1",
+                    "t3"
+                ]
+            },
+            "r2": {
+                "desc": "remove multiple elements",
+                "k": "meta2",
+                "v": [
+                    1,
+                    3
+                ],
+                "result": [
+                    "2"
+                ]
+            },
+            "r3": {
+                "desc": "entirely remove an entry",
+                "k": "meta4",
+                "v": null,
+                "result": null
+            },
+            "r4": {
+                "desc": "remove all elements of an entry",
+                "k": "meta2",
+                "v": [
+                    1,
+                    2,
+                    3
+                ],
+                "result": null
+            },
+            "r5": {
+                "desc": "remove an entry that doesn't exist",
+                "k": "unk",
+                "v": null,
+                "result": null
+            }
+        }
+    }
+}
