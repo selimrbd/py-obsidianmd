@@ -40,12 +40,16 @@ class Metadata(ABC):
         pass
   
     @abstractmethod
-    def to_string(self, repr: bool=False) -> Optional[str]:
+    def to_string(self) -> str:
         """Render metadata as a string.
         
         If repr is True, print to screen
         """
         pass
+
+    @abstractmethod
+    def update_content(self, note_content: str) -> str:
+        ...
 
     def _extract_metadata(self, note_content: str) -> MetaDict:
         meta_str = self._extract_str(note_content)
@@ -108,6 +112,9 @@ class Metadata(ABC):
             if k2 not in self.metadata: continue
             self.metadata[k2] = list(dict.fromkeys(self.metadata[k2]))
 
+    def print(self):
+        print(self.to_string())
+
 class Frontmatter(Metadata):
     """Represents the frontmatter of a note"""
 
@@ -138,7 +145,7 @@ class Frontmatter(Metadata):
             metadata['tags'] = [t.strip() for t in mtags.split(' ') if t.strip() != '']
         return metadata
     
-    def to_string(self, repr: bool=False) -> Optional[str]:
+    def to_string(self) -> str:
         """Render metadata as a string.
         
         If repr is True, print to screen
@@ -146,10 +153,14 @@ class Frontmatter(Metadata):
         if len(self.metadata) == 0: return ''
         metadata_repr = [f"{k}: {', '.join(v)}\n" for k,v in self.metadata.items()]
         out = '---\n' + ''.join(metadata_repr)+ '---\n'
-        if repr: 
-            print(out)
-            return None
         return out
+
+    def update_content(self, note_content: str) -> str:
+        """
+        """
+        res = self.erase(note_content)
+        res = self.to_string() + res
+        return res
 
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
@@ -176,18 +187,22 @@ class InlineMetadata(Metadata):
             metadata['tags'] = [t.strip() for t in mtags.split(' ') if t.strip() != '']
         return metadata
 
-    def to_string(self, repr: bool=False) -> Optional[str]:
+    def to_string(self) -> str:
         """Render metadata as a string.
         
         If repr is True, print to screen
         """
         if len(self.metadata) == 0: return ''
-        r = "\n---\n- **@ metadata:**\n"
+        r = "\n\n---\n- **@ metadata:**\n"
         for k,v in self.metadata.items(): r += f"    - {k}:: {', '.join(v)}\n"
-        if repr: 
-            print(r)
-            return None
         return r
+
+    def update_content(self, note_content: str) -> str:
+        """
+        """
+        res = self.erase(note_content)
+        res = res + self.to_string()
+        return res
 
 class MetadataType(Enum):
     FRONTMATTER = 'frontmatter'
@@ -200,6 +215,7 @@ class MetadataType(Enum):
         for k in MetadataType:
             if s == k.value: return k
         raise ValueError(f'Metadatatype not defined: "{s}"')
+
 
 class NoteMetadata:
     """Represents all a note's metadata (frontmatter, inline and body tags)."""
@@ -251,6 +267,20 @@ class NoteMetadata:
         elif meta_type == MetadataType.ALL:
             res = Frontmatter.erase(res)
             res = InlineMetadata.erase(res)
+        else:
+            raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
+        return res
+
+    def update_content(self, note_content: str, meta_type: MetadataType|None=None) -> str:
+        meta_type = self._parse_arg_meta_type(meta_type)
+        res = note_content
+        if meta_type == MetadataType.FRONTMATTER:
+            res = self.frontmatter.update_content(res)
+        elif meta_type == MetadataType.INLINE:
+            res = self.inline.update_content(res)
+        elif meta_type == MetadataType.ALL:
+            res = self.frontmatter.update_content(res)
+            res = self.inline.update_content(res)
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
         return res

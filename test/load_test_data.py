@@ -1,19 +1,19 @@
 import json
+import os
 import sys
 from pathlib import Path
-from typing import Union
 
 sys.path.append('..')
 from source.metadata import MetadataType
 
 PATH_TESTDATA = Path('test/0-test-data')
-MD_FILES = ["frontmatter-tostr", "inline-tostr", "inline-erase", "frontmatter-erase", "notemeta-erase"]
 
-def load_test_data(note_names: list[str], md_files: list[str] = MD_FILES) -> dict:
+def load_test_data(note_names: list[str]) -> dict:
     ## setup data
     data: dict = dict()
     for c in note_names:
-        data[c] = {'path': PATH_TESTDATA/f'{c}/{c}.md'}
+        path_note_dir = PATH_TESTDATA/c
+        data[c] = {'path': path_note_dir/f'{c}.md'}
         ## load metadata file
         path_meta = PATH_TESTDATA/f'{c}/{c}-meta.json'
         if not path_meta.exists():
@@ -24,12 +24,14 @@ def load_test_data(note_names: list[str], md_files: list[str] = MD_FILES) -> dic
             data[c][meta_type] = meta.get(meta_type, dict())
         
         ## load md files
+        md_files = [x for x in os.listdir(path_note_dir) if x.endswith('.md') and x != f'{c}.md']
+        print('md files:')
+        print(md_files)
         for mdf in md_files:
-            path_file = PATH_TESTDATA/f'{c}/{c}-{mdf}.md'
-            meta_type = mdf.split('-')[0]
-            property = mdf.split('-')[1]
-            # if not path_file.exists():
-            #     raise ValueError(f'file "{path_file}" does not exist.')
+            path_file = path_note_dir/mdf
+            file_name = Path(mdf).stem
+            meta_type = file_name.split('-')[1]
+            property = file_name.split('-', maxsplit=2)[2]
             if path_file.exists():
                 with open(path_file, 'r') as f:
                     data[c][meta_type][property] = f.read()
