@@ -4,11 +4,17 @@ from string import Template
 from typing import Callable
 
 sys.path.append('../..')
-from source.metadata import MetadataType, return_metaclass
+
+from source.metadata import MetadataType, NoteMetadata, return_metaclass
 
 
-def add_test_function_to_global(glob: dict, fn: Callable, note_name: str, data: dict, meta_type: MetadataType):
+def add_test_function_to_global(glob: dict, fn: Callable, note_name: str, data: dict, meta_type: MetadataType|None=None):
     ft = partial(fn, note_name=note_name, data=data, meta_type=meta_type)
+    ft_name = f"test_{fn.__name__.split('_', maxsplit=1)[-1]}_{note_name}"
+    glob[ft_name] = ft
+
+def nmt_add_test_function_to_global(glob: dict, fn: Callable, note_name: str, data: dict):
+    ft = partial(fn, note_name=note_name, data=data)
     ft_name = f"test_{fn.__name__.split('_', maxsplit=1)[-1]}_{note_name}"
     glob[ft_name] = ft
 
@@ -175,3 +181,25 @@ def t_remove_duplicate_values(note_name: str, data: dict, meta_type: MetadataTyp
         mt.remove_duplicate_values(ts['k'])
         err_msg = f'remove duplicate values test failed: {tnum}. desc: {ts["desc"]}.\n'
         assert_dict_match(mt.metadata, ts['result'], msg=err_msg)
+
+
+def nmt_remove_duplicate_values(note_name: str, data: dict, debug:bool=False) -> None:
+    d = data[note_name]
+    if 'remove-duplicate-values-tests' not in d['note-metadata']:
+        return True
+
+    mt_all = NoteMetadata(d['path'])
+    rdv_tests = d['note-metadata']['remove-duplicate-values-tests']
+    
+    if debug:
+        return mt, d['note-metadata']
+
+    for tnum, ts in rdv_tests.items():
+        mt_all = NoteMetadata(d['path'])
+        mt_all.remove_duplicate_values(k=ts['k'], meta_type=MetadataType.get_from_str(ts['meta_type']))
+        err_msg = f'NOTEMETADATA - remove duplicate values test failed: {tnum}. desc: {ts["desc"]}.\n'
+        err_msg += f"test values: (k=\"{ts['k']}\", meta type=\"{ts['meta_type']}\")\n"
+        for t in ['frontmatter', 'inline']:
+            err_msg += f'meta type: {t}\n'
+            mt = getattr(mt_all, t)
+            assert_dict_match(getattr(mt, 'metadata'), ts['result'][t], msg=err_msg)

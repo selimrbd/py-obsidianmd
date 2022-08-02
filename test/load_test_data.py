@@ -20,7 +20,7 @@ def load_test_data(note_names: list[str], md_files: list[str] = MD_FILES) -> dic
             raise ValueError(f'file "{path_meta}" does not exist.')
         with open(path_meta, 'r') as f:
             meta = json.load(f)
-        for meta_type in [MetadataType.INLINE.value, MetadataType.FRONTMATTER.value]: 
+        for meta_type in [MetadataType.INLINE.value, MetadataType.FRONTMATTER.value, MetadataType.ALL.value]: 
             data[c][meta_type] = meta.get(meta_type, dict())
         
         ## load md files

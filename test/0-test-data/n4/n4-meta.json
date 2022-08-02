@@ -1,60 +1,21 @@
 {
-    "note-metadata": {
-        "remove-duplicate-values-tests": {
-            "t1": {
-                "desc": "duplicate removal on 1 specific key",
-                "k": "c3",
-                "result": {
-                    "c1": [
-                        "foo",
-                        "foo bar"
-                    ],
-                    "c2": [
-                        "foo",
-                        "foo bar",
-                        "biz",
-                        "baz"
-                    ],
-                    "c3": [
-                        "3",
-                        "4",
-                        "5"
-                    ],
-                    "tags": [
-                        "t4",
-                        "t5",
-                        "t6",
-                        "t5"
-                    ]
-                }
-            },
-            "t2": {
-                "desc": "duplicate removal on all keys",
-                "k": null,
-                "result": {
-                    "c1": [
-                        "foo",
-                        "foo bar"
-                    ],
-                    "c2": [
-                        "foo",
-                        "foo bar",
-                        "biz",
-                        "baz"
-                    ],
-                    "c3": [
-                        "3",
-                        "4",
-                        "5"
-                    ],
-                    "tags": [
-                        "t4",
-                        "t5",
-                        "t6"
-                    ]
-                }
-            }
-        }
+    "frontmatter": {
+        "metadata": {
+            "tags": [
+                "t1",
+                "t2",
+                "t3",
+                "t2"
+            ],
+            "fm": [
+                "hello",
+                "world",
+                "hello"
+            ]
+        },
+        "str-extracted": [
+            "---\ntags: t1 t2, t3 t2\nfm: hello, world, hello\n---\n"
+        ]
     },
     "inline": {
         "metadata": {
@@ -174,16 +135,91 @@
             }
         }
     },
-    "frontmatter": {
-        "metadata": {
-            "tags": [
-                "t1",
-                "t2",
-                "t3"
-            ]
-        },
-        "str-extracted": [
-            "---\ntags: t1 t2, t3\n---\n"
-        ]
+    "note-metadata": {
+        "remove-duplicate-values-tests": {
+            "t1": {
+                "desc": "on all keys and all metadata types",
+                "k": null,
+                "meta_type": null,
+                "result": {
+                    "frontmatter": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "fm": [
+                            "hello",
+                            "world"
+                        ]
+                    },
+                    "inline": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6"
+                        ]
+                    }
+                }
+            },
+            "t2": {
+                "desc": "on 1 specific value of the frontmatter",
+                "k": "fm",
+                "meta_type": "frontmatter",
+                "result": {
+                    "frontmatter": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3",
+                            "t2"
+                        ],
+                        "fm": [
+                            "hello",
+                            "world"
+                        ]
+                    },
+                    "inline": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6",
+                            "t5"
+                        ]
+                    }
+                }
+            }
+        }
     }
 }
