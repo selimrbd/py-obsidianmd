@@ -9,7 +9,7 @@ from .templates import (add_test_function_to_global, t_add, t_build_metaobject,
                         t_to_string)
 
 META_TYPE = MetadataType.FRONTMATTER
-NOTE_NAMES = ["n1", "n2", "n3", "n4"]
+NOTE_NAMES = ["n1", "n2", "n3", "n4", "n6"]
 DATA = load_test_data(NOTE_NAMES)
 
 

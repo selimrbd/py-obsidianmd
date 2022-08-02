@@ -1,4 +1,61 @@
 {
+    "note-metadata": {
+        "remove-duplicate-values-tests": {
+            "t1": {
+                "desc": "duplicate removal on 1 specific key",
+                "k": "c3",
+                "result": {
+                    "c1": [
+                        "foo",
+                        "foo bar"
+                    ],
+                    "c2": [
+                        "foo",
+                        "foo bar",
+                        "biz",
+                        "baz"
+                    ],
+                    "c3": [
+                        "3",
+                        "4",
+                        "5"
+                    ],
+                    "tags": [
+                        "t4",
+                        "t5",
+                        "t6",
+                        "t5"
+                    ]
+                }
+            },
+            "t2": {
+                "desc": "duplicate removal on all keys",
+                "k": null,
+                "result": {
+                    "c1": [
+                        "foo",
+                        "foo bar"
+                    ],
+                    "c2": [
+                        "foo",
+                        "foo bar",
+                        "biz",
+                        "baz"
+                    ],
+                    "c3": [
+                        "3",
+                        "4",
+                        "5"
+                    ],
+                    "tags": [
+                        "t4",
+                        "t5",
+                        "t6"
+                    ]
+                }
+            }
+        }
+    },
     "inline": {
         "metadata": {
             "c1": [
@@ -14,21 +71,78 @@
             "c3": [
                 "3",
                 "4",
+                "5",
                 "5"
             ],
             "tags": [
                 "t4",
                 "t5",
-                "t6"
+                "t6",
+                "t5"
             ]
         },
         "str-extracted": [
             "c1:: foo, foo bar",
             "c2 ::foo, foo bar",
-            "c3 :: 3, 4, 5",
-            "tags :: t4, t5 t6",
+            "c3 :: 3, 4, 5, 5",
+            "tags :: t4, t5 t6 t5",
             "c2:: biz, baz"
-        ]
+        ],
+        "remove-duplicate-values-tests": {
+            "t1": {
+                "desc": "duplicate removal on 1 specific key",
+                "k": "c3",
+                "result": {
+                    "c1": [
+                        "foo",
+                        "foo bar"
+                    ],
+                    "c2": [
+                        "foo",
+                        "foo bar",
+                        "biz",
+                        "baz"
+                    ],
+                    "c3": [
+                        "3",
+                        "4",
+                        "5"
+                    ],
+                    "tags": [
+                        "t4",
+                        "t5",
+                        "t6",
+                        "t5"
+                    ]
+                }
+            },
+            "t2": {
+                "desc": "duplicate removal on all keys",
+                "k": null,
+                "result": {
+                    "c1": [
+                        "foo",
+                        "foo bar"
+                    ],
+                    "c2": [
+                        "foo",
+                        "foo bar",
+                        "biz",
+                        "baz"
+                    ],
+                    "c3": [
+                        "3",
+                        "4",
+                        "5"
+                    ],
+                    "tags": [
+                        "t4",
+                        "t5",
+                        "t6"
+                    ]
+                }
+            }
+        }
     },
     "frontmatter": {
         "metadata": {

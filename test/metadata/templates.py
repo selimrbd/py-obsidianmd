@@ -1,5 +1,6 @@
 import sys
 from functools import partial
+from string import Template
 from typing import Callable
 
 sys.path.append('../..')
@@ -10,6 +11,47 @@ def add_test_function_to_global(glob: dict, fn: Callable, note_name: str, data: 
     ft = partial(fn, note_name=note_name, data=data, meta_type=meta_type)
     ft_name = f"test_{fn.__name__.split('_', maxsplit=1)[-1]}_{note_name}"
     glob[ft_name] = ft
+
+def assert_dict_match(d1: dict|None, d2: dict|None, msg: str='') -> None:
+    """
+    assert that 2 dictionaries match. If they dont, print the output VS expected
+    Arguments:
+        - d1: output of function to test
+        - d2: expected result
+        - msg: additional message to display at the beginning of the assertion error
+    """
+    d1 = dict() if d1 is None else d1
+    d2 = dict() if d2 is None else d2
+    err_template = Template("$msg\n---\ndictionaries don't match.\nkey: $k\noutput: $o\nexpected result: $er\n")
+    for k in set(d1.keys()).union(set(d2.keys())):
+        o = d1.get(k, None)
+        er = d2.get(k, None)
+        err_msg = err_template.substitute(msg=msg, k=k, o=o, er=er)
+        assert (o == er), err_msg
+
+def assert_str_match(s1: str, s2: str, msg: str='') -> None:
+    """
+    assert that 2 strings match. If they dont, print the output VS expected
+    Arguments:
+        - s1: output of function to test
+        - s2: expected result
+    """
+    err_template = Template("$msg\n---\nstrings don't match.\n@@ output @@\n$o\n@@@@@\n@@ expected result @@\n$er\n@@@@@\n")
+    err_msg = err_template.substitute(msg=msg, o=s1, er=s2)
+    assert (s1 == s2), err_msg
+
+def assert_list_match(l1: list, l2: list, msg: str='') -> None:
+    """
+    assert that 2 lists match. If they dont, print the output VS expected
+    Arguments:
+        - l1: output of function to test
+        - l2: expected result
+    """
+    l1 = list() if l1 is None else l1
+    l2 = list() if l2 is None else l2
+    err_template = Template("$msg\n---\nlists don't match.\noutput: $o\nexpected result: $er\n")
+    err_msg = err_template.substitute(msg=msg, o=l1, er=l2)
+    assert (l1 == l2), err_msg
 
 def t_extract_str(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False):
     d = data[note_name]
@@ -24,7 +66,7 @@ def t_extract_str(note_name: str, data: dict, meta_type: MetadataType, debug:boo
     if debug:
         return str_extracted, true_str_extracted
 
-    assert (str_extracted == true_str_extracted)
+    assert_list_match(str_extracted, true_str_extracted)
 
 def t_str_to_dict(note_name: str, data: dict, meta_type: MetadataType, debug: bool=False):
     d = data[note_name]
@@ -41,7 +83,7 @@ def t_str_to_dict(note_name: str, data: dict, meta_type: MetadataType, debug: bo
     if debug:
         return meta_dict, true_meta_dict
 
-    assert meta_dict == true_meta_dict
+    assert_dict_match(meta_dict, true_meta_dict)
 
 def t_build_metaobject(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False):
     d = data[note_name]
@@ -51,7 +93,8 @@ def t_build_metaobject(note_name: str, data: dict, meta_type: MetadataType, debu
 
     if debug:
         return mt, mt.metadata, true_meta_dict
-    assert (mt.metadata == true_meta_dict)
+    
+    assert_dict_match(mt.metadata, true_meta_dict)
 
 def t_exists(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False):
     d = data[note_name]
@@ -76,7 +119,7 @@ def t_to_string(note_name: str, data: dict, meta_type: MetadataType, debug:bool=
     if debug:
         return mt.to_string(), true_tostr
 
-    assert ( mt.to_string() == true_tostr )  
+    assert_str_match(mt.to_string(), true_tostr)
 
 def t_add(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False):
     d = data[note_name]
@@ -95,9 +138,7 @@ def t_add(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False)
         mt = MetaClass(d['path'])
         mt.add(ts['k'], ts['v'], overwrite=ts['overwrite'])
         err_msg = f'add test failed: {tnum}. desc: {ts["desc"]}.\n'
-        err_msg += f'output: {mt.metadata[ts["k"]]}\n'
-        err_msg += f'expected result: {ts["result"]}\n'
-        assert mt.metadata[ts['k']] == ts['result'], err_msg
+        assert_list_match(mt.metadata.get(ts["k"], None), ts['result'], msg=err_msg)
 
 def t_remove(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False):
     d = data[note_name]
@@ -115,6 +156,4 @@ def t_remove(note_name: str, data: dict, meta_type: MetadataType, debug:bool=Fal
         mt = MetaClass(d['path'])
         mt.remove(ts['k'], ts['v'])
         err_msg = f'add test failed: {tnum}. desc: {ts["desc"]}.\n'
-        err_msg += f'output: {mt.metadata.get(ts["k"], None)}\n'
-        err_msg += f'expected result: {ts["result"]}\n'
-        assert mt.metadata.get(ts["k"], None) == ts['result'], err_msg
+        assert_list_match(mt.metadata.get(ts["k"], None), ts['result'], msg=err_msg)
