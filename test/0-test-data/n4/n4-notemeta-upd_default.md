@@ -5,9 +5,10 @@ fm: hello, world, hello
 
 blabla
 c2 ::foo, foo bar
+
+
 c1:: foo, foo bar
 blabla
-
 
 
 blabla
@@ -23,3 +24,10 @@ tags :: t4, t5 t6 t5
 c2:: biz, baz
 
 blibliblou
+
+---
+- **@ metadata:**
+    - c2:: foo, foo bar, biz, baz
+    - c1:: foo, foo bar
+    - c3:: 3, 4, 5, 5
+    - tags:: t4, t5, t6, t5

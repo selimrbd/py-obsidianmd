@@ -43,8 +43,8 @@
             ]
         },
         "str-extracted": [
-            "c1:: foo, foo bar",
             "c2 ::foo, foo bar",
+            "c1:: foo, foo bar",
             "c3 :: 3, 4, 5, 5",
             "tags :: t4, t5 t6 t5",
             "c2:: biz, baz"
@@ -135,7 +135,7 @@
             }
         }
     },
-    "note-metadata": {
+    "notemeta": {
         "remove-duplicate-values-tests": {
             "t1": {
                 "desc": "on all keys and all metadata types",

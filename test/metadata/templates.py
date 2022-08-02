@@ -182,17 +182,33 @@ def t_remove_duplicate_values(note_name: str, data: dict, meta_type: MetadataTyp
         err_msg = f'remove duplicate values test failed: {tnum}. desc: {ts["desc"]}.\n'
         assert_dict_match(mt.metadata, ts['result'], msg=err_msg)
 
+def t_erase(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False):
+    d = data[note_name]
+    with open(d['path'], 'r') as f:
+        note_content = f.read()
+    if 'eraseall' not in d['notemeta']:
+        return True
+
+    MetaClass = return_metaclass(meta_type)
+    erased = MetaClass._erase(note_content)
+    true_erased = d[meta_type.value].get('erase', '') if meta_type.value in d else ''
+    
+    if debug:
+        return erased, true_erased
+
+    assert_str_match(erased, true_erased)
+
 
 def nmt_remove_duplicate_values(note_name: str, data: dict, debug:bool=False) -> None:
     d = data[note_name]
-    if 'remove-duplicate-values-tests' not in d['note-metadata']:
+    if 'remove-duplicate-values-tests' not in d['notemeta']:
         return True
 
     mt_all = NoteMetadata(d['path'])
-    rdv_tests = d['note-metadata']['remove-duplicate-values-tests']
+    rdv_tests = d['notemeta']['remove-duplicate-values-tests']
     
     if debug:
-        return mt, d['note-metadata']
+        return mt, d['notemeta']
 
     for tnum, ts in rdv_tests.items():
         mt_all = NoteMetadata(d['path'])
@@ -203,3 +219,18 @@ def nmt_remove_duplicate_values(note_name: str, data: dict, debug:bool=False) ->
             err_msg += f'meta type: {t}\n'
             mt = getattr(mt_all, t)
             assert_dict_match(getattr(mt, 'metadata'), ts['result'][t], msg=err_msg)
+
+def nmt_erase(note_name: str, data: dict, debug:bool=False) -> None:
+    d = data[note_name]
+    with open(d['path'], 'r') as f:
+        note_content = f.read()
+    if 'eraseall' not in d['notemeta']:
+        return True
+
+    erased_all = NoteMetadata.erase(note_content, meta_type=MetadataType.ALL)
+    erased_all_true = d['notemeta']['eraseall']
+    
+    if debug:
+        return erased_all, erased_all_true
+
+    assert_str_match(erased_all, erased_all_true)

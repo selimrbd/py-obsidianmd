@@ -4,8 +4,8 @@ fm: hello, world, hello
 ---
 
 blabla
-c2 ::foo, foo bar
-c1:: foo, foo bar
+
+
 blabla
 
 
@@ -14,12 +14,12 @@ blabla
 
 # blabla
 
-c3 :: 3, 4, 5, 5
 
-tags :: t4, t5 t6 t5
+
+
 
 ## blabla
 
-c2:: biz, baz
+
 
 blibliblou

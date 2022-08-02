@@ -1,14 +1,10 @@
----
-tags: t1 t2, t3 t2
-fm: hello, world, hello
----
 
 blabla
-c2 ::foo, foo bar
+
 c1:: foo, foo bar
 blabla
 
-
+c2 ::foo, foo bar
 
 blabla
 
