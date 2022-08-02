@@ -157,3 +157,21 @@ def t_remove(note_name: str, data: dict, meta_type: MetadataType, debug:bool=Fal
         mt.remove(ts['k'], ts['v'])
         err_msg = f'add test failed: {tnum}. desc: {ts["desc"]}.\n'
         assert_list_match(mt.metadata.get(ts["k"], None), ts['result'], msg=err_msg)
+
+def t_remove_duplicate_values(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+    d = data[note_name]
+    if 'remove-duplicate-values-tests' not in d[meta_type.value]:
+        return True
+
+    MetaClass = return_metaclass(meta_type)
+    mt = MetaClass(d['path'])
+    rdv_tests = d[meta_type.value]['remove-duplicate-values-tests']
+    
+    if debug:
+        return mt, d[meta_type.value]
+
+    for tnum, ts in rdv_tests.items():
+        mt = MetaClass(d['path'])
+        mt.remove_duplicate_values(ts['k'])
+        err_msg = f'remove duplicate values test failed: {tnum}. desc: {ts["desc"]}.\n'
+        assert_dict_match(mt.metadata, ts['result'], msg=err_msg)
