@@ -6,6 +6,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Type, Union
 
+from .exceptions import TypeError
+
 UserInput = Union[str,int,float]
 MetaDict = dict[str, list[str]]
 
@@ -86,8 +88,20 @@ class Metadata(ABC):
         if len(self.metadata[k]) == 0:
             del self.metadata[k]
 
-    def remove_duplicates(self, k: str) -> None:
-        ...
+    def remove_duplicate_values(self, k: Optional[str|list[str]]) -> None:
+
+        if k is None:
+            list_keys = list(self.metadata.keys())
+        elif isinstance(k, str):
+            list_keys = [k]
+        elif isinstance(k, list):
+            list_keys = k
+        else:
+            raise TypeError('k', type(k), str(Optional[str|list[str]]))
+        
+        for k2 in list_keys:
+            if k2 not in self.metadata: continue
+            self.metadata[k2] = list(dict.fromkeys(self.metadata[k2]))
 
 class Frontmatter(Metadata):
     """Represents the frontmatter of a note"""
@@ -173,6 +187,16 @@ class InlineMetadata(Metadata):
 class MetadataType(Enum):
     FRONTMATTER = 'frontmatter'
     INLINE = 'inline'
+
+class NoteMetadata:
+
+    def __init__(self, path: Path|str):
+        self.path = Path(path)
+        self.frontmatter = Frontmatter(path)
+        self.inline = InlineMetadata(path)
+        #self.bodytags = BodyTags(path)
+    
+
 
 def return_metaclass(meta_type: MetadataType) -> Type[Metadata]:
     if meta_type == MetadataType.FRONTMATTER:
