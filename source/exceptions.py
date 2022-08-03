@@ -1,7 +1,7 @@
 from string import Template
 
 
-class TypeError(Exception):
+class ArgTypeError(Exception):
     def __init__(self, var_name: str, given_type: type, expected_type: type|str):
         self.var_name = var_name
         self.given_type = given_type

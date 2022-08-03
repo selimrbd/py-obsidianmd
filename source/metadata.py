@@ -7,10 +7,14 @@ from multiprocessing.sharedctypes import Value
 from pathlib import Path
 from typing import Optional, Type, Union
 
-from .exceptions import TypeError
+from .exceptions import ArgTypeError
 
 UserInput = Union[str,int,float]
 MetaDict = dict[str, list[str]]
+
+class Order(Enum):
+    ASC = "asc"
+    DESC = "desc"
 
 class Metadata(ABC):
 
@@ -106,7 +110,7 @@ class Metadata(ABC):
         elif isinstance(k, list):
             list_keys = k
         else:
-            raise TypeError('k', type(k), str(Optional[str|list[str]]))
+            raise ArgTypeError('k', type(k), str(Optional[str|list[str]]))
         
         for k2 in list_keys:
             if k2 not in self.metadata: continue
@@ -114,6 +118,40 @@ class Metadata(ABC):
 
     def print(self):
         print(self.to_string())
+
+    def order_values(self, keys: str|list[str]|None=None, how: Order=Order.ASC) -> None:
+        """Orders metadata values.
+        
+        Attributes:
+            - k: key on which to order the values. If None, orders all values
+        """
+        if not isinstance(how, Order): raise ArgTypeError('how', type(how), Order) # type: ignore
+        
+        if keys is None: keys = list(self.metadata.keys())
+        if isinstance(keys, str): keys = [keys]
+        for k in keys:
+            reverse = False if (how == Order.ASC) else True
+            self.metadata[k] = sorted(self.metadata[k], reverse=reverse)
+    
+    
+    def order_keys(self, how: Order=Order.DESC) -> None:
+        """Orders metadata keys.
+
+        Utilizes that since 3.6, python dict remember insert order.
+        """
+        return None
+
+    def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC):
+        """Orders metadata keys and values.
+        
+        Attributes:
+            - keys: keys for which to order the values
+            - o_keys: how to order the keys. If None, don't order them
+            - o_values: how to order values. If None, don't order them
+        """
+
+
+        return None
 
 class Frontmatter(Metadata):
     """Represents the frontmatter of a note"""
@@ -228,8 +266,9 @@ class NoteMetadata:
     @classmethod
     def _parse_arg_meta_type(cls, meta_type: MetadataType|None) -> MetadataType:
         if meta_type is None: meta_type = MetadataType.ALL
-        if not isinstance(meta_type, MetadataType):
-                raise TypeError(var_name='meta_type', given_type=type(meta_type), expected_type=str(MetadataType|None))
+        if not isinstance(meta_type, MetadataType): #type: ignore
+                raise ArgTypeError(var_name='meta_type', given_type=type(meta_type), 
+                expected_type=str(MetadataType|None))
         return meta_type
 
     def remove_duplicate_values(self, k: str|list[str]|None, meta_type: MetadataType|None=None):
@@ -284,6 +323,24 @@ class NoteMetadata:
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
         return res
+
+    def order_values(self, keys: str|list[str]|None=None, how: Order=Order.ASC, meta_type: MetadataType|None=None) -> None:
+        meta_type = self._parse_arg_meta_type(meta_type)
+        if meta_type == MetadataType.FRONTMATTER:
+            self.frontmatter.order_values(keys=keys, how=how)
+        elif meta_type == MetadataType.INLINE:
+            self.inline.order_values(keys=keys, how=how)
+        elif meta_type == MetadataType.ALL:
+            self.frontmatter.order_values(keys=keys, how=how)
+            self.inline.order_values(keys=keys, how=how)
+        else:
+            raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
+        
+    def order_keys(self, how: Order=Order.DESC, meta_type: MetadataType|None=None) -> None:
+        return None
+
+    def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC, meta_type: MetadataType|None=None):
+        return None
 
 
 def return_metaclass(meta_type: MetadataType) -> Type[Metadata]:

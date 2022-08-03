@@ -25,8 +25,6 @@ def load_test_data(note_names: list[str]) -> dict:
         
         ## load md files
         md_files = [x for x in os.listdir(path_note_dir) if x.endswith('.md') and x != f'{c}.md']
-        print('md files:')
-        print(md_files)
         for mdf in md_files:
             path_file = path_note_dir/mdf
             file_name = Path(mdf).stem

@@ -1,11 +1,16 @@
+import inspect
+import re
 import sys
 from functools import partial
 from string import Template
 from typing import Callable
 
+import pytest
+
 sys.path.append('../..')
 
-from source.metadata import MetadataType, NoteMetadata, return_metaclass
+from source.exceptions import ArgTypeError
+from source.metadata import MetadataType, NoteMetadata, Order, return_metaclass
 
 
 def add_test_function_to_global(glob: dict, fn: Callable, note_name: str, data: dict, meta_type: MetadataType|None=None):
@@ -206,6 +211,27 @@ def t_update_content(note_name: str, data: dict, meta_type: MetadataType, debug:
 
     assert_str_match(upd_default, upd_default_true)
 
+def t_order_values(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+    
+    fn_name = inspect.currentframe().f_code.co_name
+    fn_tested = re.sub('^t_', '', fn_name)
+    d = data[note_name] 
+    MetaClass = return_metaclass(meta_type)
+    tests_ov = d[meta_type.value]['tests-order_values'] 
+
+    for tnum, ts in tests_ov.items():
+        m = MetaClass(d['path']) 
+        arg_keys = ts["keys"]
+        arg_how = eval(ts["how"]) if re.match("^Order\\.", ts["how"]) is not None else ts["how"]
+        res_true = ts['result']
+        if "RAISE_EXCEPTION" in res_true:
+            exception_name = res_true["RAISE_EXCEPTION"]
+            with pytest.raises(eval(exception_name)):
+                m.order_values(keys=arg_keys, how=arg_how)
+        else:
+            m.order_values(keys=arg_keys, how=arg_how) 
+            err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}'
+            assert_dict_match(m.metadata, res_true, msg=err_msg)
 
 def nmt_remove_duplicate_values(note_name: str, data: dict, debug:bool=False) -> None:
     d = data[note_name]
@@ -255,3 +281,30 @@ def nmt_update_content(note_name: str, data: dict, debug:bool=False) -> None:
     assert_str_match(upd_default, upd_default_true)
     assert_str_match(upd_fm_only, upd_fm_only_true)
     assert_str_match(upd_inline_only, upd_inline_only_true)
+
+def nmt_order_values(note_name: str, data: dict, debug:bool=False) -> None:
+    
+    fn_name = inspect.currentframe().f_code.co_name
+    fn_tested = re.sub('^t_', '', fn_name)
+    d = data[note_name] 
+    tests_ov = d['notemeta']['tests-order_values'] 
+
+    for tnum, ts in tests_ov.items():
+        m = NoteMetadata(d['path']) 
+        arg_keys = ts["keys"]
+        arg_how = eval(ts["how"]) if re.match("^Order\\.", ts["how"]) is not None else ts["how"]
+        arg_meta_type = eval(ts["meta_type"]) if re.match("^MetadataType\\.", str(ts["meta_type"])) is not None else ts["meta_type"]
+        res_true = ts['result']
+        if "RAISE_EXCEPTION" in res_true:
+            exception_name = res_true["RAISE_EXCEPTION"]
+            with pytest.raises(eval(exception_name)):
+                m.order_values(keys=arg_keys, how=arg_how, meta_type=arg_meta_type)
+        else:
+            m.order_values(keys=arg_keys, how=arg_how, meta_type=arg_meta_type) 
+            err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}'
+            for typ in ['frontmatter', 'inline']:
+                err_msg += f"\nmetadata type: {typ}"
+                sub_meta = getattr(m, typ)
+                dict_meta = getattr(sub_meta, 'metadata')
+                dict_meta_true = res_true[typ]
+                assert_dict_match(dict_meta, dict_meta_true, msg=err_msg)
