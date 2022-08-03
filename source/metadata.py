@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from enum import Enum
-from multiprocessing.sharedctypes import Value
 from pathlib import Path
-from typing import Optional, Type, Union
+from typing import Optional, OrderedDict, Type, Union
 
 from .exceptions import ArgTypeError
 
@@ -133,14 +133,15 @@ class Metadata(ABC):
             reverse = False if (how == Order.ASC) else True
             self.metadata[k] = sorted(self.metadata[k], reverse=reverse)
     
-    
-    def order_keys(self, how: Order=Order.DESC) -> None:
+    def order_keys(self, how: Order=Order.ASC) -> None:
         """Orders metadata keys.
 
         Utilizes that since 3.6, python dict remember insert order.
         """
-        return None
-
+        reverse = (how == Order.DESC)
+        list_keys = sorted(list(self.metadata.keys()),reverse=reverse)
+        self.metadata = {k:self.metadata.pop(k) for k in list_keys}
+        
     def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC):
         """Orders metadata keys and values.
         
@@ -336,7 +337,17 @@ class NoteMetadata:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
         
     def order_keys(self, how: Order=Order.DESC, meta_type: MetadataType|None=None) -> None:
-        return None
+        meta_type = self._parse_arg_meta_type(meta_type)
+        if meta_type == MetadataType.FRONTMATTER:
+            self.frontmatter.order_keys(how=how)
+        elif meta_type == MetadataType.INLINE:
+            self.inline.order_keys(how=how)
+        elif meta_type == MetadataType.ALL:
+            self.frontmatter.order_keys(how=how)
+            self.inline.order_keys(how=how)
+        else:
+            raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
+    
 
     def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC, meta_type: MetadataType|None=None):
         return None

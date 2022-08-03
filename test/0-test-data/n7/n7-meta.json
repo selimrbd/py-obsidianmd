@@ -124,7 +124,26 @@
                 }
             }
         },
-        "tests-order_keys": {},
+        "tests-order_keys": {
+            "t1": {
+                "desc": "order ascending",
+                "how": "Order.ASC",
+                "result": [
+                    "i0",
+                    "i1",
+                    "i2"
+                ]
+            },
+            "t2": {
+                "desc": "order descending",
+                "how": "Order.DESC",
+                "result": [
+                    "i2",
+                    "i1",
+                    "i0"
+                ]
+            }
+        },
         "tests-order": {}
     },
     "notemeta": {
@@ -259,6 +278,59 @@
                             "c"
                         ]
                     }
+                }
+            }
+        },
+        "tests-order_keys": {
+            "t1": {
+                "desc": "order only frontmatter",
+                "how": "Order.ASC",
+                "meta_type": "MetadataType.FRONTMATTER",
+                "result": {
+                    "inline": [
+                        "i2",
+                        "i0",
+                        "i1"
+                    ],
+                    "frontmatter": [
+                        "f0",
+                        "f1",
+                        "f2"
+                    ]
+                }
+            },
+            "t2": {
+                "desc": "order only inline",
+                "how": "Order.ASC",
+                "meta_type": "MetadataType.INLINE",
+                "result": {
+                    "inline": [
+                        "i0",
+                        "i1",
+                        "i2"
+                    ],
+                    "frontmatter": [
+                        "f2",
+                        "f1",
+                        "f0"
+                    ]
+                }
+            },
+            "t3": {
+                "desc": "order all metadata",
+                "how": "Order.ASC",
+                "meta_type": null,
+                "result": {
+                    "inline": [
+                        "i0",
+                        "i1",
+                        "i2"
+                    ],
+                    "frontmatter": [
+                        "f0",
+                        "f1",
+                        "f2"
+                    ]
                 }
             }
         }

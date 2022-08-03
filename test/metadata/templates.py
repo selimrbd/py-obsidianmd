@@ -233,6 +233,32 @@ def t_order_values(note_name: str, data: dict, meta_type: MetadataType, debug:bo
             err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}'
             assert_dict_match(m.metadata, res_true, msg=err_msg)
 
+def t_order_keys(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+    
+    fn_name = inspect.currentframe().f_code.co_name
+    fn_tested = re.sub('^t_', '', fn_name)
+    d = data[note_name] 
+    MetaClass = return_metaclass(meta_type)
+    tests_okys = d[meta_type.value][f'tests-{fn_tested}'] 
+
+    for tnum, ts in tests_okys.items():
+        m = MetaClass(d['path'])
+        arg_how = eval(ts["how"]) if re.match("^Order\\.", ts["how"]) is not None else ts["how"]
+        res_true = ts['result']
+        if "RAISE_EXCEPTION" in res_true:
+            exception_name = res_true["RAISE_EXCEPTION"]
+            with pytest.raises(eval(exception_name)):
+                m.order_keys(how=arg_how)
+        else:
+            m.order_keys(how=arg_how)
+            list_keys = list(m.metadata.keys())
+            list_keys_true = res_true
+            err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}'
+            err_msg += f'ORDER: {arg_how}, TYPE: {type(arg_how)}'
+            assert_list_match(list_keys, list_keys_true, msg=err_msg)
+
+
+
 def nmt_remove_duplicate_values(note_name: str, data: dict, debug:bool=False) -> None:
     d = data[note_name]
 
@@ -308,3 +334,30 @@ def nmt_order_values(note_name: str, data: dict, debug:bool=False) -> None:
                 dict_meta = getattr(sub_meta, 'metadata')
                 dict_meta_true = res_true[typ]
                 assert_dict_match(dict_meta, dict_meta_true, msg=err_msg)
+
+def nmt_order_keys(note_name: str, data: dict, debug:bool=False) -> None:
+    
+    fn_name = inspect.currentframe().f_code.co_name
+    fn_tested = re.sub('^t_', '', fn_name)
+    d = data[note_name] 
+    tests_oky = d['notemeta']['tests-order_keys'] 
+
+    for tnum, ts in tests_oky.items():
+        m = NoteMetadata(d['path']) 
+        arg_how = eval(ts["how"]) if re.match("^Order\\.", ts["how"]) is not None else ts["how"]
+        arg_meta_type = eval(ts["meta_type"]) if re.match("^MetadataType\\.", str(ts["meta_type"])) is not None else ts["meta_type"]
+        res_true = ts['result']
+        if "RAISE_EXCEPTION" in res_true:
+            exception_name = res_true["RAISE_EXCEPTION"]
+            with pytest.raises(eval(exception_name)):
+                m.order_keys(how=arg_how, meta_type=arg_meta_type)
+        else:
+            m.order_keys(how=arg_how, meta_type=arg_meta_type) 
+            err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}\narg_how: "{arg_how}"\narg_meta_type: "{arg_meta_type}"\n'
+            for typ in ['frontmatter', 'inline']:
+                err_msg2 = err_msg+f"\nmetadata type: {typ}"
+                sub_meta = getattr(m, typ)
+                list_meta_keys = list(getattr(sub_meta, 'metadata').keys())
+                list_meta_keys_true = res_true[typ]
+                assert_list_match(list_meta_keys, list_meta_keys_true, msg=err_msg2)
+
