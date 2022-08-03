@@ -254,7 +254,6 @@ class MetadataType(Enum):
             if s == k.value: return k
         raise ValueError(f'Metadatatype not defined: "{s}"')
 
-
 class NoteMetadata:
     """Represents all a note's metadata (frontmatter, inline and body tags)."""
     def __init__(self, path: Path|str):
