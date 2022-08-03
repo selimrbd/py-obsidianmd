@@ -257,6 +257,43 @@ def t_order_keys(note_name: str, data: dict, meta_type: MetadataType, debug:bool
             err_msg += f'ORDER: {arg_how}, TYPE: {type(arg_how)}'
             assert_list_match(list_keys, list_keys_true, msg=err_msg)
 
+def eval_arg_from_json(arg: str|None, re_match_pattern: str):
+    if arg is None: return None
+    try:
+        if re.match(re_match_pattern, str(arg)) is not None: return eval(arg)
+        return arg
+    except AttributeError:
+        return arg
+
+def t_order(note_name: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+    
+    fn_name = inspect.currentframe().f_code.co_name
+    fn_tested = re.sub('^t_', '', fn_name)
+    d = data[note_name] 
+    MetaClass = return_metaclass(meta_type)
+    tests_order = d[meta_type.value][f'tests-{fn_tested}'] 
+
+    for tnum, ts in tests_order.items():
+        m = MetaClass(d['path'])
+        arg_keys = ts["keys"]
+        arg_o_keys = eval_arg_from_json(ts["o_keys"], re_match_pattern='^Order\\.')
+        arg_o_values = eval_arg_from_json(ts["o_values"], re_match_pattern='^Order\\.')
+        res_true = ts['result']
+        if "RAISE_EXCEPTION" in res_true:
+            exception_name = res_true["RAISE_EXCEPTION"]
+            with pytest.raises(eval(exception_name)):
+                m.order(keys=arg_keys, o_keys=arg_o_keys, o_values=arg_o_values)
+        else:
+            m.order(keys=arg_keys, o_keys=arg_o_keys, o_values=arg_o_values)
+            list_keys = list(m.metadata.keys())
+            list_keys_true = res_true['list_keys']
+            meta_dict = m.metadata
+            meta_dict_true = res_true['metadata']
+            err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}'
+            err_msg += f'\nkeys: "{arg_keys}", o_keys: "{arg_o_keys}" ({type(arg_o_keys)}), o_values: "{arg_o_values}" ({type(arg_o_values)})'
+            assert_list_match(list_keys, list_keys_true, msg=err_msg)
+            assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+            
 
 
 def nmt_remove_duplicate_values(note_name: str, data: dict, debug:bool=False) -> None:
@@ -360,4 +397,35 @@ def nmt_order_keys(note_name: str, data: dict, debug:bool=False) -> None:
                 list_meta_keys = list(getattr(sub_meta, 'metadata').keys())
                 list_meta_keys_true = res_true[typ]
                 assert_list_match(list_meta_keys, list_meta_keys_true, msg=err_msg2)
+
+def nmt_order(note_name: str, data: dict, debug:bool=False) -> None:
+    
+    fn_name = inspect.currentframe().f_code.co_name
+    fn_tested = re.sub('^t_', '', fn_name)
+    d = data[note_name] 
+    tests_oky = d['notemeta']['tests-order'] 
+
+    for tnum, ts in tests_oky.items():
+        m = NoteMetadata(d['path']) 
+        arg_keys = ts["keys"]
+        arg_o_keys = eval_arg_from_json(ts["o_keys"], re_match_pattern='^Order\\.')
+        arg_o_values = eval_arg_from_json(ts["o_values"], re_match_pattern='^Order\\.')
+        arg_meta_type = eval_arg_from_json(ts["meta_type"], re_match_pattern="^MetadataType\\.")
+        res_true = ts['result']
+        if "RAISE_EXCEPTION" in res_true:
+            exception_name = res_true["RAISE_EXCEPTION"]
+            with pytest.raises(eval(exception_name)):
+                m.order(keys=arg_keys, o_keys=arg_o_keys, o_values=arg_o_values, meta_type=arg_meta_type)
+        else:
+            m.order(keys=arg_keys, o_keys=arg_o_keys, o_values=arg_o_values, meta_type=arg_meta_type)
+            err_msg = f'\n** "{fn_tested}" test failed **\ntest number: {tnum}\ndescription: {ts["desc"]}\n\narg_meta_type: "{arg_meta_type}"\n'
+            for typ in ['frontmatter', 'inline']:
+                err_msg2 = err_msg+f"\nmetadata type: {typ}"
+                sub_meta = getattr(m, typ)
+                list_meta_keys = list(getattr(sub_meta, 'metadata').keys())
+                list_meta_keys_true = res_true[typ]['list_keys']
+                meta_dict = sub_meta.metadata
+                meta_dict_true = res_true[typ]['metadata']
+                assert_list_match(list_meta_keys, list_meta_keys_true, msg=err_msg2)
+                assert_dict_match(meta_dict, meta_dict_true, msg=err_msg2)
 

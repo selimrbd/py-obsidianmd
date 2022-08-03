@@ -150,8 +150,10 @@ class Metadata(ABC):
             - o_keys: how to order the keys. If None, don't order them
             - o_values: how to order values. If None, don't order them
         """
-
-
+        if o_keys is not None:
+            self.order_keys(how=o_keys)
+        if o_values is not None:
+            self.order_values(keys=keys, how=o_values)
         return None
 
 class Frontmatter(Metadata):
@@ -348,10 +350,18 @@ class NoteMetadata:
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
     
-
     def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC, meta_type: MetadataType|None=None):
-        return None
-
+        meta_type = self._parse_arg_meta_type(meta_type)
+        if meta_type == MetadataType.FRONTMATTER:
+            self.frontmatter.order(keys=keys, o_keys=o_keys, o_values=o_values)
+        elif meta_type == MetadataType.INLINE:
+            self.inline.order(keys=keys, o_keys=o_keys, o_values=o_values)
+        elif meta_type == MetadataType.ALL:
+            self.frontmatter.order(keys=keys, o_keys=o_keys, o_values=o_values)
+            self.inline.order(keys=keys, o_keys=o_keys, o_values=o_values)
+        else:
+            raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
+    
 
 def return_metaclass(meta_type: MetadataType) -> Type[Metadata]:
     if meta_type == MetadataType.FRONTMATTER:

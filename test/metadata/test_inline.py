@@ -5,9 +5,10 @@ from source.metadata import MetadataType
 
 from .. import load_test_data
 from .templates import (add_test_function_to_global, t_build_metaobject,
-                        t_erase, t_exists, t_extract_str, t_order_keys,
-                        t_order_values, t_remove_duplicate_values,
-                        t_str_to_dict, t_to_string, t_update_content)
+                        t_erase, t_exists, t_extract_str, t_order,
+                        t_order_keys, t_order_values,
+                        t_remove_duplicate_values, t_str_to_dict, t_to_string,
+                        t_update_content)
 
 META_TYPE = MetadataType.INLINE
 NOTE_NAMES = ["n1", "n2", "n3", "n4"]
@@ -26,6 +27,6 @@ for fn in [t_remove_duplicate_values, t_erase, t_update_content]:
 
 nl = ['n7']
 DATA = load_test_data(nl)
-for fn in [t_order_values, t_order_keys]:
+for fn in [t_order_values, t_order_keys, t_order]:
     for n in nl:
         add_test_function_to_global(glob=globals(), fn=fn, note_name=n, data=DATA, meta_type=META_TYPE)
