@@ -1,0 +1,102 @@
+{
+    "tests": {
+        "description": "tests related to the Frontmatter object",
+        "tests-_extract_str": {
+            "1": {
+                "description": "file with no frontmatter (n1)",
+                "data": "n1",
+                "inputs": {},
+                "expected_output": {
+                    "str_extracted": []
+                }
+            },
+            "2": {
+                "description": "file with frontmatter (n2)",
+                "data": "n2",
+                "inputs": {},
+                "expected_output": {
+                    "str_extracted": [
+                        "---\ntags: t1, t2 t3\nmeta2: 1,2,3\nmeta3: foo, b bar\nmeta4: \"foo\", \"b bar\"\n---\n"
+                    ]
+                }
+            },
+            "3": {
+                "description": "file with no frontmatter. Frontmatter pattern in the middle (n6)",
+                "data": "n6",
+                "inputs": {},
+                "expected_output": {
+                    "str_extracted": []
+                }
+            }
+        },
+        "tests-_str_to_dict": {
+            "1": {
+                "description": "file with no frontmatter (n1)",
+                "data": "n1",
+                "inputs": {
+                    "str_extracted": []
+                },
+                "expected_output": {
+                    "meta_dict": {}
+                }
+            },
+            "2": {
+                "description": "file with frontmatter (n2)",
+                "data": "n2",
+                "inputs": {
+                    "str_extracted": [
+                        "---\ntags: t1, t2 t3\nmeta2: 1,2,3\nmeta3: foo, b bar\nmeta4: \"foo\", \"b bar\"\n---\n"
+                    ]
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "3": {
+                "description": "file with frontmatter (n4)",
+                "data": "n4",
+                "inputs": {
+                    "str_extracted": [
+                        "---\ntags: t1 t2, t3 t2\nfm: hello, world, hello\n---\n"
+                    ]
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3",
+                            "t2"
+                        ],
+                        "fm": [
+                            "hello",
+                            "world",
+                            "hello"
+                        ]
+                    }
+                }
+            }
+        },
+        "tests-to_string": {},
+        "tests-a": {}
+    }
+}

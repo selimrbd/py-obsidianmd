@@ -20,13 +20,11 @@ class Metadata(ABC):
 
     REGEX: str = ''
 
-    def __init__(self, path: Path|str):
-        with open(path, 'r') as f:
-            note_content = f.read()
+    def __init__(self, note_content: str):
         self.metadata: MetaDict = self._extract_metadata(note_content)
     
     def __repr__(self):
-        r = f"metadata of type {type(self)}:\n"
+        r = f"{type(self)}:\n"
         if self.to_string() is None:
              r +=' None'
         else:
@@ -116,9 +114,6 @@ class Metadata(ABC):
             if k2 not in self.metadata: continue
             self.metadata[k2] = list(dict.fromkeys(self.metadata[k2]))
 
-    def print(self):
-        print(self.to_string())
-
     def order_values(self, keys: str|list[str]|None=None, how: Order=Order.ASC) -> None:
         """Orders metadata values.
         
@@ -155,6 +150,10 @@ class Metadata(ABC):
         if o_values is not None:
             self.order_values(keys=keys, how=o_values)
         return None
+
+    def print(self):
+        print(self.to_string())
+
 
 class Frontmatter(Metadata):
     """Represents the frontmatter of a note"""
@@ -259,11 +258,10 @@ class MetadataType(Enum):
 
 class NoteMetadata:
     """Represents all a note's metadata (frontmatter, inline and body tags)."""
-    def __init__(self, path: Path|str):
-        self.path = Path(path)
-        self.frontmatter = Frontmatter(path)
-        self.inline = InlineMetadata(path)
-        #self.bodytags = BodyTags(path)
+    def __init__(self, note_content: str):
+        self.frontmatter = Frontmatter(note_content)
+        self.inline = InlineMetadata(note_content)
+
     
     @classmethod
     def _parse_arg_meta_type(cls, meta_type: MetadataType|None) -> MetadataType:
