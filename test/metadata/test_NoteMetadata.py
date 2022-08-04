@@ -1,4 +1,3 @@
-from curses import meta
 from pathlib import Path
 
 from source.metadata import MetadataType

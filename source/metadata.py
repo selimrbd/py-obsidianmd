@@ -267,6 +267,20 @@ class NoteMetadata:
                 expected_type=str(MetadataType|None))
         return meta_type
 
+    def add(self, k: str, l: Union[UserInput, list[UserInput], None], meta_type: MetadataType=MetadataType.FRONTMATTER, overwrite: bool=False) -> None:
+        """
+        """
+        if meta_type == MetadataType.FRONTMATTER:
+            self.frontmatter.add(k=k, l=l, overwrite=overwrite)
+        if meta_type == MetadataType.INLINE:
+            self.inline.add(k=k, l=l, overwrite=overwrite)  
+
+    def remove(self, k: str, l: Optional[Union[UserInput, list[UserInput]]]=None, meta_type: MetadataType=MetadataType.FRONTMATTER) -> None:
+        if meta_type == MetadataType.FRONTMATTER:
+            self.frontmatter.remove(k=k, l=l)
+        if meta_type == MetadataType.INLINE:
+            self.inline.remove(k=k, l=l)
+
     def remove_duplicate_values(self, k: str|list[str]|None, meta_type: MetadataType|None=None):
         """Remove duplicate values in the note's metadata
         
