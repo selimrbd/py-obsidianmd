@@ -1,5 +1,284 @@
 {
     "tests": {
+        "default_meta_type": "notemeta",
+        "tests-remove_duplicate_values": {
+            "n4_1": {
+                "description": "on all keys and all metadata types",
+                "data": "n4",
+                "inputs": {
+                    "k": null,
+                    "meta_type": null
+                },
+                "expected_output": {
+                    "frontmatter": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "fm": [
+                            "hello",
+                            "world"
+                        ]
+                    },
+                    "inline": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6"
+                        ]
+                    }
+                }
+            },
+            "n4_2": {
+                "description": "on 1 specific value of the frontmatter",
+                "data": "n4",
+                "inputs": {
+                    "k": "fm",
+                    "meta_type": "frontmatter"
+                },
+                "expected_output": {
+                    "frontmatter": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3",
+                            "t2"
+                        ],
+                        "fm": [
+                            "hello",
+                            "world"
+                        ]
+                    },
+                    "inline": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6",
+                            "t5"
+                        ]
+                    }
+                }
+            }
+        },
+        "tests-order_values": {
+            "t1": {
+                "desc": "order all metadata",
+                "keys": null,
+                "how": "Order.ASC",
+                "meta_type": null,
+                "result": {
+                    "frontmatter": {
+                        "f2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "f1": [
+                            "a",
+                            "b",
+                            "c",
+                            "z"
+                        ],
+                        "f0": [
+                            "a",
+                            "b",
+                            "c"
+                        ]
+                    },
+                    "inline": {
+                        "i2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "i1": [
+                            "a",
+                            "b",
+                            "c",
+                            "z"
+                        ],
+                        "i0": [
+                            "a",
+                            "b",
+                            "c"
+                        ]
+                    }
+                }
+            },
+            "t2": {
+                "desc": "order only frontmatter",
+                "keys": null,
+                "how": "Order.ASC",
+                "meta_type": "MetadataType.FRONTMATTER",
+                "result": {
+                    "frontmatter": {
+                        "f2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "f1": [
+                            "a",
+                            "b",
+                            "c",
+                            "z"
+                        ],
+                        "f0": [
+                            "a",
+                            "b",
+                            "c"
+                        ]
+                    },
+                    "inline": {
+                        "i2": [
+                            "3",
+                            "2",
+                            "1"
+                        ],
+                        "i1": [
+                            "z",
+                            "b",
+                            "c",
+                            "a"
+                        ],
+                        "i0": [
+                            "b",
+                            "a",
+                            "c"
+                        ]
+                    }
+                }
+            },
+            "t3": {
+                "desc": "order only inline",
+                "keys": null,
+                "how": "Order.ASC",
+                "meta_type": "MetadataType.INLINE",
+                "result": {
+                    "frontmatter": {
+                        "f2": [
+                            "3",
+                            "2",
+                            "1"
+                        ],
+                        "f1": [
+                            "z",
+                            "b",
+                            "c",
+                            "a"
+                        ],
+                        "f0": [
+                            "b",
+                            "a",
+                            "c"
+                        ]
+                    },
+                    "inline": {
+                        "i2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "i1": [
+                            "a",
+                            "b",
+                            "c",
+                            "z"
+                        ],
+                        "i0": [
+                            "a",
+                            "b",
+                            "c"
+                        ]
+                    }
+                }
+            }
+        },
+        "tests-order_keys": {
+            "t1": {
+                "desc": "order only frontmatter",
+                "how": "Order.ASC",
+                "meta_type": "MetadataType.FRONTMATTER",
+                "result": {
+                    "inline": [
+                        "i2",
+                        "i0",
+                        "i1"
+                    ],
+                    "frontmatter": [
+                        "f0",
+                        "f1",
+                        "f2"
+                    ]
+                }
+            },
+            "t2": {
+                "desc": "order only inline",
+                "how": "Order.ASC",
+                "meta_type": "MetadataType.INLINE",
+                "result": {
+                    "inline": [
+                        "i0",
+                        "i1",
+                        "i2"
+                    ],
+                    "frontmatter": [
+                        "f2",
+                        "f1",
+                        "f0"
+                    ]
+                }
+            },
+            "t3": {
+                "desc": "order all metadata",
+                "how": "Order.ASC",
+                "meta_type": null,
+                "result": {
+                    "inline": [
+                        "i0",
+                        "i1",
+                        "i2"
+                    ],
+                    "frontmatter": [
+                        "f0",
+                        "f1",
+                        "f2"
+                    ]
+                }
+            }
+        },
         "tests-order": {
             "1": {
                 "description": "Only frontmatter. order keys + values.",
@@ -8,7 +287,7 @@
                     "keys": null,
                     "o_keys": "Order.ASC",
                     "o_values": "Order.ASC",
-                    "meta_type": "MetadataType.FRONTMATTER",
+                    "meta_type": "MetadataType.FRONTMATTER"
                 },
                 "expected_outputs": {
                     "frontmatter": {
@@ -182,457 +461,181 @@
                 }
             }
         },
-        "remove-duplicate-values-tests": {
+        "tests-order2": {
             "t1": {
-                "data": "n4",
-                "desc": "on all keys and all metadata types",
-                "k": null,
-                "meta_type": null,
+                "desc": "order keys + value. Only frontmatter",
+                "keys": null,
+                "o_keys": "Order.ASC",
+                "o_values": "Order.ASC",
+                "meta_type": "MetadataType.FRONTMATTER",
                 "result": {
                     "frontmatter": {
-                        "tags": [
-                            "t1",
-                            "t2",
-                            "t3"
+                        "list_keys": [
+                            "f0",
+                            "f1",
+                            "f2"
                         ],
-                        "fm": [
-                            "hello",
-                            "world"
-                        ]
+                        "metadata": {
+                            "f2": [
+                                "1",
+                                "2",
+                                "3"
+                            ],
+                            "f1": [
+                                "a",
+                                "b",
+                                "c",
+                                "z"
+                            ],
+                            "f0": [
+                                "a",
+                                "b",
+                                "c"
+                            ]
+                        }
                     },
                     "inline": {
-                        "c1": [
-                            "foo",
-                            "foo bar"
+                        "list_keys": [
+                            "i2",
+                            "i0",
+                            "i1"
                         ],
-                        "c2": [
-                            "foo",
-                            "foo bar",
-                            "biz",
-                            "baz"
-                        ],
-                        "c3": [
-                            "3",
-                            "4",
-                            "5"
-                        ],
-                        "tags": [
-                            "t4",
-                            "t5",
-                            "t6"
-                        ]
+                        "metadata": {
+                            "i2": [
+                                "3",
+                                "2",
+                                "1"
+                            ],
+                            "i1": [
+                                "z",
+                                "b",
+                                "c",
+                                "a"
+                            ],
+                            "i0": [
+                                "b",
+                                "a",
+                                "c"
+                            ]
+                        }
                     }
                 }
             },
             "t2": {
-                "desc": "on 1 specific value of the frontmatter",
-                "k": "fm",
-                "meta_type": "frontmatter",
+                "desc": "order keys + value. Only inline",
+                "keys": null,
+                "o_keys": "Order.ASC",
+                "o_values": "Order.ASC",
+                "meta_type": "MetadataType.INLINE",
                 "result": {
                     "frontmatter": {
-                        "tags": [
-                            "t1",
-                            "t2",
-                            "t3",
-                            "t2"
+                        "list_keys": [
+                            "f2",
+                            "f1",
+                            "f0"
                         ],
-                        "fm": [
-                            "hello",
-                            "world"
-                        ]
+                        "metadata": {
+                            "f2": [
+                                "3",
+                                "2",
+                                "1"
+                            ],
+                            "f1": [
+                                "z",
+                                "b",
+                                "c",
+                                "a"
+                            ],
+                            "f0": [
+                                "b",
+                                "a",
+                                "c"
+                            ]
+                        }
                     },
                     "inline": {
-                        "c1": [
-                            "foo",
-                            "foo bar"
+                        "list_keys": [
+                            "i0",
+                            "i1",
+                            "i2"
                         ],
-                        "c2": [
-                            "foo",
-                            "foo bar",
-                            "biz",
-                            "baz"
-                        ],
-                        "c3": [
-                            "3",
-                            "4",
-                            "5",
-                            "5"
-                        ],
-                        "tags": [
-                            "t4",
-                            "t5",
-                            "t6",
-                            "t5"
-                        ]
+                        "metadata": {
+                            "i2": [
+                                "1",
+                                "2",
+                                "3"
+                            ],
+                            "i1": [
+                                "a",
+                                "b",
+                                "c",
+                                "z"
+                            ],
+                            "i0": [
+                                "a",
+                                "b",
+                                "c"
+                            ]
+                        }
                     }
                 }
-            }
-        }
-    }
-}
-
-"notemeta": {
-    "tests-order_values": {
-        "t1": {
-            "desc": "order all metadata",
-            "keys": null,
-            "how": "Order.ASC",
-            "meta_type": null,
-            "result": {
-                "frontmatter": {
-                    "f2": [
-                        "1",
-                        "2",
-                        "3"
-                    ],
-                    "f1": [
-                        "a",
-                        "b",
-                        "c",
-                        "z"
-                    ],
-                    "f0": [
-                        "a",
-                        "b",
-                        "c"
-                    ]
-                },
-                "inline": {
-                    "i2": [
-                        "1",
-                        "2",
-                        "3"
-                    ],
-                    "i1": [
-                        "a",
-                        "b",
-                        "c",
-                        "z"
-                    ],
-                    "i0": [
-                        "a",
-                        "b",
-                        "c"
-                    ]
-                }
-            }
-        },
-        "t2": {
-            "desc": "order only frontmatter",
-            "keys": null,
-            "how": "Order.ASC",
-            "meta_type": "MetadataType.FRONTMATTER",
-            "result": {
-                "frontmatter": {
-                    "f2": [
-                        "1",
-                        "2",
-                        "3"
-                    ],
-                    "f1": [
-                        "a",
-                        "b",
-                        "c",
-                        "z"
-                    ],
-                    "f0": [
-                        "a",
-                        "b",
-                        "c"
-                    ]
-                },
-                "inline": {
-                    "i2": [
-                        "3",
-                        "2",
-                        "1"
-                    ],
-                    "i1": [
-                        "z",
-                        "b",
-                        "c",
-                        "a"
-                    ],
-                    "i0": [
-                        "b",
-                        "a",
-                        "c"
-                    ]
-                }
-            }
-        },
-        "t3": {
-            "desc": "order only inline",
-            "keys": null,
-            "how": "Order.ASC",
-            "meta_type": "MetadataType.INLINE",
-            "result": {
-                "frontmatter": {
-                    "f2": [
-                        "3",
-                        "2",
-                        "1"
-                    ],
-                    "f1": [
-                        "z",
-                        "b",
-                        "c",
-                        "a"
-                    ],
-                    "f0": [
-                        "b",
-                        "a",
-                        "c"
-                    ]
-                },
-                "inline": {
-                    "i2": [
-                        "1",
-                        "2",
-                        "3"
-                    ],
-                    "i1": [
-                        "a",
-                        "b",
-                        "c",
-                        "z"
-                    ],
-                    "i0": [
-                        "a",
-                        "b",
-                        "c"
-                    ]
-                }
-            }
-        }
-    },
-    "tests-order_keys": {
-        "t1": {
-            "desc": "order only frontmatter",
-            "how": "Order.ASC",
-            "meta_type": "MetadataType.FRONTMATTER",
-            "result": {
-                "inline": [
-                    "i2",
-                    "i0",
-                    "i1"
-                ],
-                "frontmatter": [
-                    "f0",
-                    "f1",
-                    "f2"
-                ]
-            }
-        },
-        "t2": {
-            "desc": "order only inline",
-            "how": "Order.ASC",
-            "meta_type": "MetadataType.INLINE",
-            "result": {
-                "inline": [
-                    "i0",
-                    "i1",
-                    "i2"
-                ],
-                "frontmatter": [
-                    "f2",
-                    "f1",
-                    "f0"
-                ]
-            }
-        },
-        "t3": {
-            "desc": "order all metadata",
-            "how": "Order.ASC",
-            "meta_type": null,
-            "result": {
-                "inline": [
-                    "i0",
-                    "i1",
-                    "i2"
-                ],
-                "frontmatter": [
-                    "f0",
-                    "f1",
-                    "f2"
-                ]
-            }
-        }
-    },
-    "tests-order": {
-        "t1": {
-            "desc": "order keys + value. Only frontmatter",
-            "keys": null,
-            "o_keys": "Order.ASC",
-            "o_values": "Order.ASC",
-            "meta_type": "MetadataType.FRONTMATTER",
-            "result": {
-                "frontmatter": {
-                    "list_keys": [
-                        "f0",
-                        "f1",
-                        "f2"
-                    ],
-                    "metadata": {
-                        "f2": [
-                            "1",
-                            "2",
-                            "3"
+            },
+            "t3": {
+                "desc": "order keys + value. All metadata",
+                "keys": null,
+                "o_keys": "Order.ASC",
+                "o_values": "Order.ASC",
+                "meta_type": null,
+                "result": {
+                    "frontmatter": {
+                        "list_keys": [
+                            "f0",
+                            "f1",
+                            "f2"
                         ],
-                        "f1": [
-                            "a",
-                            "b",
-                            "c",
-                            "z"
+                        "metadata": {
+                            "f2": [
+                                "1",
+                                "2",
+                                "3"
+                            ],
+                            "f1": [
+                                "a",
+                                "b",
+                                "c",
+                                "z"
+                            ],
+                            "f0": [
+                                "a",
+                                "b",
+                                "c"
+                            ]
+                        }
+                    },
+                    "inline": {
+                        "list_keys": [
+                            "i0",
+                            "i1",
+                            "i2"
                         ],
-                        "f0": [
-                            "a",
-                            "b",
-                            "c"
-                        ]
-                    }
-                },
-                "inline": {
-                    "list_keys": [
-                        "i2",
-                        "i0",
-                        "i1"
-                    ],
-                    "metadata": {
-                        "i2": [
-                            "3",
-                            "2",
-                            "1"
-                        ],
-                        "i1": [
-                            "z",
-                            "b",
-                            "c",
-                            "a"
-                        ],
-                        "i0": [
-                            "b",
-                            "a",
-                            "c"
-                        ]
-                    }
-                }
-            }
-        },
-        "t2": {
-            "desc": "order keys + value. Only inline",
-            "keys": null,
-            "o_keys": "Order.ASC",
-            "o_values": "Order.ASC",
-            "meta_type": "MetadataType.INLINE",
-            "result": {
-                "frontmatter": {
-                    "list_keys": [
-                        "f2",
-                        "f1",
-                        "f0"
-                    ],
-                    "metadata": {
-                        "f2": [
-                            "3",
-                            "2",
-                            "1"
-                        ],
-                        "f1": [
-                            "z",
-                            "b",
-                            "c",
-                            "a"
-                        ],
-                        "f0": [
-                            "b",
-                            "a",
-                            "c"
-                        ]
-                    }
-                },
-                "inline": {
-                    "list_keys": [
-                        "i0",
-                        "i1",
-                        "i2"
-                    ],
-                    "metadata": {
-                        "i2": [
-                            "1",
-                            "2",
-                            "3"
-                        ],
-                        "i1": [
-                            "a",
-                            "b",
-                            "c",
-                            "z"
-                        ],
-                        "i0": [
-                            "a",
-                            "b",
-                            "c"
-                        ]
-                    }
-                }
-            }
-        },
-        "t3": {
-            "desc": "order keys + value. All metadata",
-            "keys": null,
-            "o_keys": "Order.ASC",
-            "o_values": "Order.ASC",
-            "meta_type": null,
-            "result": {
-                "frontmatter": {
-                    "list_keys": [
-                        "f0",
-                        "f1",
-                        "f2"
-                    ],
-                    "metadata": {
-                        "f2": [
-                            "1",
-                            "2",
-                            "3"
-                        ],
-                        "f1": [
-                            "a",
-                            "b",
-                            "c",
-                            "z"
-                        ],
-                        "f0": [
-                            "a",
-                            "b",
-                            "c"
-                        ]
-                    }
-                },
-                "inline": {
-                    "list_keys": [
-                        "i0",
-                        "i1",
-                        "i2"
-                    ],
-                    "metadata": {
-                        "i2": [
-                            "1",
-                            "2",
-                            "3"
-                        ],
-                        "i1": [
-                            "a",
-                            "b",
-                            "c",
-                            "z"
-                        ],
-                        "i0": [
-                            "a",
-                            "b",
-                            "c"
-                        ]
+                        "metadata": {
+                            "i2": [
+                                "1",
+                                "2",
+                                "3"
+                            ],
+                            "i1": [
+                                "a",
+                                "b",
+                                "c",
+                                "z"
+                            ],
+                            "i0": [
+                                "a",
+                                "b",
+                                "c"
+                            ]
+                        }
                     }
                 }
             }

@@ -356,10 +356,13 @@ class NoteMetadata:
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
     
-def return_metaclass(meta_type: MetadataType) -> Type[Metadata]:
+def return_metaclass(meta_type: MetadataType) -> Type[Metadata]|Type[NoteMetadata]|None:
     if meta_type == MetadataType.FRONTMATTER:
         return Frontmatter
     elif meta_type == MetadataType.INLINE:
         return InlineMetadata
+    elif meta_type == MetadataType.ALL:
+        return NoteMetadata
     else:
-        raise NotImplementedError(f'no metadata class implemented of type "{meta_type}"')
+        return None
+        #raise NotImplementedError(f'no metadata class implemented of type "{meta_type}"')

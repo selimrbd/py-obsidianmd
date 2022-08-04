@@ -1,22 +1,16 @@
-# import sys
+from curses import meta
+from pathlib import Path
 
-# sys.path.append('../..')
+from source.metadata import MetadataType
 
-# from .. import load_test_data
-# from .templates import (nmt_add_test_function_to_global, nmt_erase, nmt_order,
-#                         nmt_order_keys, nmt_order_values,
-#                         nmt_remove_duplicate_values, nmt_update_content)
+from .a_tmp import (add_test_function_metadata, get_name_function_tested,
+                    load_data, nmt_remove_duplicate_values)
 
-# NOTE_NAMES = ["n4"]
-# DATA = load_test_data(NOTE_NAMES)
+PATH_TEST_DEF = Path(__file__).parent/'test_NoteMetadata.json'
+data = load_data(PATH_TEST_DEF)
 
-# for fn in [nmt_remove_duplicate_values, nmt_erase, nmt_update_content]:
-#     for n in ["n4"]:
-#         nmt_add_test_function_to_global(glob=globals(), fn=fn, note_name=n, data=DATA)
-
-
-# nl = ['n7']
-# DATA = load_test_data(nl)
-# for fn in [nmt_order_values, nmt_order_keys, nmt_order_keys, nmt_order]:
-#     for n in nl:
-#         nmt_add_test_function_to_global(glob=globals(), fn=fn, note_name=n, data=DATA)
+for t_fn in [nmt_remove_duplicate_values]:
+    name_f = get_name_function_tested(t_fn)
+    test_ids: list[str] = list(data['tests'][f'tests-{name_f}'].keys())
+    for tid in test_ids:
+        add_test_function_metadata(glob=globals(), fn=t_fn, test_id=tid, data=data, meta_type=MetadataType.ALL)

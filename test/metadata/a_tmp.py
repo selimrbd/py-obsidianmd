@@ -10,7 +10,7 @@ from functools import partial
 from string import Template
 from typing import Callable
 
-from source.metadata import MetadataType, Order, return_metaclass
+from source.metadata import MetadataType, NoteMetadata, Order, return_metaclass
 
 PATH_TEST_DATA = Path(__file__).parent/'../0-test-data'
 PATH_TEST_NOTES = PATH_TEST_DATA/'notes'
@@ -115,7 +115,7 @@ def add_test_function_fminline(glob: dict, fn: TestTemplateMetadata, test_id: st
 def prep_test_data(test_id: str, data: dict, name_f: str):
     d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
     inputs: dict = d_t['inputs']
-    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
+    meta_type = parse_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     note_name: str = d_t["data"]
     d_n: dict = data[note_name]
     expected_output: dict = d_t['expected_output']
@@ -123,14 +123,17 @@ def prep_test_data(test_id: str, data: dict, name_f: str):
 
     return inputs, expected_output, d_n, d_t, MetaClass
 
+def parse_name_function_tested(name_f: str):
+    return name_f.split('_', maxsplit=1)[1]
 
-def get_test_arg_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|None:
+
+def parse_test_arg_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|None:
     meta_type_str = data["tests"].get('default_meta_type', None)
     meta_type_str = data['tests'][f'tests-{name_f}'][test_id]['inputs'].get('meta_type', meta_type_str)
     if meta_type_str is None: return None
     return MetadataType.get_from_str(meta_type_str)
 
-def get_test_arg_order(order_str: str):
+def parse_test_arg_order(order_str: str):
     if order_str == 'Order.ASC':
         order = Order.ASC
     elif order_str == 'Order.DESC': 
@@ -141,16 +144,8 @@ def get_test_arg_order(order_str: str):
 
 def t__extract_str(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _ , expected_output, d_n, _ , MetaClass = prep_test_data(test_id, data, name_f)
-    # d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
-    # inputs = d_t['inputs']
-    # meta_type = MetadataType.get_from_str(data["default_meta_type"])
-    # if 'meta_type' in inputs: meta_type = MetadataType.get_from_str(inputs["meta_type"])
-    # note_name: str = d_t["data"]
-    # d_n: dict = data[note_name]
-    # expected_output = d_t['expected_output']
-    # MetaClass = return_metaclass(meta_type)
 
     str_exr: list[str] = MetaClass._extract_str(d_n['content']) # type: ignore
     str_exr_true: list[str] = expected_output['str_extracted']
@@ -161,7 +156,7 @@ def t__extract_str(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t__str_to_dict(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, _ , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     meta_dict: dict = MetaClass._str_to_dict(inputs['str_extracted']) # type: ignore
@@ -174,7 +169,7 @@ def t__str_to_dict(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_to_string(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     m = MetaClass(d_n['content'])
@@ -190,7 +185,7 @@ def t_to_string(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_update_content(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
 
     m = MetaClass(d_n['content'])
@@ -205,7 +200,7 @@ def t_update_content(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_erase(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     tostr: str = MetaClass.erase(d_n['content']) # type: ignore
@@ -220,7 +215,7 @@ def t_erase(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_exists(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     exists: bool = MetaClass.exists(d_n['content']) # type: ignore
@@ -234,7 +229,7 @@ def t_exists(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_add(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     m = MetaClass(d_n['content'])
@@ -250,7 +245,7 @@ def t_add(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_remove(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     m = MetaClass(d_n['content'])
@@ -266,7 +261,7 @@ def t_remove(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     m = MetaClass(d_n['content'])
@@ -282,9 +277,9 @@ def t_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> Non
 
 def t_order_values(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
-    how = get_test_arg_order(inputs['how'])
+    how = parse_test_arg_order(inputs['how'])
 
     m = MetaClass(d_n['content'])
     m.order_values(k=inputs['k'], how=how) 
@@ -299,9 +294,9 @@ def t_order_values(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_order_keys(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
-    how = get_test_arg_order(inputs['how'])
+    how = parse_test_arg_order(inputs['how'])
 
     m = MetaClass(d_n['content'])
     m.order_keys(how=how) 
@@ -316,10 +311,10 @@ def t_order_keys(test_id: str, data: dict, debug:bool=False) -> None:
 
 def t_order(test_id: str, data: dict, debug:bool=False) -> None:
  
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
-    o_keys = get_test_arg_order(inputs['o_keys'])
-    o_values = get_test_arg_order(inputs['o_values'])
+    o_keys = parse_test_arg_order(inputs['o_keys'])
+    o_values = parse_test_arg_order(inputs['o_values'])
 
     m = MetaClass(d_n['content'])
     m.order(k=inputs['k'],o_keys=o_keys, o_values=o_values)
@@ -336,12 +331,34 @@ def t_order(test_id: str, data: dict, debug:bool=False) -> None:
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
     assert_list_match(keys_order, keys_order_true, msg=err_msg)
 
+### NoteMetadata test functions
+
+def nmt_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , _ = prep_test_data(test_id, data, name_f)
+    
+    m = NoteMetadata(d_n['content'])
+    m.remove_duplicate_values(k=inputs['k'], meta_type=MetadataType.get_from_str(inputs['meta_type'])) 
+    fm_dict = m.frontmatter.metadata
+    il_dict = m.inline.metadata
+    fm_dict_true: dict[str, list[str]] = expected_output['frontmatter']
+    il_dict_true: dict[str, list[str]] = expected_output['inline']
+
+    if debug:
+        return (fm_dict, fm_dict_true), (il_dict, il_dict_true)
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
+    assert_dict_match(il_dict, il_dict_true, msg=err_msg)
+
 ### TestTemplateMetadata   
 
-def add_test_function_metadata(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict):
+def add_test_function_metadata(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict, meta_type: MetadataType|None=None):
     ft = partial(fn, test_id=test_id, data=data)
     name_f = get_name_function_tested(fn)
-    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
+    if meta_type is None:
+        meta_type = parse_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     ft_name = f"test_{meta_type.value}_{name_f}_{test_id}"
     glob[ft_name] = ft
 
