@@ -285,27 +285,6 @@ class NoteMetadata:
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
 
-    @classmethod
-    def erase(cls, note_content: str, meta_type: MetadataType|None) -> str:
-        """Erase metadata from note content
-        
-        Arguments:
-            - note_content: string representing a note's content 
-            - meta_type: if None, erases all metadata
-        """
-        meta_type = cls._parse_arg_meta_type(meta_type)
-        res = note_content
-        if meta_type == MetadataType.FRONTMATTER:
-            res = Frontmatter.erase(res)
-        elif meta_type == MetadataType.INLINE:
-            res = InlineMetadata.erase(res)
-        elif meta_type == MetadataType.ALL:
-            res = Frontmatter.erase(res)
-            res = InlineMetadata.erase(res)
-        else:
-            raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
-        return res
-
     def update_content(self, note_content: str, meta_type: MetadataType|None=None) -> str:
         meta_type = self._parse_arg_meta_type(meta_type)
         res = note_content
