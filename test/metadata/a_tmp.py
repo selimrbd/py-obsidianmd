@@ -115,7 +115,7 @@ def add_test_function_fminline(glob: dict, fn: TestTemplateMetadata, test_id: st
 def prep_test_data(test_id: str, data: dict, name_f: str):
     d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
     inputs: dict = d_t['inputs']
-    meta_type = get_test_meta_type(test_id=test_id, name_f=name_f, data=data)
+    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     note_name: str = d_t["data"]
     d_n: dict = data[note_name]
     expected_output: dict = d_t['expected_output']
@@ -124,12 +124,20 @@ def prep_test_data(test_id: str, data: dict, name_f: str):
     return inputs, expected_output, d_n, d_t, MetaClass
 
 
-def get_test_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|None:
+def get_test_arg_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|None:
     meta_type_str = data["tests"].get('default_meta_type', None)
     meta_type_str = data['tests'][f'tests-{name_f}'][test_id]['inputs'].get('meta_type', meta_type_str)
     if meta_type_str is None: return None
     return MetadataType.get_from_str(meta_type_str)
- 
+
+def get_test_arg_order(order_str: str):
+    if order_str == 'Order.ASC':
+        order = Order.ASC
+    elif order_str == 'Order.DESC': 
+        order = Order.DESC
+    else:
+        order: str|Order = order_str
+    return order
 
 def t__extract_str(test_id: str, data: dict, debug:bool=False) -> None:
  
@@ -276,13 +284,7 @@ def t_order_values(test_id: str, data: dict, debug:bool=False) -> None:
  
     name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
     inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
-    
-    if inputs['how'] == 'Order.ASC':
-        how = Order.ASC
-    elif inputs['how'] == 'Order.DESC': 
-        how = Order.DESC
-    else:
-        how: str|Order = inputs['how']
+    how = get_test_arg_order(inputs['how'])
 
     m = MetaClass(d_n['content'])
     m.order_values(k=inputs['k'], how=how) 
@@ -290,18 +292,56 @@ def t_order_values(test_id: str, data: dict, debug:bool=False) -> None:
     meta_dict_true: dict[str, list[str]] = expected_output['meta_dict']
 
     if debug:
-        return meta_dict, meta_dict_true, how
+        return meta_dict, meta_dict_true
     
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+def t_order_keys(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    how = get_test_arg_order(inputs['how'])
+
+    m = MetaClass(d_n['content'])
+    m.order_keys(how=how) 
+    keys_order = list(m.metadata.keys())
+    keys_order_true: dict[str, list[str]] = expected_output['keys_order']
+
+    if debug:
+        return keys_order, keys_order_true
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_list_match(keys_order, keys_order_true, msg=err_msg)
+
+def t_order(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    o_keys = get_test_arg_order(inputs['o_keys'])
+    o_values = get_test_arg_order(inputs['o_values'])
+
+    m = MetaClass(d_n['content'])
+    m.order(k=inputs['k'],o_keys=o_keys, o_values=o_values)
+
+    meta_dict = m.metadata
+    meta_dict_true: dict[str, list[str]] =  expected_output['meta_dict']
+    keys_order = list(m.metadata.keys())
+    keys_order_true: list[str] = expected_output['keys_order']
+
+    if debug:
+        return keys_order, keys_order_true, meta_dict, meta_dict_true
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+    assert_list_match(keys_order, keys_order_true, msg=err_msg)
 
 ### TestTemplateMetadata   
 
 def add_test_function_metadata(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict):
     ft = partial(fn, test_id=test_id, data=data)
     name_f = get_name_function_tested(fn)
-    meta_type = get_test_meta_type(test_id=test_id, name_f=name_f, data=data)
+    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     ft_name = f"test_{meta_type.value}_{name_f}_{test_id}"
     glob[ft_name] = ft
 

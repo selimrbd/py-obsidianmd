@@ -587,38 +587,54 @@
             }
         },
         "tests-order_keys": {
-            "t1": {
-                "desc": "order ascending",
-                "how": "Order.ASC",
-                "result": [
-                    "i0",
-                    "i1",
-                    "i2"
-                ]
+            "n7_1": {
+                "description": "order ascending",
+                "data": "n7",
+                "inputs": {
+                    "meta_type": "inline",
+                    "how": "Order.ASC"
+                },
+                "expected_output": {
+                    "keys_order": [
+                        "i0",
+                        "i1",
+                        "i2"
+                    ]
+                }
             },
-            "t2": {
-                "desc": "order descending",
-                "how": "Order.DESC",
-                "result": [
-                    "i2",
-                    "i1",
-                    "i0"
-                ]
+            "n7_2": {
+                "description": "order descending",
+                "data": "n7",
+                "inputs": {
+                    "meta_type": "inline",
+                    "how": "Order.DESC"
+                },
+                "expected_output": {
+                    "keys_order": [
+                        "i2",
+                        "i1",
+                        "i0"
+                    ]
+                }
             }
         },
         "tests-order": {
-            "t1": {
-                "desc": "order keys only",
-                "keys": null,
-                "o_keys": "Order.ASC",
-                "o_values": null,
-                "result": {
-                    "list_keys": [
+            "n7_1": {
+                "description": "order keys only",
+                "data": "n7",
+                "inputs": {
+                    "meta_type": "inline",
+                    "k": null,
+                    "o_keys": "Order.ASC",
+                    "o_values": null
+                },
+                "expected_output": {
+                    "keys_order": [
                         "i0",
                         "i1",
                         "i2"
                     ],
-                    "metadata": {
+                    "meta_dict": {
                         "i2": [
                             "3",
                             "2",
@@ -638,18 +654,22 @@
                     }
                 }
             },
-            "t2": {
-                "desc": "order values only",
-                "keys": null,
-                "o_keys": null,
-                "o_values": "Order.ASC",
-                "result": {
-                    "list_keys": [
+            "n7_2": {
+                "description": "order values only",
+                "data": "n7",
+                "inputs": {
+                    "meta_type": "inline",
+                    "k": null,
+                    "o_keys": null,
+                    "o_values": "Order.ASC"
+                },
+                "expected_output": {
+                    "keys_order": [
                         "i2",
                         "i0",
                         "i1"
                     ],
-                    "metadata": {
+                    "meta_dict": {
                         "i2": [
                             "1",
                             "2",
@@ -669,18 +689,22 @@
                     }
                 }
             },
-            "t3": {
-                "desc": "order keys and values",
-                "keys": null,
-                "o_keys": "Order.ASC",
-                "o_values": "Order.ASC",
-                "result": {
-                    "list_keys": [
+            "n7_3": {
+                "data": "n7",
+                "description": "order keys and values",
+                "inputs": {
+                    "meta_type": "inline",
+                    "k": null,
+                    "o_keys": "Order.ASC",
+                    "o_values": "Order.ASC"
+                },
+                "expected_output": {
+                    "keys_order": [
                         "i0",
                         "i1",
                         "i2"
                     ],
-                    "metadata": {
+                    "meta_dict": {
                         "i2": [
                             "1",
                             "2",
