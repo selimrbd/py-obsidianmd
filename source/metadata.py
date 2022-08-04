@@ -320,15 +320,15 @@ class NoteMetadata:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
         return res
 
-    def order_values(self, keys: str|list[str]|None=None, how: Order=Order.ASC, meta_type: MetadataType|None=None) -> None:
+    def order_values(self, k: str|list[str]|None=None, how: Order=Order.ASC, meta_type: MetadataType|None=None) -> None:
         meta_type = self._parse_arg_meta_type(meta_type)
         if meta_type == MetadataType.FRONTMATTER:
-            self.frontmatter.order_values(keys=keys, how=how)
+            self.frontmatter.order_values(k=k, how=how)
         elif meta_type == MetadataType.INLINE:
-            self.inline.order_values(keys=keys, how=how)
+            self.inline.order_values(k=k, how=how)
         elif meta_type == MetadataType.ALL:
-            self.frontmatter.order_values(keys=keys, how=how)
-            self.inline.order_values(keys=keys, how=how)
+            self.frontmatter.order_values(k=k, how=how)
+            self.inline.order_values(k=k, how=how)
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
         
@@ -344,15 +344,15 @@ class NoteMetadata:
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
     
-    def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC, meta_type: MetadataType|None=None):
+    def order(self, k: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC, meta_type: MetadataType|None=None):
         meta_type = self._parse_arg_meta_type(meta_type)
         if meta_type == MetadataType.FRONTMATTER:
-            self.frontmatter.order(keys=keys, o_keys=o_keys, o_values=o_values)
+            self.frontmatter.order(k=k, o_keys=o_keys, o_values=o_values)
         elif meta_type == MetadataType.INLINE:
-            self.inline.order(keys=keys, o_keys=o_keys, o_values=o_values)
+            self.inline.order(k=k, o_keys=o_keys, o_values=o_values)
         elif meta_type == MetadataType.ALL:
-            self.frontmatter.order(keys=keys, o_keys=o_keys, o_values=o_values)
-            self.inline.order(keys=keys, o_keys=o_keys, o_values=o_values)
+            self.frontmatter.order(k=k, o_keys=o_keys, o_values=o_values)
+            self.inline.order(k=k, o_keys=o_keys, o_values=o_values)
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
     

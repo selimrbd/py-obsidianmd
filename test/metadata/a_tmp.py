@@ -10,7 +10,9 @@ from functools import partial
 from string import Template
 from typing import Callable
 
-from source.metadata import MetadataType, NoteMetadata, Order, return_metaclass
+from source.metadata import (Frontmatter, InlineMetadata, Metadata,
+                             MetadataType, NoteMetadata, Order,
+                             return_metaclass)
 
 PATH_TEST_DATA = Path(__file__).parent/'../0-test-data'
 PATH_TEST_NOTES = PATH_TEST_DATA/'notes'
@@ -54,9 +56,6 @@ def build_error_msg(test_id: str, dict_tests: dict) -> str:
     templ = Template(templ)
     err_msg = templ.substitute(test_id=test_id, test_desc=dict_tests['description'])
     return err_msg
-
-def get_name_function_tested(fn: Callable):
-    return fn.__name__.split('_', maxsplit=1)[-1]
 
 def assert_dict_match(d1: dict|None, d2: dict|None, msg: str='') -> None:
     """
@@ -107,7 +106,7 @@ TestTemplateMetadata = Callable[[str, dict, MetadataType, bool], None]
 
 def add_test_function_fminline(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict, meta_type: MetadataType):
     ft = partial(fn, test_id=test_id, data=data, meta_type=meta_type)
-    name_f_tested = get_name_function_tested(fn)
+    name_f_tested = parse_name_function_tested(fn.__name__)
     name_meta = meta_type.value
     ft_name = f"test_{name_meta}_{name_f_tested}_{test_id}"
     glob[ft_name] = ft
@@ -115,7 +114,7 @@ def add_test_function_fminline(glob: dict, fn: TestTemplateMetadata, test_id: st
 def prep_test_data(test_id: str, data: dict, name_f: str):
     d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
     inputs: dict = d_t['inputs']
-    meta_type = parse_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
+    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     note_name: str = d_t["data"]
     d_n: dict = data[note_name]
     expected_output: dict = d_t['expected_output']
@@ -123,24 +122,41 @@ def prep_test_data(test_id: str, data: dict, name_f: str):
 
     return inputs, expected_output, d_n, d_t, MetaClass
 
-def parse_name_function_tested(name_f: str):
-    return name_f.split('_', maxsplit=1)[1]
+###
 
-
-def parse_test_arg_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|None:
-    meta_type_str = data["tests"].get('default_meta_type', None)
+def get_test_arg_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|str|None:
+    meta_type_str: str = data["tests"].get('default_meta_type', None)
     meta_type_str = data['tests'][f'tests-{name_f}'][test_id]['inputs'].get('meta_type', meta_type_str)
     if meta_type_str is None: return None
-    return MetadataType.get_from_str(meta_type_str)
+    return parse_test_arg_meta_type(meta_type_str)
+    #return MetadataType.get_from_str(meta_type_str)
 
-def parse_test_arg_order(order_str: str):
-    if order_str == 'Order.ASC':
+
+def parse_test_arg_meta_type(meta_type_str: str|None) -> MetadataType|str|None:
+    if meta_type_str == '>>MetadataType.FRONTMATTER':
+        meta_type = MetadataType.FRONTMATTER
+    elif meta_type_str == '>>MetadataType.INLINE': 
+        meta_type = MetadataType.INLINE
+    elif meta_type_str == '>>MetadataType.ALL':
+        meta_type = MetadataType.ALL
+    else:
+        meta_type = meta_type_str
+    return meta_type
+
+
+def parse_test_arg_order(order_str: str) -> Order|str:
+    if order_str == '>>Order.ASC':
         order = Order.ASC
-    elif order_str == 'Order.DESC': 
+    elif order_str == '>>Order.DESC': 
         order = Order.DESC
     else:
         order: str|Order = order_str
     return order
+
+def parse_name_function_tested(name_f: str):
+    return name_f.split('_', maxsplit=1)[-1]
+
+###
 
 def t__extract_str(test_id: str, data: dict, debug:bool=False) -> None:
  
@@ -339,7 +355,8 @@ def nmt_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> N
     inputs , expected_output, d_n , d_t , _ = prep_test_data(test_id, data, name_f)
     
     m = NoteMetadata(d_n['content'])
-    m.remove_duplicate_values(k=inputs['k'], meta_type=MetadataType.get_from_str(inputs['meta_type'])) 
+    meta_type = parse_test_arg_meta_type(inputs['meta_type'])
+    m.remove_duplicate_values(k=inputs['k'], meta_type=meta_type)
     fm_dict = m.frontmatter.metadata
     il_dict = m.inline.metadata
     fm_dict_true: dict[str, list[str]] = expected_output['frontmatter']
@@ -352,13 +369,81 @@ def nmt_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> N
     assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
     assert_dict_match(il_dict, il_dict_true, msg=err_msg)
 
+def nmt_order_values(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , _ = prep_test_data(test_id, data, name_f)
+    
+    m = NoteMetadata(d_n['content'])
+    meta_type = parse_test_arg_meta_type(inputs['meta_type'])
+    how = parse_test_arg_order(inputs['how'])
+    m.order_values(k=inputs['k'], how=how, meta_type=meta_type) 
+    fm_dict = m.frontmatter.metadata
+    il_dict = m.inline.metadata
+    fm_dict_true: dict[str, list[str]] = expected_output['frontmatter']
+    il_dict_true: dict[str, list[str]] = expected_output['inline']
+
+    if debug:
+        return (fm_dict, fm_dict_true), (il_dict, il_dict_true)
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
+    assert_dict_match(il_dict, il_dict_true, msg=err_msg)
+
+def nmt_order_keys(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , _ = prep_test_data(test_id, data, name_f)
+    
+    m = NoteMetadata(d_n['content'])
+    meta_type = parse_test_arg_meta_type(inputs['meta_type'])
+    how = parse_test_arg_order(inputs['how'])
+    m.order_keys(how=how, meta_type=meta_type) 
+    fm_list_keys = list(m.frontmatter.metadata.keys())
+    il_list_keys = list(m.inline.metadata.keys())
+    fm_list_keys_true: list[str] = expected_output['frontmatter']
+    il_list_keys_true: list[str] = expected_output['inline']
+
+    if debug:
+        return (fm_list_keys, fm_list_keys_true), (il_list_keys, il_list_keys_true)
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_list_match(fm_list_keys, fm_list_keys_true, msg=err_msg)
+    assert_list_match(il_list_keys, il_list_keys_true, msg=err_msg)
+
+def nmt_order(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , _ = prep_test_data(test_id, data, name_f)
+    
+    m = NoteMetadata(d_n['content'])
+    k = inputs['k']
+    meta_type: MetadataType = parse_test_arg_meta_type(inputs['meta_type'])
+    o_keys: Order = parse_test_arg_order(inputs['o_keys'])
+    o_values: Order = parse_test_arg_order(inputs['o_values'])
+    m.order(k=k, o_keys=o_keys, o_values=o_values, meta_type=meta_type) 
+    fm_list_keys = list(m.frontmatter.metadata.keys())
+    fm_meta_dict = m.frontmatter.metadata
+    il_list_keys = list(m.inline.metadata.keys())
+    il_meta_dict = m.inline.metadata
+    fm_meta_dict_true: dict[str, list[str]] = expected_output['frontmatter']['meta_dict']
+    fm_list_keys_true: list[str] = expected_output['frontmatter']['list_keys']
+    il_meta_dict_true: dict[str, list[str]] = expected_output['inline']['meta_dict']
+    il_list_keys_true: list[str] = expected_output['inline']['list_keys']
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_list_match(fm_list_keys, fm_list_keys_true, msg=err_msg)
+    assert_list_match(il_list_keys, il_list_keys_true, msg=err_msg)
+    assert_dict_match(fm_meta_dict, fm_meta_dict_true, msg=err_msg)
+    assert_dict_match(il_meta_dict, il_meta_dict_true, msg=err_msg)
+
 ### TestTemplateMetadata   
 
 def add_test_function_metadata(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict, meta_type: MetadataType|None=None):
     ft = partial(fn, test_id=test_id, data=data)
-    name_f = get_name_function_tested(fn)
+    name_f = parse_name_function_tested(fn.__name__)
     if meta_type is None:
-        meta_type = parse_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
+        meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     ft_name = f"test_{meta_type.value}_{name_f}_{test_id}"
     glob[ft_name] = ft
 

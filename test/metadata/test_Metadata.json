@@ -6,7 +6,7 @@
                 "description": "add a string",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "tags",
                     "l": "t4",
                     "overwrite": false
@@ -39,7 +39,7 @@
                 "description": "add a list of strings",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "meta2",
                     "l": [
                         "asd",
@@ -76,7 +76,7 @@
                 "description": "add an int",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "meta3",
                     "l": 999,
                     "overwrite": false
@@ -109,7 +109,7 @@
                 "description": "add and overwrite",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "meta3",
                     "l": 999,
                     "overwrite": true
@@ -140,7 +140,7 @@
                 "description": "add a metadata that didn't exist, with no value",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "newmeta",
                     "l": null,
                     "overwrite": false
@@ -173,7 +173,7 @@
                 "description": "add a metadata that didn't exist, with values",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "newmeta2",
                     "l": [
                         1,
@@ -214,7 +214,7 @@
                 "description": "remove one element",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "tags",
                     "l": "t2"
                 },
@@ -244,7 +244,7 @@
                 "description": "remove multiple elements",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "meta2",
                     "l": [
                         1,
@@ -276,7 +276,7 @@
                 "data": "n2",
                 "description": "entirely remove a metadata",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "meta4",
                     "l": null
                 },
@@ -303,7 +303,7 @@
                 "data": "n2",
                 "description": "remove all elements of an entry",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "meta2",
                     "l": [
                         1,
@@ -334,7 +334,7 @@
                 "description": "remove an entry that doesn't exist",
                 "data": "n2",
                 "inputs": {
-                    "meta_type": "frontmatter",
+                    "meta_type": ">>MetadataType.FRONTMATTER",
                     "k": "unk",
                     "l": null
                 },
@@ -367,7 +367,7 @@
                 "description": "duplicate removal on 1 specific key",
                 "data": "n4",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": "c3"
                 },
                 "expected_output": {
@@ -400,7 +400,7 @@
                 "description": "duplicate removal on all keys",
                 "data": "n4",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": null
                 },
                 "expected_output": {
@@ -432,7 +432,7 @@
                 "description": "duplicate removal on a list of keys",
                 "data": "n4",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": [
                         "c3",
                         "c1"
@@ -470,9 +470,9 @@
                 "description": "order values for 1 key (asc)",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": "i2",
-                    "how": "Order.ASC"
+                    "how": ">>Order.ASC"
                 },
                 "expected_output": {
                     "meta_dict": {
@@ -499,12 +499,12 @@
                 "description": "order values for list of keys (asc)",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": [
                         "i2",
                         "i1"
                     ],
-                    "how": "Order.ASC"
+                    "how": ">>Order.ASC"
                 },
                 "expected_output": {
                     "meta_dict": {
@@ -531,9 +531,9 @@
                 "description": "order values for all keys (asc)",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": null,
-                    "how": "Order.ASC"
+                    "how": ">>Order.ASC"
                 },
                 "expected_output": {
                     "meta_dict": {
@@ -560,9 +560,9 @@
                 "description": "order values for 1 key (desc)",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": "i1",
-                    "how": "Order.DESC"
+                    "how": ">>Order.DESC"
                 },
                 "expected_output": {
                     "meta_dict": {
@@ -591,8 +591,8 @@
                 "description": "order ascending",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
-                    "how": "Order.ASC"
+                    "meta_type": ">>MetadataType.INLINE",
+                    "how": ">>Order.ASC"
                 },
                 "expected_output": {
                     "keys_order": [
@@ -606,8 +606,8 @@
                 "description": "order descending",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
-                    "how": "Order.DESC"
+                    "meta_type": ">>MetadataType.INLINE",
+                    "how": ">>Order.DESC"
                 },
                 "expected_output": {
                     "keys_order": [
@@ -623,9 +623,9 @@
                 "description": "order keys only",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": null,
-                    "o_keys": "Order.ASC",
+                    "o_keys": ">>Order.ASC",
                     "o_values": null
                 },
                 "expected_output": {
@@ -658,10 +658,10 @@
                 "description": "order values only",
                 "data": "n7",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": null,
                     "o_keys": null,
-                    "o_values": "Order.ASC"
+                    "o_values": ">>Order.ASC"
                 },
                 "expected_output": {
                     "keys_order": [
@@ -693,10 +693,10 @@
                 "data": "n7",
                 "description": "order keys and values",
                 "inputs": {
-                    "meta_type": "inline",
+                    "meta_type": ">>MetadataType.INLINE",
                     "k": null,
-                    "o_keys": "Order.ASC",
-                    "o_values": "Order.ASC"
+                    "o_keys": ">>Order.ASC",
+                    "o_values": ">>Order.ASC"
                 },
                 "expected_output": {
                     "keys_order": [

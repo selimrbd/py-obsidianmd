@@ -1,7 +1,7 @@
 {
     "tests": {
         "description": "tests related to the InlineMetadata object",
-        "default_meta_type": "inline",
+        "default_meta_type": ">>MetadataType.INLINE",
         "tests-_extract_str": {
             "n1": {
                 "description": "file with inline metadata grouped (n1)",

@@ -1,7 +1,7 @@
 {
     "tests": {
         "description": "tests related to the Frontmatter object",
-        "default_meta_type": "frontmatter",
+        "default_meta_type": ">>MetadataType.FRONTMATTER",
         "tests-_extract_str": {
             "n1": {
                 "description": "file with no frontmatter (n1)",
