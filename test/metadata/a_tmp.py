@@ -105,37 +105,57 @@ def assert_list_match(l1: list, l2: list, msg: str='') -> None:
 
 TestTemplateMetadata = Callable[[str, dict, MetadataType, bool], None]
 
-def add_test_function_metadata(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict, meta_type: MetadataType):
+
+def add_test_function_fminline(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict, meta_type: MetadataType):
     ft = partial(fn, test_id=test_id, data=data, meta_type=meta_type)
     name_f_tested = get_name_function_tested(fn)
     name_meta = meta_type.value
     ft_name = f"test_{name_meta}_{name_f_tested}_{test_id}"
     glob[ft_name] = ft
 
-def t__extract_str(test_id: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
- 
-    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+def prep_test_data(test_id: str, data: dict, name_f: str):
     d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
+    inputs: dict = d_t['inputs']
+    meta_type = get_test_meta_type(test_id=test_id, name_f=name_f, data=data)
     note_name: str = d_t["data"]
     d_n: dict = data[note_name]
-    
+    expected_output: dict = d_t['expected_output']
     MetaClass = return_metaclass(meta_type)
+
+    return inputs, expected_output, d_n, d_t, MetaClass
+
+
+def get_test_meta_type(test_id: str, name_f: str, data: dict) -> MetadataType|None:
+    meta_type_str = data["tests"].get('default_meta_type', None)
+    meta_type_str = data['tests'][f'tests-{name_f}'][test_id]['inputs'].get('meta_type', meta_type_str)
+    if meta_type_str is None: return None
+    return MetadataType.get_from_str(meta_type_str)
+ 
+
+def t__extract_str(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    _ , expected_output, d_n, _ , MetaClass = prep_test_data(test_id, data, name_f)
+    # d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
+    # inputs = d_t['inputs']
+    # meta_type = MetadataType.get_from_str(data["default_meta_type"])
+    # if 'meta_type' in inputs: meta_type = MetadataType.get_from_str(inputs["meta_type"])
+    # note_name: str = d_t["data"]
+    # d_n: dict = data[note_name]
+    # expected_output = d_t['expected_output']
+    # MetaClass = return_metaclass(meta_type)
+
     str_exr: list[str] = MetaClass._extract_str(d_n['content']) # type: ignore
-    str_exr_true: list[str] = d_t['expected_output']['str_extracted']
+    str_exr_true: list[str] = expected_output['str_extracted']
     
     if debug:
         return str_exr, str_exr_true
     assert_list_match(str_exr, str_exr_true)
 
-def t__str_to_dict(test_id: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+def t__str_to_dict(test_id: str, data: dict, debug:bool=False) -> None:
  
     name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
-    d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
-    note_name: str = d_t["data"]
-    d_n: dict = data[note_name]
-    inputs = d_t['inputs']
-    expected_output = d_t['expected_output']
-    MetaClass = return_metaclass(meta_type)
+    inputs , expected_output, _ , d_t , MetaClass = prep_test_data(test_id, data, name_f)
     
     meta_dict: dict = MetaClass._str_to_dict(inputs['str_extracted']) # type: ignore
     meta_dict_true: dict = expected_output['meta_dict']
@@ -145,15 +165,11 @@ def t__str_to_dict(test_id: str, data: dict, meta_type: MetadataType, debug:bool
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
-def t_to_string(test_id: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+def t_to_string(test_id: str, data: dict, debug:bool=False) -> None:
  
     name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
-    d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
-    note_name: str = d_t["data"]
-    d_n: dict = data[note_name]
-    expected_output = d_t['expected_output']
-
-    MetaClass = return_metaclass(meta_type)
+    _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    
     m = MetaClass(d_n['content'])
     tostr: str = m.to_string() # type: ignore
     name_field_true: str = expected_output["field_name"]
@@ -161,18 +177,15 @@ def t_to_string(test_id: str, data: dict, meta_type: MetadataType, debug:bool=Fa
 
     if debug:
         return tostr, tostr_true
+    
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(tostr, tostr_true, msg=err_msg)
 
-def t_update_content(test_id: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+def t_update_content(test_id: str, data: dict, debug:bool=False) -> None:
  
     name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
-    d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
-    note_name: str = d_t["data"]
-    d_n: dict = data[note_name]
-    expected_output = d_t['expected_output']
+    _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
 
-    MetaClass = return_metaclass(meta_type)
     m = MetaClass(d_n['content'])
     upd: str = m.update_content(d_n['content']) # type: ignore
     name_field_true: str = expected_output["field_name"]
@@ -184,5 +197,12 @@ def t_update_content(test_id: str, data: dict, meta_type: MetadataType, debug:bo
     assert_str_match(upd, upd_true, msg=err_msg)
 
 
+### TestTemplateMetadata   
 
+def add_test_function_metadata(glob: dict, fn: TestTemplateMetadata, test_id: str, data: dict):
+    ft = partial(fn, test_id=test_id, data=data)
+    name_f = get_name_function_tested(fn)
+    meta_type = get_test_meta_type(test_id=test_id, name_f=name_f, data=data)
+    ft_name = f"test_{meta_type.value}_{name_f}_{test_id}"
+    glob[ft_name] = ft
 

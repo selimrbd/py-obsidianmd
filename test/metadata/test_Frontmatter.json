@@ -1,8 +1,9 @@
 {
     "tests": {
         "description": "tests related to the Frontmatter object",
+        "default_meta_type": "frontmatter",
         "tests-_extract_str": {
-            "1": {
+            "n1": {
                 "description": "file with no frontmatter (n1)",
                 "data": "n1",
                 "inputs": {},
@@ -10,7 +11,7 @@
                     "str_extracted": []
                 }
             },
-            "2": {
+            "n2": {
                 "description": "file with frontmatter (n2)",
                 "data": "n2",
                 "inputs": {},
@@ -20,7 +21,7 @@
                     ]
                 }
             },
-            "3": {
+            "n6": {
                 "description": "file with no frontmatter. Frontmatter pattern in the middle (n6)",
                 "data": "n6",
                 "inputs": {},

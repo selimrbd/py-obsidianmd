@@ -1,0 +1,33 @@
+{
+    "tests": {
+        "description": "tests related to the Frontmatter object",
+        "tests-erase": {
+            "n4_1": {
+                "description": "file with no frontmatter (n1)",
+                "data": "n4",
+                "inputs": {},
+                "expected_output": {
+                    "str_extracted": []
+                }
+            },
+            "2": {
+                "description": "file with frontmatter (n2)",
+                "data": "n2",
+                "inputs": {},
+                "expected_output": {
+                    "str_extracted": [
+                        "---\ntags: t1, t2 t3\nmeta2: 1,2,3\nmeta3: foo, b bar\nmeta4: \"foo\", \"b bar\"\n---\n"
+                    ]
+                }
+            },
+            "3": {
+                "description": "file with no frontmatter. Frontmatter pattern in the middle (n6)",
+                "data": "n6",
+                "inputs": {},
+                "expected_output": {
+                    "str_extracted": []
+                }
+            }
+        }
+    }
+}

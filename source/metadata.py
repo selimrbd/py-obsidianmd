@@ -256,12 +256,11 @@ class MetadataType(Enum):
         raise ValueError(f'Metadatatype not defined: "{s}"')
 
 class NoteMetadata:
-    """Represents all a note's metadata (frontmatter, inline and body tags)."""
+    """Contains all the note's metadata (frontmatter + inline)."""
     def __init__(self, note_content: str):
         self.frontmatter = Frontmatter(note_content)
         self.inline = InlineMetadata(note_content)
 
-    
     @classmethod
     def _parse_arg_meta_type(cls, meta_type: MetadataType|None) -> MetadataType:
         if meta_type is None: meta_type = MetadataType.ALL
