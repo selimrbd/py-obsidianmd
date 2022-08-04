@@ -153,6 +153,34 @@
                     "field_name": "exp_inline_upd_default"
                 }
             }
+        },
+        "tests-exists": {
+            "n1": {
+                "description": "NA",
+                "data": "n1",
+                "inputs": {},
+                "expected_output": {
+                    "exists": true
+                }
+            },
+            "n2": {
+                "description": "NA",
+                "data": "n2",
+                "inputs": {},
+                "expected_output": {
+                    "exists": false
+                }
+            }
+        },
+        "tests-erase": {
+            "n4": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_inline_erase"
+                }
+            }
         }
     }
 }

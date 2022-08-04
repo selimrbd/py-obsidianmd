@@ -196,6 +196,51 @@ def t_update_content(test_id: str, data: dict, debug:bool=False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(upd, upd_true, msg=err_msg)
 
+def t_erase(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    
+    tostr: str = MetaClass.erase(d_n['content']) # type: ignore
+    name_field_true: str = expected_output["field_name"]
+    tostr_true: str = d_n[name_field_true]
+
+    if debug:
+        return tostr, tostr_true
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_str_match(tostr, tostr_true, msg=err_msg)
+
+def t_exists(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    _ , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    
+    exists: bool = MetaClass.exists(d_n['content']) # type: ignore
+    exists_true: str = expected_output['exists']
+
+    if debug:
+        return exists, exists_true
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert exists == exists_true, err_msg
+
+def t_add(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    
+    m = MetaClass(d_n['content'])
+    m.add(k=inputs['k'], l=inputs['l'], overwrite=inputs['overwrite']) # type: ignore
+    meta_dict = m.metadata
+    meta_dict_true: dict[str, list[str]] = expected_output['meta_dict']
+
+    if debug:
+        return meta_dict, meta_dict_true
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+
 
 ### TestTemplateMetadata   
 

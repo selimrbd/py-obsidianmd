@@ -1,31 +1,211 @@
 {
     "tests": {
         "description": "tests related to the Frontmatter object",
-        "tests-erase": {
-            "n4_1": {
-                "description": "file with no frontmatter (n1)",
-                "data": "n4",
-                "inputs": {},
-                "expected_output": {
-                    "str_extracted": []
-                }
-            },
-            "2": {
-                "description": "file with frontmatter (n2)",
+        "tests-add": {
+            "n2_1": {
+                "description": "add a string",
                 "data": "n2",
-                "inputs": {},
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "tags",
+                    "l": "t4",
+                    "overwrite": false
+                },
                 "expected_output": {
-                    "str_extracted": [
-                        "---\ntags: t1, t2 t3\nmeta2: 1,2,3\nmeta3: foo, b bar\nmeta4: \"foo\", \"b bar\"\n---\n"
-                    ]
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3",
+                            "t4"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
                 }
             },
-            "3": {
-                "description": "file with no frontmatter. Frontmatter pattern in the middle (n6)",
-                "data": "n6",
-                "inputs": {},
+            "n2_2": {
+                "description": "add a list of strings",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "meta2",
+                    "l": [
+                        "asd",
+                        "qzf"
+                    ],
+                    "overwrite": false
+                },
                 "expected_output": {
-                    "str_extracted": []
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3",
+                            "asd",
+                            "qzf"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "n2_3": {
+                "description": "add an int",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "meta3",
+                    "l": 999,
+                    "overwrite": false
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar",
+                            "999"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "n2_4": {
+                "description": "add and overwrite",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "meta3",
+                    "l": 999,
+                    "overwrite": true
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "999"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "n2_5": {
+                "description": "add a metadata that didn't exist, with no value",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "newmeta",
+                    "l": null,
+                    "overwrite": false
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ],
+                        "newmeta": []
+                    }
+                }
+            },
+            "n2_6": {
+                "description": "add a metadata that didn't exist, with values",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "newmeta2",
+                    "l": [
+                        1,
+                        2
+                    ],
+                    "overwrite": false
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ],
+                        "newmeta2": [
+                            "1",
+                            "2"
+                        ]
+                    }
                 }
             }
         }

@@ -132,6 +132,42 @@
                     "field_name": "exp_frontmatter_upd_default"
                 }
             }
+        },
+        "tests-exists": {
+            "n1": {
+                "description": "NA",
+                "data": "n1",
+                "inputs": {},
+                "expected_output": {
+                    "exists": false
+                }
+            },
+            "n2": {
+                "description": "NA",
+                "data": "n2",
+                "inputs": {},
+                "expected_output": {
+                    "exists": true
+                }
+            },
+            "n6": {
+                "description": "NA",
+                "data": "n6",
+                "inputs": {},
+                "expected_output": {
+                    "exists": false
+                }
+            }
+        },
+        "tests-erase": {
+            "n4": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_frontmatter_erase"
+                }
+            }
         }
     }
 }
