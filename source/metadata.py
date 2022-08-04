@@ -96,8 +96,7 @@ class Metadata(ABC):
             return
         nl = [str(l)] if isinstance(l, UserInput) else [str(x) for x in l]
         self.metadata[k] = [e for e in self.metadata[k] if e not in nl]
-        if len(self.metadata[k]) == 0:
-            del self.metadata[k]
+
 
     def remove_duplicate_values(self, k: str|list[str]|None=None) -> None:
 

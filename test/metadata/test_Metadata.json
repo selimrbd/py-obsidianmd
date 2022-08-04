@@ -208,6 +208,159 @@
                     }
                 }
             }
+        },
+        "tests-remove": {
+            "n2_1": {
+                "description": "remove one element",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "tags",
+                    "l": "t2"
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "n2_2": {
+                "description": "remove multiple elements",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "meta2",
+                    "l": [
+                        1,
+                        3
+                    ]
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "2"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "n2_3": {
+                "data": "n2",
+                "description": "entirely remove a metadata",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "meta4",
+                    "l": null
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ]
+                    }
+                }
+            },
+            "n2_4": {
+                "data": "n2",
+                "description": "remove all elements of an entry",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "meta2",
+                    "l": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            },
+            "n2_5": {
+                "description": "remove an entry that doesn't exist",
+                "data": "n2",
+                "inputs": {
+                    "meta_type": "frontmatter",
+                    "k": "unk",
+                    "l": null
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "tags": [
+                            "t1",
+                            "t2",
+                            "t3"
+                        ],
+                        "meta2": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "meta3": [
+                            "foo",
+                            "b bar"
+                        ],
+                        "meta4": [
+                            "\"foo\"",
+                            "\"b bar\""
+                        ]
+                    }
+                }
+            }
         }
     }
 }
