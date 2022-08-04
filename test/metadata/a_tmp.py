@@ -145,11 +145,44 @@ def t__str_to_dict(test_id: str, data: dict, meta_type: MetadataType, debug:bool
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
-def t_to_string():
-    # for this test, expected value is given in .md file (same dir as note)
-    # the file should be named (e.g) "exp_frontmatter_to_string" (same for inline)
-    name_field_true = f'exp_{metaclass_str}_to_string' 
-    pass
+def t_to_string(test_id: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
+    note_name: str = d_t["data"]
+    d_n: dict = data[note_name]
+    expected_output = d_t['expected_output']
 
-###
+    MetaClass = return_metaclass(meta_type)
+    m = MetaClass(d_n['content'])
+    tostr: str = m.to_string() # type: ignore
+    name_field_true: str = expected_output["field_name"]
+    tostr_true: str = d_n[name_field_true]
+
+    if debug:
+        return tostr, tostr_true
+    err_msg = build_error_msg(test_id, d_t)
+    assert_str_match(tostr, tostr_true, msg=err_msg)
+
+def t_update_content(test_id: str, data: dict, meta_type: MetadataType, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    d_t: dict = data["tests"][f'tests-{name_f}'][test_id]
+    note_name: str = d_t["data"]
+    d_n: dict = data[note_name]
+    expected_output = d_t['expected_output']
+
+    MetaClass = return_metaclass(meta_type)
+    m = MetaClass(d_n['content'])
+    upd: str = m.update_content(d_n['content']) # type: ignore
+    name_field_true: str = expected_output["field_name"]
+    upd_true: str = d_n[name_field_true]
+
+    if debug:
+        return upd, upd_true
+    err_msg = build_error_msg(test_id, d_t)
+    assert_str_match(upd, upd_true, msg=err_msg)
+
+
+
 

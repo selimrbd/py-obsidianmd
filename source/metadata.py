@@ -154,7 +154,6 @@ class Metadata(ABC):
     def print(self):
         print(self.to_string())
 
-
 class Frontmatter(Metadata):
     """Represents the frontmatter of a note"""
 
@@ -360,7 +359,6 @@ class NoteMetadata:
         else:
             raise ValueError(f'Unsupported value for argument meta_type: {meta_type}')
     
-
 def return_metaclass(meta_type: MetadataType) -> Type[Metadata]:
     if meta_type == MetadataType.FRONTMATTER:
         return Frontmatter

@@ -117,7 +117,41 @@
                 }
             }
         },
-        "tests-to_string": {},
-        "tests-a": {}
+        "tests-to_string": {
+            "n1": {
+                "description": "NA",
+                "data": "n1",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_inline_to_string"
+                }
+            },
+            "n2": {
+                "description": "NA",
+                "data": "n2",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_inline_to_string"
+                }
+            },
+            "n4": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_inline_to_string"
+                }
+            }
+        },
+        "tests-update_content": {
+            "n4": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_inline_upd_default"
+                }
+            }
+        }
     }
 }
