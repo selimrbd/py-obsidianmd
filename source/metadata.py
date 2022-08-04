@@ -112,7 +112,7 @@ class Metadata(ABC):
             if k2 not in self.metadata: continue
             self.metadata[k2] = list(dict.fromkeys(self.metadata[k2]))
 
-    def order_values(self, keys: str|list[str]|None=None, how: Order=Order.ASC) -> None:
+    def order_values(self, k: str|list[str]|None=None, how: Order=Order.ASC) -> None:
         """Orders metadata values.
         
         Attributes:
@@ -120,11 +120,11 @@ class Metadata(ABC):
         """
         if not isinstance(how, Order): raise ArgTypeError('how', type(how), Order) # type: ignore
         
-        if keys is None: keys = list(self.metadata.keys())
-        if isinstance(keys, str): keys = [keys]
-        for k in keys:
+        if k is None: k = list(self.metadata.keys())
+        if isinstance(k, str): k = [k]
+        for e in k:
             reverse = False if (how == Order.ASC) else True
-            self.metadata[k] = sorted(self.metadata[k], reverse=reverse)
+            self.metadata[e] = sorted(self.metadata[e], reverse=reverse)
     
     def order_keys(self, how: Order=Order.ASC) -> None:
         """Orders metadata keys.
@@ -135,7 +135,7 @@ class Metadata(ABC):
         list_keys = sorted(list(self.metadata.keys()),reverse=reverse)
         self.metadata = {k:self.metadata.pop(k) for k in list_keys}
         
-    def order(self, keys: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC):
+    def order(self, k: str|list[str]|None=None, o_keys: Order|None=Order.ASC, o_values: Order|None=Order.ASC):
         """Orders metadata keys and values.
         
         Attributes:
@@ -146,7 +146,7 @@ class Metadata(ABC):
         if o_keys is not None:
             self.order_keys(how=o_keys)
         if o_values is not None:
-            self.order_values(keys=keys, how=o_values)
+            self.order_values(k=k, how=o_values)
         return None
 
     def print(self):

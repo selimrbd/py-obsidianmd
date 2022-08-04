@@ -2,7 +2,6 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Type, Union
 
 sys.path.append('../..')
 import inspect
@@ -11,7 +10,7 @@ from functools import partial
 from string import Template
 from typing import Callable
 
-from source.metadata import Metadata, MetadataType, return_metaclass
+from source.metadata import MetadataType, Order, return_metaclass
 
 PATH_TEST_DATA = Path(__file__).parent/'../0-test-data'
 PATH_TEST_NOTES = PATH_TEST_DATA/'notes'
@@ -273,6 +272,28 @@ def t_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> Non
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+def t_order_values(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    
+    if inputs['how'] == 'Order.ASC':
+        how = Order.ASC
+    elif inputs['how'] == 'Order.DESC': 
+        how = Order.DESC
+    else:
+        how: str|Order = inputs['how']
+
+    m = MetaClass(d_n['content'])
+    m.order_values(k=inputs['k'], how=how) 
+    meta_dict = m.metadata
+    meta_dict_true: dict[str, list[str]] = expected_output['meta_dict']
+
+    if debug:
+        return meta_dict, meta_dict_true, how
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
 
 ### TestTemplateMetadata   
