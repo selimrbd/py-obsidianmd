@@ -361,6 +361,109 @@
                     }
                 }
             }
+        },
+        "tests-remove_duplicate_values": {
+            "n4_1": {
+                "description": "duplicate removal on 1 specific key",
+                "data": "n4",
+                "inputs": {
+                    "meta_type": "inline",
+                    "k": "c3"
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6",
+                            "t5"
+                        ]
+                    }
+                }
+            },
+            "n4_2": {
+                "description": "duplicate removal on all keys",
+                "data": "n4",
+                "inputs": {
+                    "meta_type": "inline",
+                    "k": null
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6"
+                        ]
+                    }
+                }
+            },
+            "n4_3": {
+                "description": "duplicate removal on a list of keys",
+                "data": "n4",
+                "inputs": {
+                    "meta_type": "inline",
+                    "k": [
+                        "c3",
+                        "c1"
+                    ]
+                },
+                "expected_output": {
+                    "meta_dict": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6",
+                            "t5"
+                        ]
+                    }
+                }
+            }
         }
     }
 }

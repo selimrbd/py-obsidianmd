@@ -257,6 +257,23 @@ def t_remove(test_id: str, data: dict, debug:bool=False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+def t_remove_duplicate_values(test_id: str, data: dict, debug:bool=False) -> None:
+ 
+    name_f = re.sub('^t_', '', inspect.currentframe().f_code.co_name)
+    inputs , expected_output, d_n , d_t , MetaClass = prep_test_data(test_id, data, name_f)
+    
+    m = MetaClass(d_n['content'])
+    m.remove_duplicate_values(k=inputs['k']) 
+    meta_dict = m.metadata
+    meta_dict_true: dict[str, list[str]] = expected_output['meta_dict']
+
+    if debug:
+        return meta_dict, meta_dict_true
+    
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+
+
 
 ### TestTemplateMetadata   
 
