@@ -1,32 +1,15 @@
-# import sys
+from pathlib import Path
 
-# sys.path.append('../..')
-# from source.metadata import MetadataType
+from ..load_test_data import load_data
+from .templates import (add_test_function_metadata, parse_name_function_tested,
+                        t__extract_str, t__str_to_dict, t_erase, t_exists,
+                        t_to_string, t_update_content)
 
-# from .. import load_test_data
-# from .templates import (add_test_function_to_global, t_build_metaobject,
-#                         t_erase, t_exists, t_extract_str, t_order,
-#                         t_order_keys, t_order_values,
-#                         t_remove_duplicate_values, t_str_to_dict, t_to_string,
-#                         t_update_content)
+PATH_TEST_DEF = Path(__file__).parent/'test_InlineMetadata.json'
+data = load_data(PATH_TEST_DEF)
 
-# META_TYPE = MetadataType.INLINE
-# NOTE_NAMES = ["n1", "n2", "n3", "n4"]
-# DATA = load_test_data(NOTE_NAMES)
-
-
-# ## basic tests
-# for fn in [t_build_metaobject, t_extract_str, t_str_to_dict, t_exists, t_to_string]:
-#     for n in NOTE_NAMES:
-#         add_test_function_to_global(glob=globals(), fn=fn, note_name=n, data=DATA, meta_type=META_TYPE)
-
-# nl = ['n4']
-# for fn in [t_remove_duplicate_values, t_erase, t_update_content]:
-#     for n in nl:
-#         add_test_function_to_global(glob=globals(), fn=fn, note_name=n, data=DATA, meta_type=META_TYPE)
-
-# nl = ['n7']
-# DATA = load_test_data(nl)
-# for fn in [t_order_values, t_order_keys, t_order]:
-#     for n in nl:
-#         add_test_function_to_global(glob=globals(), fn=fn, note_name=n, data=DATA, meta_type=META_TYPE)
+for t_fn in [t__extract_str, t__str_to_dict, t_to_string, t_update_content, t_exists, t_erase]:
+    name_f = parse_name_function_tested(t_fn.__name__)
+    test_ids: list[str] = list(data['tests'][f'tests-{name_f}'].keys())
+    for tid in test_ids:
+        add_test_function_metadata(glob=globals(), fn=t_fn, test_id=tid, data=data)

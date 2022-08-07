@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from .a_tmp import (add_test_function_metadata, load_data,
-                    parse_name_function_tested, t_add, t_order, t_order_keys,
-                    t_order_values, t_remove, t_remove_duplicate_values)
+from ..load_test_data import load_data
+from .templates import (add_test_function_metadata, parse_name_function_tested,
+                        t_add, t_order, t_order_keys, t_order_values, t_remove,
+                        t_remove_duplicate_values)
 
 PATH_TEST_DEF = Path(__file__).parent/'test_Metadata.json'
 data = load_data(PATH_TEST_DEF)

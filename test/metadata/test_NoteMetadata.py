@@ -2,9 +2,10 @@ from pathlib import Path
 
 from source.metadata import MetadataType
 
-from .a_tmp import (add_test_function_metadata, load_data, nmt_order,
-                    nmt_order_keys, nmt_order_values,
-                    nmt_remove_duplicate_values, parse_name_function_tested)
+from ..load_test_data import load_data
+from .templates import (add_test_function_metadata, nmt_order, nmt_order_keys,
+                        nmt_order_values, nmt_remove_duplicate_values,
+                        parse_name_function_tested)
 
 PATH_TEST_DEF = Path(__file__).parent/'test_NoteMetadata.json'
 data = load_data(PATH_TEST_DEF)
