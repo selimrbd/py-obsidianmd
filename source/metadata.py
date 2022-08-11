@@ -285,8 +285,8 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    # REGEX = "\n([^\w]*)([A-z]\w+) ?::(.*)"
     REGEX = "([^\w\n])*([A-z]\w+) ?::(.*)\n?"
+    REGEX_ENCLOSED = ""
 
     @classmethod
     def parse(
