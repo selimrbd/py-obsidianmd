@@ -113,16 +113,6 @@
                     "exists": false
                 }
             }
-        },
-        "tests-erase": {
-            "n4": {
-                "description": "NA",
-                "data": "n4",
-                "inputs": {},
-                "expected_output": {
-                    "field_name": "exp_frontmatter_erase"
-                }
-            }
         }
     }
 }
