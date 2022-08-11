@@ -38,9 +38,7 @@ class MetadataType(Enum):
 
 class Metadata(ABC):
     def __init__(self, note_content: str):
-        parsed = self.parse(note_content)
-        self.metadata: MetaDict = parsed[0]
-        self._content_no_meta = parsed[1]
+        self.metadata: MetaDict = self.parse(note_content)
 
     def __repr__(self):
         r = f"{type(self)}:\n"
@@ -54,7 +52,7 @@ class Metadata(ABC):
     @abstractmethod
     def parse(
         cls, note_content: str, parse_fn: ParseFunction | None = None
-    ) -> tuple[MetaDict, str]:
+    ) -> MetaDict:
         pass
 
     @abstractmethod
@@ -73,7 +71,7 @@ class Metadata(ABC):
     def exists(cls, note_content: str) -> bool:
         """Checks if the metadata type is present in the note"""
         try:
-            meta_dict = cls.parse(note_content)[0]
+            meta_dict = cls.parse(note_content)
         except:
             meta_dict = {}
         return len(meta_dict) > 0
@@ -191,14 +189,14 @@ class Frontmatter(Metadata):
     @classmethod
     def parse(
         cls, note_content: str, parse_fn: ParseFunction | None = None
-    ) -> tuple[MetaDict, str]:
+    ) -> MetaDict:
         """Parse note content to extract metadata dictionary."""
         if parse_fn is None:
             parse_fn = cls.parse_1
         return parse_fn(note_content)
 
     @classmethod
-    def parse_1(cls, note_content: str) -> tuple[MetaDict, str]:
+    def parse_1(cls, note_content: str) -> MetaDict:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
         try:
@@ -207,7 +205,6 @@ class Frontmatter(Metadata):
             raise InvalidFrontmatterError
 
         meta_dict: MetaDict = fm.metadata
-        content_no_meta = fm.content
 
         # make all elements into list of strings
         for k, v in meta_dict.items():
@@ -228,10 +225,10 @@ class Frontmatter(Metadata):
                         e = re.sub(re.escape(sc), sep, e)
                     res += [x.strip() for x in e.split(sep) if len(x.strip()) > 0]
                 meta_dict[k] = res
-        return meta_dict, content_no_meta
+        return meta_dict
 
     @classmethod
-    def parse_2(cls, note_content: str) -> tuple[MetaDict, str]:
+    def parse_2(cls, note_content: str) -> MetaDict:
         """Parse frontmatter metadata using regex"""
         mtc = re.search(cls.REGEX, note_content)
         if mtc is None:
@@ -255,8 +252,7 @@ class Frontmatter(Metadata):
             mtags = " ".join(metadata["tags"])
             metadata["tags"] = [t.strip() for t in mtags.split(" ") if t.strip() != ""]
 
-        content_no_meta = re.sub(regex, "", note_content)
-        return metadata, content_no_meta
+        return metadata
 
     def to_string(self) -> str:
         """Render metadata as a string.
@@ -296,31 +292,29 @@ class InlineMetadata(Metadata):
     @classmethod
     def parse(
         cls, note_content: str, parse_fn: ParseFunction | None = None
-    ) -> tuple[MetaDict, str]:
+    ) -> MetaDict:
         """Parse note content to extract metadata dictionary."""
         if parse_fn is None:
             parse_fn = cls.parse_1
         return parse_fn(note_content)
 
     @classmethod
-    def parse_1(cls, note_content: str) -> tuple[MetaDict, str]:
+    def parse_1(cls, note_content: str) -> MetaDict:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
-
-        content_no_meta = re.sub(cls.REGEX, "", note_content)
 
         matches = re.findall(cls.REGEX, note_content)
         tmp = dict()
         for _, k, v in matches:
             tmp[k] = tmp.get(k, "") + ", " + v
-        metadata = {
+        metadata: MetaDict = {
             k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
             for (k, v) in tmp.items()
         }
         if "tags" in metadata:
             mtags = " ".join(metadata["tags"])
             metadata["tags"] = [t.strip() for t in mtags.split(" ") if t.strip() != ""]
-        return metadata, content_no_meta
+        return metadata
 
     def to_string(self) -> str:
         """Render metadata as a string.

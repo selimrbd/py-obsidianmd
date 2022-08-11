@@ -161,7 +161,7 @@ def t_parse(test_id: str, data: dict, debug: bool = False) -> None:
         with pytest.raises(exception):
             MetaClass.parse(d_n["content"])
     else:
-        meta_dict = MetaClass.parse(d_n["content"])[0]
+        meta_dict = MetaClass.parse(d_n["content"])
         meta_dict_true = expected_output["meta_dict"]
 
         if debug:
