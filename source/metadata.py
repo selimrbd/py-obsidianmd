@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
+from pickle import FALSE
 from typing import Callable, Optional, Type, Union
 
 import frontmatter
@@ -267,36 +268,50 @@ class Frontmatter(Metadata):
         out = "---\n" + "".join(metadata_repr) + "---\n\n"
         return out
 
+    @classmethod
+    def erase(cls, note_content: str) -> str:
+        r: str = frontmatter.loads(note_content).content
+        return r
+
     def update_content(self, note_content: str) -> str:
         """ """
-        res = self.to_string() + self._content_no_meta
+        content_no_meta = self.erase(note_content)
+        res = self.to_string() + content_no_meta
         return res
 
 
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    REGEX = "[A-z]\w+ ?::.*"
+    @classmethod
+    def parse(
+        cls, note_content: str, parse_fn: ParseFunction | None = None
+    ) -> tuple[MetaDict, str]:
+        """Parse note content to extract metadata dictionary."""
+        if parse_fn is None:
+            parse_fn = cls.parse_1
+        return parse_fn(note_content)
 
     @staticmethod
-    def _extract_str(note_content: str) -> list[str]:
-        return re.findall(InlineMetadata.REGEX, note_content)
+    def parse_1(note_content: str) -> tuple[MetaDict, str]:
+        """Parse note content to extract metadata dictionary.
+        Uses the python-frontmatter library."""
 
-    @staticmethod
-    def _str_to_dict(meta_str: list[str]) -> MetaDict:
-        metadata: MetaDict = dict()
-        tmp: dict[str, str] = dict()
-        for x in meta_str:
-            k, v = x.split("::")[0].strip(), x.split("::")[1].strip()
-            if k not in tmp:
-                tmp[k] = v
-            else:
-                tmp[k] += f", {v}"
-        metadata = {k: [x.strip() for x in v.split(",")] for (k, v) in tmp.items()}
+        regex = "\n([^\w]*)([A-z]\w+) ?::(.*)"
+        content_no_meta = re.sub(regex, "", note_content)
+
+        matches = re.findall(regex, note_content)
+        tmp = dict()
+        for _, k, v in matches:
+            tmp[k] = tmp.get(k, "") + ", " + v
+        metadata = {
+            k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
+            for (k, v) in tmp.items()
+        }
         if "tags" in metadata:
             mtags = " ".join(metadata["tags"])
             metadata["tags"] = [t.strip() for t in mtags.split(" ") if t.strip() != ""]
-        return metadata
+        return metadata, content_no_meta
 
     def to_string(self) -> str:
         """Render metadata as a string.
@@ -305,16 +320,31 @@ class InlineMetadata(Metadata):
         """
         if len(self.metadata) == 0:
             return ""
-        r = "\n\n---\n- **@ metadata:**\n"
+        r = ""
         for k, v in self.metadata.items():
-            r += f"    - {k}:: {', '.join(v)}\n"
+            r += f"{k}:: {', '.join(v)}\n"
         return r
 
-    def update_content(self, note_content: str) -> str:
-        """ """
-        res = self.erase(note_content)
-        res = res + self.to_string()
-        return res
+    @classmethod
+    def erase(cls, note_content: str) -> str:
+        regex = "\n([^\w]*)([A-z]\w+) ?::(.*)"
+        content_no_meta = re.sub(regex, "", note_content)
+        return content_no_meta
+
+    def update_content(self, note_content: str, how: str = "bottom") -> str:
+        """
+        how:
+            - inplace
+            - bottom
+            - top
+        """
+        content_no_meta = self.erase(note_content)
+        if how == "top":
+            return self.to_string() + content_no_meta
+        elif how == "bottom":
+            return content_no_meta + "\n\n" + self.to_string()
+        else:
+            raise NotImplementedError
 
 
 class NoteMetadata:

@@ -2,53 +2,11 @@
     "tests": {
         "description": "tests related to the InlineMetadata object",
         "default_meta_type": ">>MetadataType.INLINE",
-        "tests-_extract_str": {
-            "n1": {
-                "description": "file with inline metadata grouped (n1)",
-                "data": "n1",
-                "inputs": {},
-                "expected_output": {
-                    "str_extracted": [
-                        "up:: [[note 1]], [[note 2]], [[note 3]]",
-                        "brim:: s1, s2",
-                        "tork:: 2, 3, 4"
-                    ]
-                }
-            },
-            "n2": {
-                "description": "file with no inline metadata (n2)",
-                "data": "n2",
-                "inputs": {},
-                "expected_output": {
-                    "str_extracted": []
-                }
-            },
-            "n4": {
-                "description": "file with inline metadata spread out (n4)",
-                "data": "n4",
-                "inputs": {},
-                "expected_output": {
-                    "str_extracted": [
-                        "c2 ::foo, foo bar",
-                        "c1:: foo, foo bar",
-                        "c3 :: 3, 4, 5, 5",
-                        "tags :: t4, t5 t6 t5",
-                        "c2:: biz, baz"
-                    ]
-                }
-            }
-        },
-        "tests-_str_to_dict": {
+        "tests-parse": {
             "n1": {
                 "description": "file with no frontmatter (n1)",
                 "data": "n1",
-                "inputs": {
-                    "str_extracted": [
-                        "up:: [[note 1]], [[note 2]], [[note 3]]",
-                        "brim:: s1, s2",
-                        "tork:: 2, 3, 4"
-                    ]
-                },
+                "inputs": {},
                 "expected_output": {
                     "meta_dict": {
                         "up": [
@@ -71,9 +29,7 @@
             "n2": {
                 "description": "file with no inline metadata (n2)",
                 "data": "n2",
-                "inputs": {
-                    "str_extracted": []
-                },
+                "inputs": {},
                 "expected_output": {
                     "meta_dict": {}
                 }
@@ -81,15 +37,7 @@
             "n4": {
                 "description": "file with frontmatter (n4)",
                 "data": "n4",
-                "inputs": {
-                    "str_extracted": [
-                        "c2 ::foo, foo bar",
-                        "c1:: foo, foo bar",
-                        "c3 :: 3, 4, 5, 5",
-                        "tags :: t4, t5 t6 t5",
-                        "c2:: biz, baz"
-                    ]
-                },
+                "inputs": {},
                 "expected_output": {
                     "meta_dict": {
                         "c1": [
@@ -169,16 +117,6 @@
                 "inputs": {},
                 "expected_output": {
                     "exists": false
-                }
-            }
-        },
-        "tests-erase": {
-            "n4": {
-                "description": "NA",
-                "data": "n4",
-                "inputs": {},
-                "expected_output": {
-                    "field_name": "exp_inline_erase"
                 }
             }
         }

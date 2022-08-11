@@ -230,22 +230,6 @@ def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     assert_str_match(upd, upd_true, msg=err_msg)
 
 
-def t_erase(test_id: str, data: dict, debug: bool = False) -> None:
-
-    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
-    _, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
-
-    tostr: str = MetaClass.erase(d_n["content"])  # type: ignore
-    name_field_true: str = expected_output["field_name"]
-    tostr_true: str = d_n[name_field_true]
-
-    if debug:
-        return tostr, tostr_true
-
-    err_msg = build_error_msg(test_id, d_t)
-    assert_str_match(tostr, tostr_true, msg=err_msg)
-
-
 def t_exists(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
