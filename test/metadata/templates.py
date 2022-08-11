@@ -450,3 +450,25 @@ def nmt_order(test_id: str, data: dict, debug: bool = False) -> None:
     assert_list_match(il_list_keys, il_list_keys_true, msg=err_msg)
     assert_dict_match(fm_meta_dict, fm_meta_dict_true, msg=err_msg)
     assert_dict_match(il_meta_dict, il_meta_dict_true, msg=err_msg)
+
+
+def nmt_move(test_id: str, data: dict, debug: bool = False) -> None:
+
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs, expected_output, d_n, d_t, _ = prep_test_data(test_id, data, name_f)
+
+    m = NoteMetadata(d_n["content"])
+    fr = parse_test_arg_meta_type(inputs["fr"])
+    to = parse_test_arg_meta_type(inputs["to"])
+    m.move(k=inputs["k"], fr=fr, to=to)
+    fm_dict = m.frontmatter.metadata
+    il_dict = m.inline.metadata
+    fm_dict_true: dict[str, list[str]] = expected_output["frontmatter"]
+    il_dict_true: dict[str, list[str]] = expected_output["inline"]
+
+    if debug:
+        return (fm_dict, fm_dict_true), (il_dict, il_dict_true)
+
+    err_msg = build_error_msg(test_id, d_t)
+    assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
+    assert_dict_match(il_dict, il_dict_true, msg=err_msg)

@@ -394,7 +394,7 @@ class NoteMetadata:
             self.inline.remove(k=k, l=l)
 
     def remove_duplicate_values(
-        self, k: str | list[str] | None, meta_type: MetadataType | None = None
+        self, k: str | list[str] | None = None, meta_type: MetadataType | None = None
     ):
         """Remove duplicate values in the note's metadata
 
@@ -477,6 +477,17 @@ class NoteMetadata:
             self.inline.order(k=k, o_keys=o_keys, o_values=o_values)
         else:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
+
+    def move(self, k: str | list[str], fr: MetadataType, to: MetadataType):
+        if isinstance(k, str):
+            k = [k]
+        m_from = self.inline if fr == MetadataType.INLINE else self.frontmatter
+        m_to = self.inline if to == MetadataType.INLINE else self.frontmatter
+
+        for k2 in k:
+            if k2 in m_from.metadata:
+                m_to.add(k=k2, l=m_from.metadata[k2])
+                m_from.remove(k=k2)
 
 
 def return_metaclass(

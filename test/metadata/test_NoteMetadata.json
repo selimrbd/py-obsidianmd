@@ -481,6 +481,52 @@
                     }
                 }
             }
+        },
+        "tests-move": {
+            "n4_1": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {
+                    "k": "tags",
+                    "fr": ">>MetadataType.FRONTMATTER",
+                    "to": ">>MetadataType.INLINE"
+                },
+                "expected_output": {
+                    "frontmatter": {
+                        "fm": [
+                            "hello, world, hello"
+                        ]
+                    },
+                    "inline": {
+                        "c1": [
+                            "foo",
+                            "foo bar"
+                        ],
+                        "c2": [
+                            "foo",
+                            "foo bar",
+                            "biz",
+                            "baz"
+                        ],
+                        "c3": [
+                            "3",
+                            "4",
+                            "5",
+                            "5"
+                        ],
+                        "tags": [
+                            "t4",
+                            "t5",
+                            "t6",
+                            "t5",
+                            "t1",
+                            "t2",
+                            "t3",
+                            "t2"
+                        ]
+                    }
+                }
+            }
         }
     }
 }
