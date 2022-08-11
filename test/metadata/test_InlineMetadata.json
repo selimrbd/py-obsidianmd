@@ -98,7 +98,7 @@
                 "data": "n4",
                 "inputs": {},
                 "expected_output": {
-                    "field_name": "exp_inline_upd_default"
+                    "field_name": "exp_inline_upd_bottom"
                 }
             }
         },

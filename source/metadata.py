@@ -267,9 +267,7 @@ class Frontmatter(Metadata):
                 metadata_repr += f"{k}: {v[0]}\n"
             else:
                 metadata_repr += f'{k}: [ {", ".join(v)} ]\n'
-        # metadata_repr = [f"{k}: {', '.join(v)}\n" for k, v in self.metadata.items()]
-        # out = "---\n" + "".join(metadata_repr) + "---\n\n"
-        out = "---\n" + metadata_repr + "---\n\n"
+        out = "---\n" + metadata_repr + "---\n"
         return out
 
     @classmethod
@@ -287,7 +285,8 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    REGEX = "\n([^\w]*)([A-z]\w+) ?::(.*)"
+    # REGEX = "\n([^\w]*)([A-z]\w+) ?::(.*)"
+    REGEX = "([^\w\n])*([A-z]\w+) ?::(.*)\n?"
 
     @classmethod
     def parse(
@@ -326,13 +325,33 @@ class InlineMetadata(Metadata):
         r = ""
         for k, v in self.metadata.items():
             r += f"{k}:: {', '.join(v)}\n"
+        r = r[:-1]  # remove last \n
         return r
 
     @classmethod
     def erase(cls, note_content: str) -> str:
-        regex = "\n([^\w]*)([A-z]\w+) ?::(.*)"
-        content_no_meta = re.sub(regex, "", note_content)
+        content_no_meta = re.sub(cls.REGEX, "", note_content)
         return content_no_meta
+
+    @staticmethod
+    def get_sep_newlines(content_no_meta: str, how: str = "bottom") -> str:
+        if how == "top":
+            if content_no_meta[0] != "\n":
+                sep = "\n\n"
+            elif content_no_meta[0:2] != "\n\n":
+                sep = "\n"
+            else:
+                sep = ""
+        elif how == "bottom":
+            if content_no_meta[-1] != "\n":
+                sep = "\n\n"
+            elif content_no_meta[-2:] != "\n\n":
+                sep = "\n"
+            else:
+                sep = ""
+        else:
+            sep = ""
+        return sep
 
     def update_content(self, note_content: str, how: str = "bottom") -> str:
         """
@@ -341,11 +360,12 @@ class InlineMetadata(Metadata):
             - bottom
             - top
         """
-        content_no_meta = self.erase(note_content)
+        c_no_meta = self.erase(note_content)
+        sep = self.get_sep_newlines(c_no_meta, how=how)
         if how == "top":
-            return self.to_string() + content_no_meta
+            return self.to_string() + sep + c_no_meta
         elif how == "bottom":
-            return content_no_meta + "\n\n" + self.to_string()
+            return c_no_meta + sep + self.to_string()
         else:
             raise NotImplementedError
 
@@ -413,20 +433,10 @@ class NoteMetadata:
         else:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
 
-    def update_content(
-        self, note_content: str, meta_type: MetadataType | None = None
-    ) -> str:
-        meta_type = self._parse_arg_meta_type(meta_type)
-        res = note_content
-        if meta_type == MetadataType.FRONTMATTER:
-            res = self.frontmatter.update_content(res)
-        elif meta_type == MetadataType.INLINE:
-            res = self.inline.update_content(res)
-        elif meta_type == MetadataType.ALL:
-            res = self.frontmatter.update_content(res)
-            res = self.inline.update_content(res)
-        else:
-            raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
+    def update_content(self, note_content: str, how_inline: str = "bottom") -> str:
+        str_no_fm = self.frontmatter.erase(note_content)
+        res = self.inline.update_content(str_no_fm, how=how_inline)
+        res = self.frontmatter.to_string() + res
         return res
 
     def order_values(

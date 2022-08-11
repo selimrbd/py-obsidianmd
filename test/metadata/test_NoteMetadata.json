@@ -527,6 +527,39 @@
                     }
                 }
             }
+        },
+        "tests-update_content": {
+            "n4_1": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {
+                    "how_inline": "bottom"
+                },
+                "expected_output": {
+                    "field_name": "exp_notemeta_upd_inline_bottom"
+                }
+            },
+            "n4_2": {
+                "description": "NA",
+                "data": "n4",
+                "inputs": {
+                    "how_inline": "top"
+                },
+                "expected_output": {
+                    "field_name": "exp_notemeta_upd_inline_top"
+                }
+            },
+            "n4_3": {
+                "description": "update multiple times",
+                "data": "n4",
+                "inputs": {
+                    "how_inline": "top",
+                    "nb_times": 4
+                },
+                "expected_output": {
+                    "field_name": "exp_notemeta_upd_inline_top"
+                }
+            }
         }
     }
 }

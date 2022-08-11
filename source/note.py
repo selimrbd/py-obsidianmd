@@ -19,8 +19,8 @@ class Note:
     def __repr__(self) -> str:
         return f'Note (path: "{self.path}")\n'
 
-    def update_content(self):
-        self.content = self.metadata.update_content(self.content)
+    def update_content(self, how_inline: str = "bottom"):
+        self.content = self.metadata.update_content(self.content, how_inline=how_inline)
 
     def write(self):
         """Write the current content to the note's path"""

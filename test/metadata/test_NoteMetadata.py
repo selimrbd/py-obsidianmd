@@ -10,6 +10,7 @@ from .templates import (
     nmt_order_keys,
     nmt_order_values,
     nmt_remove_duplicate_values,
+    nmt_update_content,
     parse_name_function_tested,
 )
 
@@ -22,6 +23,7 @@ for t_fn in [
     nmt_order_keys,
     nmt_order,
     nmt_move,
+    nmt_update_content,
 ]:
     name_f = parse_name_function_tested(t_fn.__name__)
     test_ids: list[str] = list(data["tests"][f"tests-{name_f}"].keys())

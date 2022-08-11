@@ -472,3 +472,26 @@ def nmt_move(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
     assert_dict_match(il_dict, il_dict_true, msg=err_msg)
+
+
+def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
+
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs, expected_output, d_n, d_t, _ = prep_test_data(test_id, data, name_f)
+
+    arg_content = d_n["content"]
+    arg_how_inline = inputs["how_inline"]
+    nb_times = int(inputs.get("nb_times", 1))
+    
+    m = NoteMetadata(arg_content)
+    for _ in range(nb_times):
+        upd: str = m.update_content(arg_content, how_inline=arg_how_inline)  # type: ignore
+    name_field_true: str = expected_output["field_name"]
+    upd_true: str = d_n[name_field_true]
+
+    if debug:
+        return (upd, upd_true)
+
+    err_msg = build_error_msg(test_id, d_t)
+    assert_str_match(upd, upd_true, msg=err_msg)
+    
