@@ -17,8 +17,7 @@
                             "t3"
                         ],
                         "fm": [
-                            "hello",
-                            "world"
+                            "hello, world, hello"
                         ]
                     },
                     "inline": {
@@ -49,7 +48,7 @@
                 "description": "on 1 specific value of the frontmatter",
                 "data": "n4",
                 "inputs": {
-                    "k": "fm",
+                    "k": "tags",
                     "meta_type": ">>MetadataType.FRONTMATTER"
                 },
                 "expected_output": {
@@ -57,12 +56,10 @@
                         "tags": [
                             "t1",
                             "t2",
-                            "t3",
-                            "t2"
+                            "t3"
                         ],
                         "fm": [
-                            "hello",
-                            "world"
+                            "hello, world, hello"
                         ]
                     },
                     "inline": {
