@@ -264,8 +264,15 @@ class Frontmatter(Metadata):
         """
         if len(self.metadata) == 0:
             return ""
-        metadata_repr = [f"{k}: {', '.join(v)}\n" for k, v in self.metadata.items()]
-        out = "---\n" + "".join(metadata_repr) + "---\n\n"
+        metadata_repr = ""
+        for k, v in self.metadata.items():
+            if len(v) == 1:
+                metadata_repr += f"{k}: {v[0]}\n"
+            else:
+                metadata_repr += f'{k}: [ {", ".join(v)} ]\n'
+        # metadata_repr = [f"{k}: {', '.join(v)}\n" for k, v in self.metadata.items()]
+        # out = "---\n" + "".join(metadata_repr) + "---\n\n"
+        out = "---\n" + metadata_repr + "---\n\n"
         return out
 
     @classmethod
