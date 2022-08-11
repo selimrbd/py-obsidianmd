@@ -186,6 +186,8 @@ class Metadata(ABC):
 class Frontmatter(Metadata):
     """Represents the frontmatter of a note"""
 
+    REGEX = "(?s)(^---\n).*?(\n---\n)"
+
     @classmethod
     def parse(
         cls, note_content: str, parse_fn: ParseFunction | None = None
@@ -195,8 +197,8 @@ class Frontmatter(Metadata):
             parse_fn = cls.parse_1
         return parse_fn(note_content)
 
-    @staticmethod
-    def parse_1(note_content: str) -> tuple[MetaDict, str]:
+    @classmethod
+    def parse_1(cls, note_content: str) -> tuple[MetaDict, str]:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
         try:
@@ -228,11 +230,10 @@ class Frontmatter(Metadata):
                 meta_dict[k] = res
         return meta_dict, content_no_meta
 
-    @staticmethod
-    def parse_2(note_content: str) -> tuple[MetaDict, str]:
+    @classmethod
+    def parse_2(cls, note_content: str) -> tuple[MetaDict, str]:
         """Parse frontmatter metadata using regex"""
-        regex = "(?s)(^---\n).*?(\n---\n)"
-        mtc = re.search(regex, note_content)
+        mtc = re.search(cls.REGEX, note_content)
         if mtc is None:
             ext_str = list()
         fm_str = mtc.group()
@@ -290,6 +291,8 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
+    REGEX = "\n([^\w]*)([A-z]\w+) ?::(.*)"
+
     @classmethod
     def parse(
         cls, note_content: str, parse_fn: ParseFunction | None = None
@@ -299,15 +302,14 @@ class InlineMetadata(Metadata):
             parse_fn = cls.parse_1
         return parse_fn(note_content)
 
-    @staticmethod
-    def parse_1(note_content: str) -> tuple[MetaDict, str]:
+    @classmethod
+    def parse_1(cls, note_content: str) -> tuple[MetaDict, str]:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
 
-        regex = "\n([^\w]*)([A-z]\w+) ?::(.*)"
-        content_no_meta = re.sub(regex, "", note_content)
+        content_no_meta = re.sub(cls.REGEX, "", note_content)
 
-        matches = re.findall(regex, note_content)
+        matches = re.findall(cls.REGEX, note_content)
         tmp = dict()
         for _, k, v in matches:
             tmp[k] = tmp.get(k, "") + ", " + v
