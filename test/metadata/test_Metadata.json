@@ -51,19 +51,15 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3",
+                            "1,2,3",
                             "asd",
                             "qzf"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -85,18 +81,14 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar",
+                            "foo, b bar",
                             "999"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -118,16 +110,13 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
                             "999"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -149,17 +138,13 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ],
                         "newmeta": []
                     }
@@ -185,17 +170,13 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ],
                         "newmeta2": [
                             "1",
@@ -221,17 +202,13 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -241,29 +218,25 @@
                 "data": "n2",
                 "inputs": {
                     "meta_type": ">>MetadataType.FRONTMATTER",
-                    "k": "meta2",
+                    "k": "tags",
                     "l": [
-                        1,
-                        3
+                        "t1",
+                        "t3"
                     ]
                 },
                 "expected_output": {
                     "meta_dict": {
                         "tags": [
-                            "t1",
-                            "t2",
-                            "t3"
+                            "t2"
                         ],
                         "meta2": [
-                            "2"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -284,13 +257,10 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -300,28 +270,24 @@
                 "description": "remove all elements of an entry",
                 "inputs": {
                     "meta_type": ">>MetadataType.FRONTMATTER",
-                    "k": "meta2",
+                    "k": "tags",
                     "l": [
-                        1,
-                        2,
-                        3
+                        "t1",
+                        "t2",
+                        "t3"
                     ]
                 },
                 "expected_output": {
                     "meta_dict": {
-                        "tags": [
-                            "t1",
-                            "t2",
-                            "t3"
+                        "tags": [],
+                        "meta2": [
+                            "1,2,3"
                         ],
-                        "meta2": [],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
@@ -342,17 +308,13 @@
                             "t3"
                         ],
                         "meta2": [
-                            "1",
-                            "2",
-                            "3"
+                            "1,2,3"
                         ],
                         "meta3": [
-                            "foo",
-                            "b bar"
+                            "foo, b bar"
                         ],
                         "meta4": [
-                            "\"foo\"",
-                            "\"b bar\""
+                            "foo, b bar"
                         ]
                     }
                 }
