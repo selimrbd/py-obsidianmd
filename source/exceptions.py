@@ -1,8 +1,13 @@
 from string import Template
 
 
+class InvalidFrontmatterError(ValueError):
+    def __init__(self):
+        super().__init__()
+
+
 class ArgTypeError(Exception):
-    def __init__(self, var_name: str, given_type: type, expected_type: type|str):
+    def __init__(self, var_name: str, given_type: type, expected_type: type | str):
         self.var_name = var_name
         self.given_type = given_type
         self.expected_type = expected_type
