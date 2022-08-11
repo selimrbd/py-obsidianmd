@@ -64,6 +64,29 @@
                         ]
                     }
                 }
+            },
+            "n5": {
+                "description": "metadata fields of multiple words",
+                "data": "n5",
+                "inputs": {},
+                "expected_output": {
+                    "meta_dict": {
+                        "this is an inline field": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "another field": [
+                            "45"
+                        ],
+                        "one-word": [
+                            "0"
+                        ],
+                        "oneWord": [
+                            "0"
+                        ]
+                    }
+                }
             }
         },
         "tests-to_string": {

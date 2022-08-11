@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from source.metadata import NoteMetadata
@@ -11,6 +12,7 @@ class Note:
     """
 
     def __init__(self, path: Path | str):
+        print(path)
         self.path: Path = Path(path)
         with open(self.path, "r") as f:
             self.content: str = f.read()
@@ -22,10 +24,14 @@ class Note:
     def update_content(self, how_inline: str = "bottom"):
         self.content = self.metadata.update_content(self.content, how_inline=how_inline)
 
-    def write(self):
+    def write(self, path: Path | None = None):
         """Write the current content to the note's path"""
-        with open(self.path, "w") as f:
+        p = self.path if path is None else path
+        with open(p, "w") as f:
             f.write(self.content)
+
+    def sub(self, pattern: str, replace: str):
+        self.content = re.sub(pattern, replace, self.content)
 
     def print(self):
         print(self.content)

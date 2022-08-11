@@ -114,6 +114,16 @@ class Metadata(ABC):
         nl = [str(l)] if isinstance(l, UserInput) else [str(x) for x in l]
         self.metadata[k] = [e for e in self.metadata[k] if e not in nl]
 
+    def remove_empty(self) -> None:
+        """removes a metadata field"""
+        empty: list[str] = list()
+        for k in self.metadata:
+            if len(self.metadata[k]) == 0:
+                empty.append(k)
+
+        for k in empty:
+            del self.metadata[k]
+
     def remove_duplicate_values(self, k: str | list[str] | None = None) -> None:
 
         if k is None:
@@ -206,6 +216,10 @@ class Frontmatter(Metadata):
 
         meta_dict: MetaDict = fm.metadata
 
+        for k in meta_dict:
+            if meta_dict[k] is None:
+                meta_dict[k] = list()
+
         # make all elements into list of strings
         for k, v in meta_dict.items():
             if isinstance(v, str):
@@ -285,8 +299,9 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    REGEX = "([^\w\n])*([A-z]\w+) ?::(.*)\n?"
-    REGEX_ENCLOSED = ""
+    # REGEX = "([^\w\n])*([A-z]\w+) ?::(.*)\n?"
+    REGEX = "([^A-z\n]*)([A-z][A-z0-9_ \\-]*)::(.*)\n?"
+    REGEX_ENCLOSED = "(\\[(.*)::(.*)\\])|(\\((.*)::(.*)\\))"
 
     @classmethod
     def parse(
@@ -298,14 +313,36 @@ class InlineMetadata(Metadata):
         return parse_fn(note_content)
 
     @classmethod
-    def parse_1(cls, note_content: str) -> MetaDict:
+    def parse_2(cls, note_content: str) -> MetaDict:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
-
         matches = re.findall(cls.REGEX, note_content)
         tmp = dict()
         for _, k, v in matches:
-            tmp[k] = tmp.get(k, "") + ", " + v
+            tmp[k.strip()] = tmp.get(k, "") + ", " + v
+        metadata: MetaDict = {
+            k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
+            for (k, v) in tmp.items()
+        }
+        if "tags" in metadata:
+            mtags = " ".join(metadata["tags"])
+            metadata["tags"] = [t.strip() for t in mtags.split(" ") if t.strip() != ""]
+        return metadata
+
+    @classmethod
+    def parse_1(cls, note_content: str) -> MetaDict:
+        """Parse note content to extract metadata dictionary.
+        Uses the python-frontmatter library."""
+        matches = list()
+        for l in note_content.split("\n"):
+            b_match = re.search(cls.REGEX, l) is not None
+            b_match_enclosed = re.search(cls.REGEX_ENCLOSED, l) is not None
+            if b_match and not b_match_enclosed:
+                matches += re.findall(cls.REGEX, l)
+
+        tmp = dict()
+        for _, k, v in matches:
+            tmp[k.strip()] = tmp.get(k, "") + ", " + v
         metadata: MetaDict = {
             k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
             for (k, v) in tmp.items()
@@ -336,16 +373,16 @@ class InlineMetadata(Metadata):
     @staticmethod
     def get_sep_newlines(content_no_meta: str, how: str = "bottom") -> str:
         if how == "top":
-            if content_no_meta[0] != "\n":
+            if len(content_no_meta) >= 1 and content_no_meta[0] != "\n":
                 sep = "\n\n"
-            elif content_no_meta[0:2] != "\n\n":
+            elif len(content_no_meta) >= 1 and content_no_meta[0:2] != "\n\n":
                 sep = "\n"
             else:
                 sep = ""
         elif how == "bottom":
-            if content_no_meta[-1] != "\n":
+            if len(content_no_meta) >= 1 and content_no_meta[-1] != "\n":
                 sep = "\n\n"
-            elif content_no_meta[-2:] != "\n\n":
+            elif len(content_no_meta) >= 2 and content_no_meta[-2:] != "\n\n":
                 sep = "\n"
             else:
                 sep = ""
@@ -412,6 +449,19 @@ class NoteMetadata:
             self.frontmatter.remove(k=k, l=l)
         if meta_type == MetadataType.INLINE:
             self.inline.remove(k=k, l=l)
+
+    def remove_empty(
+        self,
+        meta_type: MetadataType = MetadataType.ALL,
+    ) -> None:
+        """removes metadata fields that are empty"""
+        if meta_type == MetadataType.FRONTMATTER:
+            self.frontmatter.remove_empty()
+        if meta_type == MetadataType.INLINE:
+            self.inline.remove_empty()
+        if meta_type is MetadataType.ALL:
+            self.frontmatter.remove_empty()
+            self.inline.remove_empty()
 
     def remove_duplicate_values(
         self, k: str | list[str] | None = None, meta_type: MetadataType | None = None

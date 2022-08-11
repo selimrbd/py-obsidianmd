@@ -37,7 +37,7 @@ def assert_dict_match(d1: dict | None, d2: dict | None, msg: str = "") -> None:
     d1 = dict() if d1 is None else d1
     d2 = dict() if d2 is None else d2
     err_template = Template(
-        "$msg\n---\ndictionaries don't match.\nkey: $k\noutput: $o\nexpected result: $er\n"
+        "$msg\n---\ndictionaries don't match.\nkey: '$k'\noutput: '$o'\nexpected result: '$er'\n"
     )
     for k in set(d1.keys()).union(set(d2.keys())):
         o = d1.get(k, None)
@@ -168,7 +168,6 @@ def t_parse(test_id: str, data: dict, debug: bool = False) -> None:
             return meta_dict, meta_dict_true
         err_msg = build_error_msg(test_id, d_t)
         assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
-
 
 def t__extract_str(test_id: str, data: dict, debug: bool = False) -> None:
 
