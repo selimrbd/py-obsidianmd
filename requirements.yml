@@ -1,0 +1,9 @@
+name: py-obsidianmd
+channels:
+ - conda-forge
+dependencies:
+  - python>=3.6
+  - pip>=22.0.0
+  - pip:
+    - -r requirements.txt
+  
