@@ -12,7 +12,7 @@ from .exceptions import ArgTypeError, InvalidFrontmatterError
 UserInput = Union[str, int, float]
 MetaDict = dict[str, list[str]]
 ParseFunction = Callable[[str], tuple[MetaDict, str]]
-Number = int | float
+Number = Union[int, float]
 
 
 class Order(Enum):
@@ -26,7 +26,7 @@ class MetadataType(Enum):
     ALL = "notemeta"
 
     @staticmethod
-    def get_from_str(s: str | None) -> MetadataType:
+    def get_from_str(s: Union[str, None]) -> MetadataType:
         if s is None:
             return MetadataType.ALL
         for k in MetadataType:
@@ -50,7 +50,7 @@ class Metadata(ABC):
     @classmethod
     @abstractmethod
     def parse(
-        cls, note_content: str, parse_fn: ParseFunction | None = None
+        cls, note_content: str, parse_fn: Union[ParseFunction, None] = None
     ) -> MetaDict:
         pass
 
@@ -128,7 +128,7 @@ class Metadata(ABC):
         for k in empty:
             del self.metadata[k]
 
-    def remove_duplicate_values(self, k: str | list[str] | None = None) -> None:
+    def remove_duplicate_values(self, k: Union[str, list[str], None] = None) -> None:
 
         if k is None:
             list_keys = list(self.metadata.keys())
@@ -137,7 +137,7 @@ class Metadata(ABC):
         elif isinstance(k, list):
             list_keys = k
         else:
-            raise ArgTypeError("k", type(k), str(Optional[str | list[str]]))
+            raise ArgTypeError("k", type(k), str(Union[str, list[str], None]))
 
         for k2 in list_keys:
             if k2 not in self.metadata:
@@ -145,7 +145,7 @@ class Metadata(ABC):
             self.metadata[k2] = list(dict.fromkeys(self.metadata[k2]))
 
     def order_values(
-        self, k: str | list[str] | None = None, how: Order = Order.ASC
+        self, k: Union[str, list[str], None] = None, how: Order = Order.ASC
     ) -> None:
         """Orders metadata values.
 
@@ -174,9 +174,9 @@ class Metadata(ABC):
 
     def order(
         self,
-        k: str | list[str] | None = None,
-        o_keys: Order | None = Order.ASC,
-        o_values: Order | None = Order.ASC,
+        k: Union[str, list[str], None] = None,
+        o_keys: Union[Order, None] = Order.ASC,
+        o_values: Union[Order, None] = Order.ASC,
     ):
         """Orders metadata keys and values.
 
@@ -202,7 +202,7 @@ class Frontmatter(Metadata):
 
     @classmethod
     def parse(
-        cls, note_content: str, parse_fn: ParseFunction | None = None
+        cls, note_content: str, parse_fn: Union[ParseFunction, None] = None
     ) -> MetaDict:
         """Parse note content to extract metadata dictionary."""
         if parse_fn is None:
@@ -309,7 +309,7 @@ class InlineMetadata(Metadata):
 
     @classmethod
     def parse(
-        cls, note_content: str, parse_fn: ParseFunction | None = None
+        cls, note_content: str, parse_fn: Union[ParseFunction, None] = None
     ) -> MetaDict:
         """Parse note content to extract metadata dictionary."""
         if parse_fn is None:
@@ -426,14 +426,14 @@ class NoteMetadata:
         self.inline = InlineMetadata(note_content)
 
     @classmethod
-    def _parse_arg_meta_type(cls, meta_type: MetadataType | None) -> MetadataType:
+    def _parse_arg_meta_type(cls, meta_type: Union[MetadataType, None]) -> MetadataType:
         if meta_type is None:
             meta_type = MetadataType.ALL
         if not isinstance(meta_type, MetadataType):  # type: ignore
             raise ArgTypeError(
                 var_name="meta_type",
                 given_type=type(meta_type),
-                expected_type=str(MetadataType | None),
+                expected_type=str(Union[MetadataType, None]),
             )
         return meta_type
 
@@ -475,7 +475,9 @@ class NoteMetadata:
             self.inline.remove_empty()
 
     def remove_duplicate_values(
-        self, k: str | list[str] | None = None, meta_type: MetadataType | None = None
+        self,
+        k: Union[str, list[str], None] = None,
+        meta_type: Union[MetadataType, None] = None,
     ):
         """Remove duplicate values in the note's metadata
 
@@ -502,9 +504,9 @@ class NoteMetadata:
 
     def order_values(
         self,
-        k: str | list[str] | None = None,
+        k: Union[str, list[str], None] = None,
         how: Order = Order.ASC,
-        meta_type: MetadataType | None = None,
+        meta_type: Union[MetadataType, None] = None,
     ) -> None:
         meta_type = self._parse_arg_meta_type(meta_type)
         if meta_type == MetadataType.FRONTMATTER:
@@ -518,7 +520,7 @@ class NoteMetadata:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
 
     def order_keys(
-        self, how: Order = Order.DESC, meta_type: MetadataType | None = None
+        self, how: Order = Order.DESC, meta_type: Union[MetadataType, None] = None
     ) -> None:
         meta_type = self._parse_arg_meta_type(meta_type)
         if meta_type == MetadataType.FRONTMATTER:
@@ -533,10 +535,10 @@ class NoteMetadata:
 
     def order(
         self,
-        k: str | list[str] | None = None,
-        o_keys: Order | None = Order.ASC,
-        o_values: Order | None = Order.ASC,
-        meta_type: MetadataType | None = None,
+        k: Union[str, list[str], None] = None,
+        o_keys: Union[Order, None] = Order.ASC,
+        o_values: Union[Order, None] = Order.ASC,
+        meta_type: Union[MetadataType, None] = None,
     ):
         meta_type = self._parse_arg_meta_type(meta_type)
         if meta_type == MetadataType.FRONTMATTER:
@@ -549,7 +551,7 @@ class NoteMetadata:
         else:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
 
-    def move(self, k: str | list[str], fr: MetadataType, to: MetadataType):
+    def move(self, k: Union[str, list[str]], fr: MetadataType, to: MetadataType):
         if isinstance(k, str):
             k = [k]
         m_from = self.inline if fr == MetadataType.INLINE else self.frontmatter
@@ -563,7 +565,7 @@ class NoteMetadata:
 
 def return_metaclass(
     meta_type: MetadataType,
-) -> Type[Metadata] | Type[NoteMetadata] | None:
+) -> Union[Type[Metadata], Type[NoteMetadata], None]:
     if meta_type == MetadataType.FRONTMATTER:
         return Frontmatter
     elif meta_type == MetadataType.INLINE:

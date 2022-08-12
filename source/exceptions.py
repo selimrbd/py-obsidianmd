@@ -1,4 +1,5 @@
 from string import Template
+from typing import Union
 
 
 class InvalidFrontmatterError(ValueError):
@@ -7,7 +8,9 @@ class InvalidFrontmatterError(ValueError):
 
 
 class ArgTypeError(Exception):
-    def __init__(self, var_name: str, given_type: type, expected_type: type | str):
+    def __init__(
+        self, var_name: str, given_type: type, expected_type: Union[type, str]
+    ):
         self.var_name = var_name
         self.given_type = given_type
         self.expected_type = expected_type

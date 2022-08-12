@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Union
 
 from source.metadata import NoteMetadata
 
@@ -11,7 +12,7 @@ class Note:
     - content: frontmatter + body
     """
 
-    def __init__(self, path: Path | str):
+    def __init__(self, path: Union[Path, str]):
         self.path: Path = Path(path)
         with open(self.path, "r") as f:
             self.content: str = f.read()
@@ -23,7 +24,7 @@ class Note:
     def update_content(self, how_inline: str = "bottom"):
         self.content = self.metadata.update_content(self.content, how_inline=how_inline)
 
-    def write(self, path: Path | None = None):
+    def write(self, path: Union[Path, None] = None):
         """Write the current content to the note's path"""
         p = self.path if path is None else path
         with open(p, "w") as f:

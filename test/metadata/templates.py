@@ -5,7 +5,7 @@ sys.path.append("../..")
 import inspect
 from functools import partial
 from string import Template
-from typing import Callable, Type
+from typing import Callable, Type, Union
 
 import pytest
 from source.exceptions import InvalidFrontmatterError
@@ -25,7 +25,10 @@ def build_error_msg(test_id: str, dict_tests: dict) -> str:
     err_msg = templ.substitute(test_id=test_id, test_desc=dict_tests["description"])
     return err_msg
 
-def assert_dict_match(d1: dict | None, d2: dict | None, msg: str = "") -> None:
+
+def assert_dict_match(
+    d1: Union[dict, None], d2: Union[dict, None], msg: str = ""
+) -> None:
     """
     assert that 2 dictionaries match. If they dont, print the output VS expected
     Arguments:
@@ -44,6 +47,7 @@ def assert_dict_match(d1: dict | None, d2: dict | None, msg: str = "") -> None:
         err_msg = err_template.substitute(msg=msg, k=k, o=o, er=er)
         assert o == er, err_msg
 
+
 def assert_str_match(s1: str, s2: str, msg: str = "") -> None:
     """
     assert that 2 strings match. If they dont, print the output VS expected
@@ -56,6 +60,7 @@ def assert_str_match(s1: str, s2: str, msg: str = "") -> None:
     )
     err_msg = err_template.substitute(msg=msg, o=s1, er=s2)
     assert s1 == s2, err_msg
+
 
 def assert_list_match(l1: list, l2: list, msg: str = "") -> None:
     """
@@ -77,12 +82,13 @@ def assert_list_match(l1: list, l2: list, msg: str = "") -> None:
 
 TestTemplateMetadata = Callable[[str, dict, MetadataType, bool], None]
 
+
 def add_test_function_metadata(
     glob: dict,
     fn: TestTemplateMetadata,
     test_id: str,
     data: dict,
-    meta_type: MetadataType | None = None,
+    meta_type: Union[MetadataType, None] = None,
 ):
     ft = partial(fn, test_id=test_id, data=data)
     name_f = parse_name_function_tested(fn.__name__)
@@ -90,6 +96,7 @@ def add_test_function_metadata(
         meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     ft_name = f"test_{meta_type.value}_{name_f}_{test_id}"
     glob[ft_name] = ft
+
 
 def prep_test_data(test_id: str, data: dict, name_f: str):
     d_t: dict = data["tests"][f"tests-{name_f}"][test_id]
@@ -102,11 +109,13 @@ def prep_test_data(test_id: str, data: dict, name_f: str):
 
     return inputs, expected_output, d_n, d_t, MetaClass
 
+
 ### parse arguments
+
 
 def get_test_arg_meta_type(
     test_id: str, name_f: str, data: dict
-) -> MetadataType | str | None:
+) -> Union[MetadataType, str, None]:
     meta_type_str: str = data["tests"].get("default_meta_type", None)
     meta_type_str = data["tests"][f"tests-{name_f}"][test_id]["inputs"].get(
         "meta_type", meta_type_str
@@ -115,7 +124,10 @@ def get_test_arg_meta_type(
         return None
     return parse_test_arg_meta_type(meta_type_str)
 
-def parse_test_arg_meta_type(meta_type_str: str | None) -> MetadataType | str | None:
+
+def parse_test_arg_meta_type(
+    meta_type_str: Union[str, None]
+) -> Union[MetadataType, str, None]:
     if meta_type_str == ">>MetadataType.FRONTMATTER":
         meta_type = MetadataType.FRONTMATTER
     elif meta_type_str == ">>MetadataType.INLINE":
@@ -126,14 +138,16 @@ def parse_test_arg_meta_type(meta_type_str: str | None) -> MetadataType | str | 
         meta_type = meta_type_str
     return meta_type
 
-def parse_test_arg_order(order_str: str) -> Order | str:
+
+def parse_test_arg_order(order_str: str) -> Union[Order, str]:
     if order_str == ">>Order.ASC":
         order = Order.ASC
     elif order_str == ">>Order.DESC":
         order = Order.DESC
     else:
-        order: str | Order = order_str
+        order: Union[str, Order] = order_str
     return order
+
 
 def parse_name_function_tested(name_f: str):
     return name_f.split("_", maxsplit=1)[-1]
@@ -160,6 +174,7 @@ def t_parse(test_id: str, data: dict, debug: bool = False) -> None:
         err_msg = build_error_msg(test_id, d_t)
         assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+
 def t__extract_str(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -171,6 +186,7 @@ def t__extract_str(test_id: str, data: dict, debug: bool = False) -> None:
     if debug:
         return str_exr, str_exr_true
     assert_list_match(str_exr, str_exr_true)
+
 
 def t__str_to_dict(test_id: str, data: dict, debug: bool = False) -> None:
 
@@ -184,6 +200,7 @@ def t__str_to_dict(test_id: str, data: dict, debug: bool = False) -> None:
         return meta_dict, meta_dict_true
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+
 
 def t_to_string(test_id: str, data: dict, debug: bool = False) -> None:
 
@@ -201,6 +218,7 @@ def t_to_string(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(tostr, tostr_true, msg=err_msg)
 
+
 def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -216,6 +234,7 @@ def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(upd, upd_true, msg=err_msg)
 
+
 def t_exists(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -229,6 +248,7 @@ def t_exists(test_id: str, data: dict, debug: bool = False) -> None:
 
     err_msg = build_error_msg(test_id, d_t)
     assert exists == exists_true, err_msg
+
 
 def t_add(test_id: str, data: dict, debug: bool = False) -> None:
 
@@ -246,6 +266,7 @@ def t_add(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+
 def t_remove(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -262,6 +283,7 @@ def t_remove(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+
 def t_remove_duplicate_values(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -277,6 +299,7 @@ def t_remove_duplicate_values(test_id: str, data: dict, debug: bool = False) -> 
 
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+
 
 def t_order_values(test_id: str, data: dict, debug: bool = False) -> None:
 
@@ -295,6 +318,7 @@ def t_order_values(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
+
 def t_order_keys(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -311,6 +335,7 @@ def t_order_keys(test_id: str, data: dict, debug: bool = False) -> None:
 
     err_msg = build_error_msg(test_id, d_t)
     assert_list_match(keys_order, keys_order_true, msg=err_msg)
+
 
 def t_order(test_id: str, data: dict, debug: bool = False) -> None:
 
@@ -334,6 +359,7 @@ def t_order(test_id: str, data: dict, debug: bool = False) -> None:
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
     assert_list_match(keys_order, keys_order_true, msg=err_msg)
 
+
 def t_erase(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -347,6 +373,7 @@ def t_erase(test_id: str, data: dict, debug: bool = False) -> None:
         return ers, ers_true
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(ers, ers_true, msg=err_msg)
+
 
 ### NoteMetadata test templates
 
@@ -371,6 +398,7 @@ def nmt_remove_duplicate_values(test_id: str, data: dict, debug: bool = False) -
     assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
     assert_dict_match(il_dict, il_dict_true, msg=err_msg)
 
+
 def nmt_order_values(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -392,6 +420,7 @@ def nmt_order_values(test_id: str, data: dict, debug: bool = False) -> None:
     assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
     assert_dict_match(il_dict, il_dict_true, msg=err_msg)
 
+
 def nmt_order_keys(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -412,6 +441,7 @@ def nmt_order_keys(test_id: str, data: dict, debug: bool = False) -> None:
     err_msg = build_error_msg(test_id, d_t)
     assert_list_match(fm_list_keys, fm_list_keys_true, msg=err_msg)
     assert_list_match(il_list_keys, il_list_keys_true, msg=err_msg)
+
 
 def nmt_order(test_id: str, data: dict, debug: bool = False) -> None:
 
@@ -441,6 +471,7 @@ def nmt_order(test_id: str, data: dict, debug: bool = False) -> None:
     assert_dict_match(fm_meta_dict, fm_meta_dict_true, msg=err_msg)
     assert_dict_match(il_meta_dict, il_meta_dict_true, msg=err_msg)
 
+
 def nmt_move(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -462,6 +493,7 @@ def nmt_move(test_id: str, data: dict, debug: bool = False) -> None:
     assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
     assert_dict_match(il_dict, il_dict_true, msg=err_msg)
 
+
 def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
@@ -470,7 +502,7 @@ def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     arg_content = d_n["content"]
     arg_how_inline = inputs["how_inline"]
     nb_times = int(inputs.get("nb_times", 1))
-    
+
     m = NoteMetadata(arg_content)
     for _ in range(nb_times):
         upd: str = m.update_content(arg_content, how_inline=arg_how_inline)  # type: ignore
@@ -482,4 +514,3 @@ def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
 
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(upd, upd_true, msg=err_msg)
-    
