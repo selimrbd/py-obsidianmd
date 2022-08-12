@@ -1,18 +1,19 @@
 [tool.poetry]
 name = "py-obsidianmd"
-version = "0.1.0"
+version = "0.1.2"
 description = "python library for ObsidianMD"
 authors = ["Selim Raboudi <selim.raboudi@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/selimrbd/py-obsidianmd"
 packages = [
-    { include = "pyobsidianmd", from = "src" }
+    { include = "pyomd" }
 ]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 python-frontmatter = "^1.0.0"
+hydra-core = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.0"
