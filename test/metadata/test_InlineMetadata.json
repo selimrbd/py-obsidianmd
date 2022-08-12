@@ -142,6 +142,16 @@
                     "exists": false
                 }
             }
+        },
+        "tests-erase": {
+            "n5": {
+                "description": "NA",
+                "data": "n5",
+                "inputs": {},
+                "expected_output": {
+                    "field_name": "exp_inline_erase"
+                }
+            }
         }
     }
 }

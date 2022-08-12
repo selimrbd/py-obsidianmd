@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
-from pickle import FALSE
 from typing import Callable, Optional, Type, Union
 
 import frontmatter
@@ -66,6 +65,11 @@ class Metadata(ABC):
     @abstractmethod
     def update_content(self, note_content: str) -> str:
         ...
+
+    @classmethod
+    @abstractmethod
+    def erase(cls, note_content: str) -> str:
+        pass
 
     @classmethod
     def exists(cls, note_content: str) -> bool:
@@ -367,7 +371,14 @@ class InlineMetadata(Metadata):
 
     @classmethod
     def erase(cls, note_content: str) -> str:
-        content_no_meta = re.sub(cls.REGEX, "", note_content)
+        keep: list[str] = list()
+        for l in note_content.split("\n"):
+            b_match = re.search(cls.REGEX, l) is not None
+            b_match_enclosed = re.search(cls.REGEX_ENCLOSED, l) is not None
+            if b_match and not b_match_enclosed:
+                continue
+            keep.append(l)
+        content_no_meta = "\n".join(keep)
         return content_no_meta
 
     @staticmethod
