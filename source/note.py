@@ -12,7 +12,6 @@ class Note:
     """
 
     def __init__(self, path: Path | str):
-        print(path)
         self.path: Path = Path(path)
         with open(self.path, "r") as f:
             self.content: str = f.read()
