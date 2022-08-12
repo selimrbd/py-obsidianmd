@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from source.metadata import MetadataType
+from pyobsidianmd.metadata import MetadataType
 
 from ..load_test_data import load_data
 from .templates import (

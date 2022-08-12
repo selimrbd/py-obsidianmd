@@ -1,15 +1,12 @@
-import sys
-from pathlib import Path
-
-sys.path.append("../..")
 import inspect
 from functools import partial
+from pathlib import Path
 from string import Template
 from typing import Callable, Type, Union
 
 import pytest
-from source.exceptions import InvalidFrontmatterError
-from source.metadata import MetadataType, NoteMetadata, Order, return_metaclass
+from pyobsidianmd.exceptions import InvalidFrontmatterError  # keep
+from pyobsidianmd.metadata import MetadataType, NoteMetadata, Order, return_metaclass
 
 PATH_TEST_DATA = Path(__file__).parent / "../0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
