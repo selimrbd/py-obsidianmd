@@ -317,23 +317,6 @@ class InlineMetadata(Metadata):
         return parse_fn(note_content)
 
     @classmethod
-    def parse_2(cls, note_content: str) -> MetaDict:
-        """Parse note content to extract metadata dictionary.
-        Uses the python-frontmatter library."""
-        matches = re.findall(cls.REGEX, note_content)
-        tmp = dict()
-        for _, k, v in matches:
-            tmp[k.strip()] = tmp.get(k, "") + ", " + v
-        metadata: MetaDict = {
-            k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
-            for (k, v) in tmp.items()
-        }
-        if "tags" in metadata:
-            mtags = " ".join(metadata["tags"])
-            metadata["tags"] = [t.strip() for t in mtags.split(" ") if t.strip() != ""]
-        return metadata
-
-    @classmethod
     def parse_1(cls, note_content: str) -> MetaDict:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
