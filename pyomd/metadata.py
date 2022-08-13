@@ -15,6 +15,7 @@ UserInput = Union[str, int, float]
 MetaDict = dict[str, list[str]]
 ParseFunction = Callable[[str], tuple[MetaDict, str]]
 Number = Union[int, float]
+from pyomd.config import CONFIG
 
 
 class Order(Enum):
@@ -26,6 +27,7 @@ class MetadataType(Enum):
     FRONTMATTER = "frontmatter"
     INLINE = "inline"
     ALL = "notemeta"
+    DEFAULT = "default"
 
     @staticmethod
     def get_from_str(s: Union[str, None]) -> MetadataType:
@@ -250,18 +252,6 @@ class Frontmatter(Metadata):
         meta_dict = cls.parse_special_fields(
             metadata=meta_dict, meta_type=MetadataType.FRONTMATTER
         )
-        return meta_dict
-        # parse special fields
-        for k in ["tag", "tags"]:
-            sep = "__sep__"
-            sep_chr = [",", " "]
-            if k in meta_dict:
-                res: list[str] = list()
-                for e in meta_dict[k]:
-                    for sc in sep_chr:
-                        e = re.sub(re.escape(sc), sep, e)
-                    res += [x.strip() for x in e.split(sep) if len(x.strip()) > 0]
-                meta_dict[k] = res
         return meta_dict
 
     @classmethod
@@ -553,7 +543,33 @@ class NoteMetadata:
         else:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
 
-    def move(self, k: Union[str, list[str]], fr: MetadataType, to: MetadataType):
+    def move(
+        self,
+        k: Union[str, list[str], None] = None,
+        fr: Union[MetadataType, None] = None,
+        to: Union[MetadataType, None] = None,
+    ):
+        if k is None:
+            for k2 in CONFIG.cfg["fields"]:
+                if "default_meta" in CONFIG.cfg["fields"][k2]:
+                    default_meta = MetadataType.get_from_str(
+                        CONFIG.cfg["fields"][k2]["default_meta"]
+                    )
+                    m_to = (
+                        self.frontmatter
+                        if default_meta == MetadataType.FRONTMATTER
+                        else self.inline
+                    )
+                    m_from = (
+                        self.frontmatter
+                        if default_meta == MetadataType.INLINE
+                        else self.inline
+                    )
+                    m_to.add(k=k2, l=m_from.metadata[k2])
+                    m_from.remove(k=k2)
+            return
+
+        assert (fr is not None) and (to is not None), "args 'fr' and 'to' should be set"
         if isinstance(k, str):
             k = [k]
         m_from = self.inline if fr == MetadataType.INLINE else self.frontmatter
