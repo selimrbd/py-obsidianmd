@@ -3,6 +3,10 @@ global:
 
 fields:
   tags:
-    default_meta: inline
+    default_meta: frontmatter
     frontmatter_separators: [" ", ","]
-    #inline_separators: [" "]
+    inline_separators: [" "]
+  tag:
+    default_meta: frontmatter
+    frontmatter_separators: [" ", ","]
+    inline_separators: [" "]
