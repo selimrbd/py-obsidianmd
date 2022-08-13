@@ -7,6 +7,8 @@ from typing import Callable, Optional, Type, Union
 
 import frontmatter
 
+from pyomd.config import CONFIG
+
 from .exceptions import ArgTypeError, InvalidFrontmatterError
 
 UserInput = Union[str, int, float]
@@ -53,6 +55,18 @@ class Metadata(ABC):
         cls, note_content: str, parse_fn: Union[ParseFunction, None] = None
     ) -> MetaDict:
         pass
+
+    @staticmethod
+    def parse_special_fields(metadata: MetaDict, meta_type: MetadataType) -> MetaDict:
+        sep_field_name = f"{meta_type.value}_separators"
+        for k in metadata:
+            b1 = k in CONFIG.cfg["fields"]
+            b2 = sep_field_name in CONFIG.cfg["fields"].get(k, {})
+            if b1 and b2:
+                for sep in CONFIG.cfg["fields"][k][sep_field_name]:
+                    tmp = sep.join(metadata[k])
+                    metadata[k] = [t.strip() for t in tmp.split(sep) if t.strip() != ""]
+        return metadata
 
     @abstractmethod
     def to_string(self) -> str:
@@ -232,6 +246,11 @@ class Frontmatter(Metadata):
                 meta_dict[k] = [str(v)]
             if isinstance(v, list):
                 meta_dict[k] = [str(x) for x in v]
+
+        meta_dict = cls.parse_special_fields(
+            metadata=meta_dict, meta_type=MetadataType.FRONTMATTER
+        )
+        return meta_dict
         # parse special fields
         for k in ["tag", "tags"]:
             sep = "__sep__"
@@ -303,7 +322,6 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    # REGEX = "([^\w\n])*([A-z]\w+) ?::(.*)\n?"
     REGEX = "([^A-z\n]*)([A-z][A-z0-9_ \\-]*)::(.*)\n?"
     REGEX_ENCLOSED = "(\\[(.*)::(.*)\\])|(\\((.*)::(.*)\\))"
 
@@ -334,9 +352,10 @@ class InlineMetadata(Metadata):
             k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
             for (k, v) in tmp.items()
         }
-        if "tags" in metadata:
-            mtags = " ".join(metadata["tags"])
-            metadata["tags"] = [t.strip() for t in mtags.split(" ") if t.strip() != ""]
+
+        metadata = cls.parse_special_fields(
+            metadata=metadata, meta_type=MetadataType.INLINE
+        )
         return metadata
 
     def to_string(self) -> str:

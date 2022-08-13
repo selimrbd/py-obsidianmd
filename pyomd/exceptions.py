@@ -7,6 +7,12 @@ class InvalidFrontmatterError(ValueError):
         super().__init__()
 
 
+class MalformedConfigError(ValueError):
+    def __init__(self, msg: str):
+        self.msg = msg
+        super().__init__(self.msg)
+
+
 class ArgTypeError(Exception):
     def __init__(
         self, var_name: str, given_type: type, expected_type: Union[type, str]

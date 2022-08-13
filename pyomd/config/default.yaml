@@ -1,0 +1,8 @@
+global:
+  default_meta: inline
+
+fields:
+  tags:
+    default_meta: inline
+    frontmatter_separators: [" ", ","]
+    #inline_separators: [" "]
