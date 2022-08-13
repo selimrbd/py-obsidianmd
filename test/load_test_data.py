@@ -6,7 +6,7 @@ PATH_TEST_DATA = Path(__file__).parent / "0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
 
 
-def load_test_notes(path_test_notes: Path = PATH_TEST_NOTES) -> dict:
+def load_test_notes(path_test_notes: Path) -> dict:
     """ """
     data = dict()
     note_dirs = os.listdir(path_test_notes)

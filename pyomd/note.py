@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 from typing import Union
 
-from pyobsidianmd.metadata import NoteMetadata
+from pyomd.metadata import NoteMetadata
 
 
 class Note:

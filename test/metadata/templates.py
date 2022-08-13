@@ -5,8 +5,8 @@ from string import Template
 from typing import Callable, Type, Union
 
 import pytest
-from pyobsidianmd.exceptions import InvalidFrontmatterError  # keep
-from pyobsidianmd.metadata import MetadataType, NoteMetadata, Order, return_metaclass
+from pyomd.exceptions import InvalidFrontmatterError  # keep
+from pyomd.metadata import MetadataType, NoteMetadata, Order, return_metaclass
 
 PATH_TEST_DATA = Path(__file__).parent / "../0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
