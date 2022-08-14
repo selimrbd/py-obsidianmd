@@ -433,10 +433,21 @@ class NoteMetadata:
         self,
         k: str,
         l: Union[UserInput, list[UserInput], None],
-        meta_type: MetadataType = MetadataType.FRONTMATTER,
+        meta_type: MetadataType = MetadataType.DEFAULT,
         overwrite: bool = False,
     ) -> None:
         """ """
+        if meta_type == MetadataType.DEFAULT:
+            b1 = k in CONFIG.cfg["fields"]
+            b2 = "default_meta" in CONFIG.cfg["fields"].get(k, {})
+            if b1 and b2:
+                meta_type = MetadataType.get_from_str(
+                    CONFIG.cfg["fields"][k]["default_meta"]
+                )
+            else:
+                meta_type = MetadataType.get_from_str(
+                    CONFIG.cfg["global"]["default_meta"]
+                )
         if meta_type == MetadataType.FRONTMATTER:
             self.frontmatter.add(k=k, l=l, overwrite=overwrite)
         if meta_type == MetadataType.INLINE:
