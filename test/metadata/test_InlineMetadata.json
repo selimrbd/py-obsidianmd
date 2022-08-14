@@ -116,12 +116,37 @@
             }
         },
         "tests-update_content": {
-            "n4": {
-                "description": "NA",
+            "n4_not_inplace_bottom": {
+                "description": "add inline meta to the bottom, inplace = False",
                 "data": "n4",
-                "inputs": {},
+                "inputs": {
+                    "how": "bottom",
+                    "inplace": false
+                },
                 "expected_output": {
-                    "field_name": "exp_inline_upd_bottom"
+                    "field_name": "exp_inline_upd_bottom_inplace_FALSE"
+                }
+            },
+            "n4_not_inplace_top": {
+                "description": "add inline meta to the top, inplace = False",
+                "data": "n4",
+                "inputs": {
+                    "how": "top",
+                    "inplace": false
+                },
+                "expected_output": {
+                    "field_name": "exp_inline_upd_top_inplace_FALSE"
+                }
+            },
+            "n4_inplace": {
+                "description": "add inline meta to the top, inplace = False",
+                "data": "n4",
+                "inputs": {
+                    "how": "bottom",
+                    "inplace": true
+                },
+                "expected_output": {
+                    "field_name": "exp_inline_upd_inplace_TRUE"
                 }
             }
         },

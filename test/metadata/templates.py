@@ -1,3 +1,4 @@
+import difflib
 import inspect
 from functools import partial
 from pathlib import Path
@@ -6,7 +7,13 @@ from typing import Callable, Type, Union
 
 import pytest
 from pyomd.exceptions import InvalidFrontmatterError  # keep
-from pyomd.metadata import MetadataType, NoteMetadata, Order, return_metaclass
+from pyomd.metadata import (
+    InlineMetadata,
+    MetadataType,
+    NoteMetadata,
+    Order,
+    return_metaclass,
+)
 
 PATH_TEST_DATA = Path(__file__).parent / "../0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
@@ -52,10 +59,14 @@ def assert_str_match(s1: str, s2: str, msg: str = "") -> None:
         - s1: output of function to test
         - s2: expected result
     """
-    err_template = Template(
-        "$msg\n---\nstrings don't match.\n@@ output @@\n$o\n@@@@@\n@@ expected result @@\n$er\n@@@@@\n"
+    diffs = difflib.unified_diff(
+        s1.split("\n"),
+        s2.split("\n"),
+        fromfile="output",
+        tofile="expected result",
+        lineterm="",
     )
-    err_msg = err_template.substitute(msg=msg, o=s1, er=s2)
+    err_msg = "\n".join(["strings don't match."] + list(diffs))
     assert s1 == s2, err_msg
 
 
@@ -219,16 +230,23 @@ def t_to_string(test_id: str, data: dict, debug: bool = False) -> None:
 def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
-    _, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
+    inputs, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
 
     m = MetaClass(d_n["content"])
-    upd: str = m.update_content(d_n["content"])  # type: ignore
+    if isinstance(m, InlineMetadata):
+        arg_how: str = inputs["how"]
+        arg_inplace: bool = inputs["inplace"]
+        upd: str = m.update_content(d_n["content"], how=arg_how, inplace=arg_inplace)  # type: ignore
+    else:
+        upd: str = m.update_content(d_n["content"])  # type: ignore
     name_field_true: str = expected_output["field_name"]
     upd_true: str = d_n[name_field_true]
 
     if debug:
         return upd, upd_true
     err_msg = build_error_msg(test_id, d_t)
+    if isinstance(m, InlineMetadata):
+        err_msg = f'arg_how: "{arg_how}"\narg_inplace: "{arg_inplace}"\n' + err_msg
     assert_str_match(upd, upd_true, msg=err_msg)
 
 
@@ -496,13 +514,18 @@ def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     inputs, expected_output, d_n, d_t, _ = prep_test_data(test_id, data, name_f)
 
-    arg_content = d_n["content"]
-    arg_how_inline = inputs["how_inline"]
+    arg_content: str = d_n["content"]
+    arg_inline_how: str = inputs["inline_how"]
+    arg_inline_inplace: bool = inputs["inline_inplace"]
     nb_times = int(inputs.get("nb_times", 1))
 
     m = NoteMetadata(arg_content)
     for _ in range(nb_times):
-        upd: str = m.update_content(arg_content, how_inline=arg_how_inline)  # type: ignore
+        upd: str = m.update_content(
+            note_content=arg_content,
+            inline_how=arg_inline_how,
+            inline_inplace=arg_inline_inplace,
+        )  # type: ignore
     name_field_true: str = expected_output["field_name"]
     upd_true: str = d_n[name_field_true]
 

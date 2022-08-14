@@ -15,6 +15,9 @@ UserInput = Union[str, int, float]
 MetaDict = dict[str, list[str]]
 ParseFunction = Callable[[str], tuple[MetaDict, str]]
 Number = Union[int, float]
+from string import Template
+from typing import Tuple
+
 from pyomd.config import CONFIG
 
 
@@ -314,6 +317,7 @@ class InlineMetadata(Metadata):
 
     REGEX = "([^A-z\n]*)([A-z][A-z0-9_ \\-]*)::(.*)\n?"
     REGEX_ENCLOSED = "(\\[(.*)::(.*)\\])|(\\((.*)::(.*)\\))"
+    REGEX_FIELD = Template("([^A-z\n]*)(($field) *)(::)(.*)(\n?)")
 
     @classmethod
     def parse(
@@ -348,15 +352,20 @@ class InlineMetadata(Metadata):
         )
         return metadata
 
-    def to_string(self) -> str:
+    def to_string(self, ignore_k: Union[str, list[str], None] = None) -> str:
         """Render metadata as a string.
 
         If repr is True, print to screen
         """
-        if len(self.metadata) == 0:
+        if ignore_k is None:
+            ignore_k = list()
+        if isinstance(ignore_k, str):
+            ignore_k = [ignore_k]
+        meta_dict = {k: v for (k, v) in self.metadata.items() if k not in ignore_k}
+        if len(meta_dict) == 0:
             return ""
         r = ""
-        for k, v in self.metadata.items():
+        for k, v in meta_dict.items():
             r += f"{k}:: {', '.join(v)}\n"
         r = r[:-1]  # remove last \n
         return r
@@ -393,21 +402,47 @@ class InlineMetadata(Metadata):
             sep = ""
         return sep
 
-    def update_content(self, note_content: str, how: str = "bottom") -> str:
+    def update_content_inplace(self, note_content: str) -> Tuple[str, list[str]]:
+        """
+        Updates inline metadata in place.
+
+        Returns a tuple:
+            - updated note_content
+            - list of updated fields.
+        """
+        nc = note_content
+        updated_fields: list[str] = list()
+        for k in self.metadata:
+            rgx = self.REGEX_FIELD.substitute(field=k)
+            if re.search(rgx, nc) is not None:
+                updated_fields.append(k)
+                nc = re.sub(rgx, f'\\1\\2\\4 {", ".join(self.metadata[k])}\\6', nc)
+        return (nc, updated_fields)
+
+    def update_content(
+        self, note_content: str, how: str = "bottom", inplace: bool = True
+    ) -> str:
         """
         how:
-            - inplace
             - bottom
             - top
+        inplace:
+            - replace inline metadata inplace (for existing fields in the note)
         """
-        c_no_meta = self.erase(note_content)
-        sep = self.get_sep_newlines(c_no_meta, how=how)
-        if how == "top":
-            return self.to_string() + sep + c_no_meta
-        elif how == "bottom":
-            return c_no_meta + sep + self.to_string()
+        if inplace:
+            nc, ignore_k = self.update_content_inplace(note_content=note_content)
         else:
+            nc, ignore_k = self.erase(note_content), None
+        sep = self.get_sep_newlines(nc, how=how)
+        if how == "top":
+            new_nc = self.to_string(ignore_k=ignore_k) + sep + nc
+        elif how == "bottom":
+            new_nc = nc + sep + self.to_string(ignore_k=ignore_k)
+        else:
+            new_nc = ""
             raise NotImplementedError
+        new_nc = new_nc.strip()
+        return new_nc
 
 
 class NoteMetadata:
@@ -499,9 +534,13 @@ class NoteMetadata:
         else:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
 
-    def update_content(self, note_content: str, how_inline: str = "bottom") -> str:
+    def update_content(
+        self, note_content: str, inline_how: str = "bottom", inline_inplace: bool = True
+    ) -> str:
         str_no_fm = self.frontmatter.erase(note_content)
-        res = self.inline.update_content(str_no_fm, how=how_inline)
+        res = self.inline.update_content(
+            str_no_fm, how=inline_how, inplace=inline_inplace
+        )
         res = self.frontmatter.to_string() + res
         return res
 

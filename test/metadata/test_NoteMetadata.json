@@ -533,7 +533,8 @@
                 "description": "NA",
                 "data": "n4",
                 "inputs": {
-                    "how_inline": "bottom"
+                    "inline_how": "bottom",
+                    "inline_inplace": false
                 },
                 "expected_output": {
                     "field_name": "exp_notemeta_upd_inline_bottom"
@@ -543,7 +544,8 @@
                 "description": "NA",
                 "data": "n4",
                 "inputs": {
-                    "how_inline": "top"
+                    "inline_how": "top",
+                    "inline_inplace": false
                 },
                 "expected_output": {
                     "field_name": "exp_notemeta_upd_inline_top"
@@ -553,11 +555,23 @@
                 "description": "update multiple times",
                 "data": "n4",
                 "inputs": {
-                    "how_inline": "top",
+                    "inline_how": "top",
+                    "inline_inplace": false,
                     "nb_times": 4
                 },
                 "expected_output": {
                     "field_name": "exp_notemeta_upd_inline_top"
+                }
+            },
+            "n4_4": {
+                "description": "update inplace",
+                "data": "n4",
+                "inputs": {
+                    "inline_how": "bottom",
+                    "inline_inplace": true
+                },
+                "expected_output": {
+                    "field_name": "exp_notemeta_upd_inline_inplace"
                 }
             }
         }
