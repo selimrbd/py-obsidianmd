@@ -1,5 +1,6 @@
 Python utilities for the personal knowledge management tool [Obsidian](https://obsidian.md/)
 
+[documentation](https://selimrbd.github.io/py-obsidianmd/)
 
 ## Motivation
 
