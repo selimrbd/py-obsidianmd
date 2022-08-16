@@ -99,6 +99,14 @@ class Metadata(ABC):
             meta_dict = {}
         return len(meta_dict) > 0
 
+    def get(self, k: str) -> Union[list[str], None]:
+        """adds a metadata field, or new values if it already exists
+
+        If overwrite is set to True, the old value is overwritten. Otherwise, new elements are
+        appended.
+        """
+        return self.metadata.get(k, None)
+
     def add(
         self,
         k: str,
@@ -464,6 +472,28 @@ class NoteMetadata:
             )
         return meta_type
 
+    def get_default_metadata(self, k: str):
+        b1 = k in CONFIG.cfg["fields"]
+        b2 = "default_meta" in CONFIG.cfg["fields"].get(k, {})
+        if b1 and b2:
+            meta_type = MetadataType.get_from_str(
+                CONFIG.cfg["fields"][k]["default_meta"]
+            )
+        else:
+            meta_type = MetadataType.get_from_str(CONFIG.cfg["global"]["default_meta"])
+        return meta_type
+
+    def get(
+        self, k: str, meta_type: MetadataType = MetadataType.DEFAULT
+    ) -> Union[list[str], None]:
+        """ """
+        if meta_type == MetadataType.DEFAULT:
+            meta_type = self.get_default_metadata(k)
+        if meta_type == MetadataType.FRONTMATTER:
+            return self.frontmatter.get(k=k)
+        if meta_type == MetadataType.INLINE:
+            return self.frontmatter.get(k=k)
+
     def add(
         self,
         k: str,
@@ -473,16 +503,7 @@ class NoteMetadata:
     ) -> None:
         """ """
         if meta_type == MetadataType.DEFAULT:
-            b1 = k in CONFIG.cfg["fields"]
-            b2 = "default_meta" in CONFIG.cfg["fields"].get(k, {})
-            if b1 and b2:
-                meta_type = MetadataType.get_from_str(
-                    CONFIG.cfg["fields"][k]["default_meta"]
-                )
-            else:
-                meta_type = MetadataType.get_from_str(
-                    CONFIG.cfg["global"]["default_meta"]
-                )
+            meta_type = self.get_default_metadata(k)
         if meta_type == MetadataType.FRONTMATTER:
             self.frontmatter.add(k=k, l=l, overwrite=overwrite)
         if meta_type == MetadataType.INLINE:
