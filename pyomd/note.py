@@ -32,7 +32,9 @@ class Note:
         with open(p, "w") as f:
             f.write(self.content)
 
-    def sub(self, pattern: str, replace: str):
+    def sub(self, pattern: str, replace: str, is_regex: bool = False):
+        if not is_regex:
+            pattern = re.escape(pattern)
         self.content = re.sub(pattern, replace, self.content)
 
     def print(self):

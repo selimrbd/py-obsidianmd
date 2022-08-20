@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
+from re import Pattern
 from typing import Callable, Optional, Type, Union
 
 import frontmatter
@@ -323,8 +324,11 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    REGEX = "([^A-z\n]*)([A-z][A-z0-9_ \\-]*)::(.*)\n?"
-    REGEX_ENCLOSED = "(\\[(.*)::(.*)\\])|(\\((.*)::(.*)\\))"
+    REGEX = re.compile(r"(.*?)(?P<key>[A-z][A-z0-9_ -]*)::(?P<values>.*)")
+    TMP_ENCLOSED = Template(
+        r"(?P<beg>.*?)(?P<open>[(\[])(?P<key>$key)::(?P<values>.*?)(?P<close>[)\]])(?P<end>.*)"
+    )
+    REGEX_ENCLOSED = re.compile(TMP_ENCLOSED.substitute(key=".*?"))
     REGEX_FIELD = Template("([^A-z\n]*)(($field) *)(::)(.*)(\n?)")
 
     @classmethod
@@ -340,16 +344,20 @@ class InlineMetadata(Metadata):
     def parse_1(cls, note_content: str) -> MetaDict:
         """Parse note content to extract metadata dictionary.
         Uses the python-frontmatter library."""
-        matches = list()
-        for l in note_content.split("\n"):
-            b_match = re.search(cls.REGEX, l) is not None
-            b_match_enclosed = re.search(cls.REGEX_ENCLOSED, l) is not None
-            if b_match and not b_match_enclosed:
-                matches += re.findall(cls.REGEX, l)
 
-        tmp = dict()
-        for _, k, v in matches:
-            tmp[k.strip()] = tmp.get(k, "") + ", " + v
+        matches: list[re.Match] = list()
+        for l in note_content.split("\n"):
+            m = cls.REGEX.search(l)
+            b = m is not None
+            b_enc = cls.REGEX_ENCLOSED.search(l) is not None
+            if b and not b_enc:
+                matches.append(m)
+
+        tmp: dict[str, list[str]] = dict()
+        for m in matches:
+            k = m.group("key").strip()
+            v = m.group("values")
+            tmp[k] = tmp.get(k, "") + ", " + v
         metadata: MetaDict = {
             k: [x.strip() for x in v.split(",") if len(x.strip()) > 0]
             for (k, v) in tmp.items()
@@ -413,7 +421,6 @@ class InlineMetadata(Metadata):
     def update_content_inplace(self, note_content: str) -> Tuple[str, list[str]]:
         """
         Updates inline metadata in place.
-
         Returns a tuple:
             - updated note_content
             - list of updated fields.
@@ -426,6 +433,29 @@ class InlineMetadata(Metadata):
                 updated_fields.append(k)
                 nc = re.sub(rgx, f'\\1\\2\\4 {", ".join(self.metadata[k])}\\6', nc)
         return (nc, updated_fields)
+
+    def update_content_inplace_2(self, note_content: str) -> Tuple[str, set[str]]:
+        """
+        Updates inline metadata in place.
+
+        Returns a tuple:
+            - updated note_content
+            - list of updated fields.
+        """
+        updated_fields: set[str] = set()
+        for k in self.metadata:
+            new_v = ", ".join(self.metadata[k])
+            regex_field = re.compile(self.TMP_ENCLOSED.substitute(key=f"{k} *"))
+            for m in regex_field.finditer(note_content):
+                updated_fields.add(k)
+                beg = m.group("beg")
+                op = m.group("open")
+                cl = m.group("close")
+                k = m.group("key")
+                end = m.group("end")
+                rep = f"{beg}{op}{k} :: {new_v}{cl}{end}"
+                note_content = regex_field.sub(rep, note_content)
+        return (note_content, updated_fields)
 
     def update_content(
         self, note_content: str, how: str = "bottom", inplace: bool = True
