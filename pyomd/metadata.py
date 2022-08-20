@@ -324,12 +324,12 @@ class Frontmatter(Metadata):
 class InlineMetadata(Metadata):
     """Represents the inline metadata of a note"""
 
-    REGEX = re.compile(r"(.*?)(?P<key>[A-z][A-z0-9_ -]*)::(?P<values>.*)")
-    TMP_ENCLOSED = Template(
+    TMP_REGEX = Template(r"(?P<beg>.*?)(?P<key>$key)::(?P<values>.*)")
+    TMP_REGEX_ENCLOSED = Template(
         r"(?P<beg>.*?)(?P<open>[(\[])(?P<key>$key)::(?P<values>.*?)(?P<close>[)\]])(?P<end>.*)"
     )
-    REGEX_ENCLOSED = re.compile(TMP_ENCLOSED.substitute(key=".*?"))
-    REGEX_FIELD = Template("([^A-z\n]*)(($field) *)(::)(.*)(\n?)")
+    REGEX = re.compile(TMP_REGEX.substitute(key="[A-z][A-z0-9_ -]*"))
+    REGEX_ENCLOSED = re.compile(TMP_REGEX_ENCLOSED.substitute(key=".*?"))
 
     @classmethod
     def parse(
@@ -418,23 +418,7 @@ class InlineMetadata(Metadata):
             sep = ""
         return sep
 
-    def update_content_inplace(self, note_content: str) -> Tuple[str, list[str]]:
-        """
-        Updates inline metadata in place.
-        Returns a tuple:
-            - updated note_content
-            - list of updated fields.
-        """
-        nc = note_content
-        updated_fields: list[str] = list()
-        for k in self.metadata:
-            rgx = self.REGEX_FIELD.substitute(field=k)
-            if re.search(rgx, nc) is not None:
-                updated_fields.append(k)
-                nc = re.sub(rgx, f'\\1\\2\\4 {", ".join(self.metadata[k])}\\6', nc)
-        return (nc, updated_fields)
-
-    def update_content_inplace_2(self, note_content: str) -> Tuple[str, set[str]]:
+    def update_content_inplace(self, note_content: str) -> Tuple[str, set[str]]:
         """
         Updates inline metadata in place.
 
@@ -445,15 +429,15 @@ class InlineMetadata(Metadata):
         updated_fields: set[str] = set()
         for k in self.metadata:
             new_v = ", ".join(self.metadata[k])
-            regex_field = re.compile(self.TMP_ENCLOSED.substitute(key=f"{k} *"))
+            regex_field = re.compile(self.TMP_REGEX.substitute(key=f"{k} *"))
+            print(regex_field.search(note_content))
             for m in regex_field.finditer(note_content):
+                print(f"gotacha: {k}")
+                print(m)
                 updated_fields.add(k)
                 beg = m.group("beg")
-                op = m.group("open")
-                cl = m.group("close")
                 k = m.group("key")
-                end = m.group("end")
-                rep = f"{beg}{op}{k} :: {new_v}{cl}{end}"
+                rep = f"{beg}{k.strip()} :: {new_v}"
                 note_content = regex_field.sub(rep, note_content)
         return (note_content, updated_fields)
 

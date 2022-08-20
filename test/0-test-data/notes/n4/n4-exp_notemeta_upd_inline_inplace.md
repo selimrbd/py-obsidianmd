@@ -4,7 +4,7 @@ fm: hello, world, hello
 ---
 blabla
 c2 :: foo, foo bar, biz, baz
-c1:: foo, foo bar
+c1 :: foo, foo bar
 blabla
 
 
@@ -19,6 +19,6 @@ tags :: t4, t5, t6, t5
 
 ## blabla
 
-c2:: foo, foo bar, biz, baz
+c2 :: foo, foo bar, biz, baz
 
 blibliblou
