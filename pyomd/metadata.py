@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
-from re import Pattern
 from typing import Callable, Optional, Type, Union
 
 import frontmatter
@@ -165,7 +164,11 @@ class Metadata(ABC):
         elif isinstance(k, list):
             list_keys = k
         else:
-            raise ArgTypeError("k", type(k), str(Union[str, list[str], None]))
+            raise ArgTypeError(
+                var_name="k",
+                type_given=type(k),
+                type_expected=str(Union[str, list[str], None]),
+            )
 
         for k2 in list_keys:
             if k2 not in self.metadata:
@@ -181,7 +184,7 @@ class Metadata(ABC):
             - k: key on which to order the values. If None, orders all values
         """
         if not isinstance(how, Order):
-            raise ArgTypeError("how", type(how), Order)  # type: ignore
+            raise ArgTypeError(var_name="how", type_given=type(how), type_expected=Order)  # type: ignore
 
         if k is None:
             k = list(self.metadata.keys())
@@ -481,8 +484,8 @@ class NoteMetadata:
         if not isinstance(meta_type, MetadataType):  # type: ignore
             raise ArgTypeError(
                 var_name="meta_type",
-                given_type=type(meta_type),
-                expected_type=str(Union[MetadataType, None]),
+                type_given=type(meta_type),
+                type_expected=str(Union[MetadataType, None]),
             )
         return meta_type
 

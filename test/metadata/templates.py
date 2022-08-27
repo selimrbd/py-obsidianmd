@@ -6,7 +6,7 @@ from string import Template
 from typing import Callable, Type, Union
 
 import pytest
-from pyomd.exceptions import InvalidFrontmatterError  # keep
+from pyomd.exceptions import InvalidFrontmatterError  # pylance: ignore
 from pyomd.metadata import (
     InlineMetadata,
     MetadataType,
