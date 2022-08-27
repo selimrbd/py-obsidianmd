@@ -1,9 +1,24 @@
+# additional ignores
+
+## misc
+
 docs/site
 pyomd-config.yaml
+
+## notebooks
+
 dev.ipynb
+update-vault.ipynb
+
+# Mac stuff
+
 .DS_Store
+
+# VSCode
+
 .vscode
 *.code-workspace
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
