@@ -20,7 +20,7 @@ Currently focused on enabling obsidian users to **experiment between different w
 
 ### installation
 Install the library using pip:
-```{bash}
+```zsh
 pip install py-obsidianmd
 ```
 
