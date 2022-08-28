@@ -29,7 +29,7 @@ You can test the libraries functionalities on an example vault, "example-pkb" pr
 
 ### Add metadata to a group of notes
 
-```{python}
+```python
 from pyomd import Notes
 from pyomd.metadata import MetadataType
 from pathlib import Path
