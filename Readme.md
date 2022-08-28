@@ -1,63 +1,38 @@
-Python utilities for the personal knowledge management tool [Obsidian](https://obsidian.md/)
+A python library for [ObsidianMD](https://obsidian.md/).
 
-[documentation](https://selimrbd.github.io/py-obsidianmd/)
+Currently focused on enabling obsidian users to **experiment between different ways of organizing their notes metadata**.
 
-## Motivation
+<br>
 
-I wanted to modify my notes' metadata in batch and couldn't find an existing plugin to do so.
-If some of the functionalities you see here are already available in a plugin, please let me know.
-Open for contributions.
+See the [full reference here](https://selimrbd.github.io/py-obsidianmd/)
 
-## Current features
+<br>
 
-* Create a Note object from a file path, that has a 'frontmatter', 'metadata', and 'tags' attributes
-* Add / remove tags from the note
-* Write back the updated note to disk
+:warning: **warning**: so far the library has been tested on very few different vaults. **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
 
-## Warnings
+## introduction video
 
-* **This code hasn't been much tested yet**, use at your own peril
-* **This code only handles tags present in the frontmatter**, not the note body
+<WIP>
 
-## Basic usage
+## features
+- add and remove metadata fields in batch
+- move metadata between the frontmatter and inline ([dataview](https://github.com/blacksmithgu/obsidian-dataview) style)
+- group all your inline metadata fields at the top/bottom of your notes
+- order your metadata fields and values: sort alphabetically, remove duplicates, ...
 
+## quickstart
+<WIP>
 
-```{python}
-path = Path('path/to/file')
-note = Note(path)
+## license
 
-## print frontmatter
-print(note.frontmatter)
+[BSD 3](LICENSE.txt)
 
-## get the note's metadata (from frontmatter) as a dict
-note.metadata
+## contributing
+Contributions are more than welcome. Different ways you can contribute:
+- **Write an issue**: report a bug, suggest an enhancement, ...
+- **Submit a pull request** to solve an open issue
 
-## get list of tags
-print(note.tags)
+For more details, see the [contribution guidelines](CONTRIBUTING.md).
 
-## add a tag
-note.add_tag('tag_name')
-
-## remove a tag
-note.remove_tag('tag_name')
-
-## write the note with the updated metadata
-note.write()
-```
-
-Original motivation: add a tag to all files in a folder
-
-```{python}
-import os
-from pathlib import Path
-from source.note import Note
-
-path_dir = Path('path/to/dir')
-
-for r,d,fls in os.walk(path_dir):
-    for f in fls:
-        pth = Path(r)/f
-        note = Note(pth)
-        note.add_tag('tag_name')
-        note.write()
-```
+## support
+<WIP>
