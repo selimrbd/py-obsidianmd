@@ -48,7 +48,7 @@ nts.metadata.add(k='parent', values=["[[NOTETYPE - Book]]"], meta_type=MetadataT
 nts.update_content(write=True)
 ```
 
-For a step-by-step example, see [the introduction video](## Introduction video).
+For a step-by-step example, see [the introduction video](#introduction-video).
 For a list of all the libraries' feature, see the [full reference](https://selimrbd.github.io/py-obsidianmd/)
 
 ## License
