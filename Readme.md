@@ -1,3 +1,5 @@
+# py-obsidianmd
+
 A python library for [ObsidianMD](https://obsidian.md/).
 
 Currently focused on enabling obsidian users to **experiment between different ways of organizing their notes metadata**. See the [full reference here](https://selimrbd.github.io/py-obsidianmd/)
@@ -40,7 +42,7 @@ path_dir = Path('my-knowledge-base')
 nts = Notes(paths=[path_dir]).filter(has_meta={'tags': 'type/book'})
 
 # add a new inline metadata field "up" and assign the value of "[[NOTETYPE - Book]]" 
-nts.metadata.add(k='up', values=["[[NOTETYPE - Book]]"], meta_type=MetadataType.INLINE)
+nts.metadata.add(k='parent', values=["[[NOTETYPE - Book]]"], meta_type=MetadataType.INLINE)
 
 # update the notes content and write them to disk
 nts.update_content(write=True)
