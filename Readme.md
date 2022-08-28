@@ -1,14 +1,10 @@
 A python library for [ObsidianMD](https://obsidian.md/).
 
-Currently focused on enabling obsidian users to **experiment between different ways of organizing their notes metadata**.
+Currently focused on enabling obsidian users to **experiment between different ways of organizing their notes metadata**. See the [full reference here](https://selimrbd.github.io/py-obsidianmd/)
 
 <br>
 
-See the [full reference here](https://selimrbd.github.io/py-obsidianmd/)
-
-<br>
-
-:warning: **warning**: so far the library has been tested on very few different vaults. **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
+:warning: so far the library has been tested on very few different vaults. **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
 
 ## introduction video
 
