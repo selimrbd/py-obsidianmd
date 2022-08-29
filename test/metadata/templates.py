@@ -390,6 +390,29 @@ def t_erase(test_id: str, data: dict, debug: bool = False) -> None:
     assert_str_match(ers, ers_true, msg=err_msg)
 
 
+# def t_has(test_id: str, data: dict, debug: bool = False):
+#     """Test template for Metadata.has."""
+#     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+#     inputs, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
+#     o_keys = parse_test_arg_order(inputs["o_keys"])
+#     o_values = parse_test_arg_order(inputs["o_values"])
+
+#     m = MetaClass(d_n["content"])
+#     m.order(k=inputs["k"], o_keys=o_keys, o_values=o_values)
+
+#     meta_dict = m.metadata
+#     meta_dict_true: dict[str, list[str]] = expected_output["meta_dict"]
+#     keys_order = list(m.metadata.keys())
+#     keys_order_true: list[str] = expected_output["keys_order"]
+
+#     if debug:
+#         return keys_order, keys_order_true, meta_dict, meta_dict_true
+
+#     err_msg = build_error_msg(test_id, d_t)
+#     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
+#     assert_list_match(keys_order, keys_order_true, msg=err_msg)
+
+
 ### NoteMetadata test templates
 
 
@@ -412,6 +435,19 @@ def nmt_remove_duplicate_values(test_id: str, data: dict, debug: bool = False) -
     err_msg = build_error_msg(test_id, d_t)
     assert_dict_match(fm_dict, fm_dict_true, msg=err_msg)
     assert_dict_match(il_dict, il_dict_true, msg=err_msg)
+
+
+def nmt_has(test_id: str, data: dict, debug: bool = False) -> None:
+
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs, expected_output, d_n, d_t, _ = prep_test_data(test_id, data, name_f)
+
+    m = NoteMetadata(d_n["content"])
+    meta_type = parse_test_arg_meta_type(inputs["meta_type"])
+    b_has = m.has(k=inputs["k"], l=inputs["l"], meta_type=meta_type)
+    b_has_true = expected_output["b_has"]
+    err_msg = build_error_msg(test_id, d_t)
+    assert b_has == b_has_true, f"b_has: {b_has}\nb_has_true: {b_has_true}\n{err_msg}"
 
 
 def nmt_order_values(test_id: str, data: dict, debug: bool = False) -> None:

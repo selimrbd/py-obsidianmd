@@ -3,9 +3,10 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Callable, Optional, Type, Union
+from string import Template
+from typing import Callable, Optional, Tuple, Type, Union
 
-import frontmatter
+import frontmatter  # type: ignore
 
 from pyomd.config import CONFIG
 
@@ -15,18 +16,26 @@ UserInput = Union[str, int, float]
 MetaDict = dict[str, list[str]]
 ParseFunction = Callable[[str], tuple[MetaDict, str]]
 Number = Union[int, float]
-from string import Template
-from typing import Tuple
-
-from pyomd.config import CONFIG
 
 
 class Order(Enum):
+    """Defines how a list should be ordered."""
+
     ASC = "asc"
     DESC = "desc"
 
 
 class MetadataType(Enum):
+    """Type of metadata.
+
+    Possible values:
+        FRONTMATTER: note frontmatter
+        INLINE: inline metadata (dataview style)
+        ALL: note metadata, wherever it is located (inline, or frontmatter)
+        DEFAULT: default location where to define new metadata
+        BODYTAG: bodytags (ex: #tag1, #tag2). Can be located anywhere in the file content
+    """
+
     FRONTMATTER = "frontmatter"
     INLINE = "inline"
     ALL = "notemeta"
@@ -43,16 +52,22 @@ class MetadataType(Enum):
 
 
 class Metadata(ABC):
+    """Common attributes and methods for all types of metadata."""
+
     def __init__(self, note_content: str):
+        """Inits the Metadata class by parsing the note content"""
         self.metadata: MetaDict = self.parse(note_content)
 
     def __repr__(self):
-        r = f"{type(self)}:\n"
+        """Creates a string representing the Metadata class."""
+        rpr = f"{type(self)}:\n"
         if self.to_string() is None:
-            r += " None"
+            rpr += " None"
         else:
-            r += "".join([f'- {k}: {", ".join(v)}\n' for k, v in self.metadata.items()])
-        return r
+            rpr += "".join(
+                [f'- {k}: {", ".join(v)}\n' for k, v in self.metadata.items()]
+            )
+        return rpr
 
     @classmethod
     @abstractmethod
@@ -107,6 +122,23 @@ class Metadata(ABC):
         """
         return self.metadata.get(k, None)
 
+    def has(self, k: str, l: Union[list[str], None] = None) -> bool:
+        """Checks if metadata contains field k and values l.
+
+        Args:
+            k: metadata field.
+            l: values of the metadata field. If set to None, no values are checked.
+            To check if metadata[k] is empty, set l to an empty list.
+        """
+        b_has = k in self.metadata
+        if l is None:
+            return b_has
+        if b_has and len(l) == 0:
+            b_has = self.metadata[k] == []
+        if b_has and len(l) > 0:
+            b_has = all(val in self.metadata[k] for val in l)
+        return b_has
+
     def add(
         self,
         k: str,
@@ -146,7 +178,7 @@ class Metadata(ABC):
         self.metadata[k] = [e for e in self.metadata[k] if e not in nl]
 
     def remove_empty(self) -> None:
-        """removes a metadata field"""
+        """removes empty metadata fields"""
         empty: list[str] = list()
         for k in self.metadata:
             if len(self.metadata[k]) == 0:
@@ -156,6 +188,7 @@ class Metadata(ABC):
             del self.metadata[k]
 
     def remove_duplicate_values(self, k: Union[str, list[str], None] = None) -> None:
+        """Removes duplicate values of a metadata key."""
 
         if k is None:
             list_keys = list(self.metadata.keys())
@@ -227,7 +260,7 @@ class Metadata(ABC):
 
 
 class Frontmatter(Metadata):
-    """Represents the frontmatter of a note"""
+    """A note's frontmatter."""
 
     REGEX = "(?s)(^---\n).*?(\n---\n)"
 
@@ -325,7 +358,7 @@ class Frontmatter(Metadata):
 
 
 class InlineMetadata(Metadata):
-    """Represents the inline metadata of a note"""
+    """A note's inline metadata (dataview style)"""
 
     TMP_REGEX = Template(r"(?P<beg>.*?)(?P<key>$key)::(?P<values>.*)")
     TMP_REGEX_ENCLOSED = Template(
@@ -471,7 +504,7 @@ class InlineMetadata(Metadata):
 
 
 class NoteMetadata:
-    """Contains all the note's metadata (frontmatter + inline)."""
+    """All the note's metadata (frontmatter + inline)."""
 
     def __init__(self, note_content: str):
         self.frontmatter = Frontmatter(note_content)
@@ -510,6 +543,32 @@ class NoteMetadata:
             return self.frontmatter.get(k=k)
         if meta_type == MetadataType.INLINE:
             return self.frontmatter.get(k=k)
+
+    def has(
+        self,
+        k: str,
+        l: Union[list[str], None] = None,
+        meta_type: Union[MetadataType, None] = None,
+    ) -> bool:
+        """Checks if metadata contains field k and values l.
+
+        Args:
+            k: metadata field.
+            l: values of the metadata field. If set to None, no values are checked.
+            To check if metadata[k] is empty, set l to an empty list.
+            meta_type: metadata type. If None, it returns true if it finds the expected values
+            in any of the metadata types.
+        """
+        b_has_fm = self.frontmatter.has(k=k, l=l)
+        b_has_il = self.inline.has(k=k, l=l)
+        if meta_type is None:
+            return b_has_fm or b_has_il
+        if meta_type == MetadataType.FRONTMATTER:
+            return b_has_fm
+        if meta_type == MetadataType.INLINE:
+            return b_has_il
+        else:
+            raise NotImplementedError
 
     def add(
         self,

@@ -133,7 +133,8 @@
                             "a",
                             "b",
                             "c"
-                        ]
+                        ],
+                        "i9": []
                     }
                 }
             },
@@ -180,7 +181,8 @@
                             "b",
                             "a",
                             "c"
-                        ]
+                        ],
+                        "i9": []
                     }
                 }
             },
@@ -227,7 +229,8 @@
                             "a",
                             "b",
                             "c"
-                        ]
+                        ],
+                        "i9": []
                     }
                 }
             }
@@ -244,7 +247,8 @@
                     "inline": [
                         "i2",
                         "i0",
-                        "i1"
+                        "i1",
+                        "i9"
                     ],
                     "frontmatter": [
                         "f0",
@@ -264,7 +268,8 @@
                     "inline": [
                         "i0",
                         "i1",
-                        "i2"
+                        "i2",
+                        "i9"
                     ],
                     "frontmatter": [
                         "f2",
@@ -284,7 +289,8 @@
                     "inline": [
                         "i0",
                         "i1",
-                        "i2"
+                        "i2",
+                        "i9"
                     ],
                     "frontmatter": [
                         "f0",
@@ -334,7 +340,8 @@
                         "list_keys": [
                             "i2",
                             "i0",
-                            "i1"
+                            "i1",
+                            "i9"
                         ],
                         "meta_dict": {
                             "i2": [
@@ -352,7 +359,8 @@
                                 "b",
                                 "a",
                                 "c"
-                            ]
+                            ],
+                            "i9": []
                         }
                     }
                 }
@@ -396,7 +404,8 @@
                         "list_keys": [
                             "i0",
                             "i1",
-                            "i2"
+                            "i2",
+                            "i9"
                         ],
                         "meta_dict": {
                             "i2": [
@@ -414,7 +423,8 @@
                                 "a",
                                 "b",
                                 "c"
-                            ]
+                            ],
+                            "i9": []
                         }
                     }
                 }
@@ -458,7 +468,8 @@
                         "list_keys": [
                             "i0",
                             "i1",
-                            "i2"
+                            "i2",
+                            "i9"
                         ],
                         "meta_dict": {
                             "i2": [
@@ -476,7 +487,8 @@
                                 "a",
                                 "b",
                                 "c"
-                            ]
+                            ],
+                            "i9": []
                         }
                     }
                 }
@@ -572,6 +584,87 @@
                 },
                 "expected_output": {
                     "field_name": "exp_notemeta_upd_inline_inplace"
+                }
+            }
+        },
+        "tests-has": {
+            "n7_1": {
+                "description": "k present in frontmatter",
+                "data": "n7",
+                "inputs": {
+                    "k": "f2",
+                    "l": null,
+                    "meta_type": ">>MetadataType.FRONTMATTER"
+                },
+                "expected_output": {
+                    "b_has": true
+                }
+            },
+            "n7_2": {
+                "description": "k absent in inline metadata",
+                "data": "n7",
+                "inputs": {
+                    "k": "f2",
+                    "l": null,
+                    "meta_type": ">>MetadataType.INLINE"
+                },
+                "expected_output": {
+                    "b_has": false
+                }
+            },
+            "n7_3": {
+                "description": "k present in frontmatter or inline",
+                "data": "n7",
+                "inputs": {
+                    "k": "f2",
+                    "l": null,
+                    "meta_type": null
+                },
+                "expected_output": {
+                    "b_has": true
+                }
+            },
+            "n7_4": {
+                "description": "k present and empty list",
+                "data": "n7",
+                "inputs": {
+                    "k": "i9",
+                    "l": [],
+                    "meta_type": ">>MetadataType.INLINE"
+                },
+                "expected_output": {
+                    "b_has": true
+                }
+            },
+            "n7_5": {
+                "description": "k present and values in l",
+                "data": "n7",
+                "inputs": {
+                    "k": "i1",
+                    "l": [
+                        "z",
+                        "c"
+                    ],
+                    "meta_type": ">>MetadataType.INLINE"
+                },
+                "expected_output": {
+                    "b_has": true
+                }
+            },
+            "n7_6": {
+                "description": "k present and values in l (some arent present)",
+                "data": "n7",
+                "inputs": {
+                    "k": "i1",
+                    "l": [
+                        "z",
+                        "c",
+                        "x"
+                    ],
+                    "meta_type": ">>MetadataType.INLINE"
+                },
+                "expected_output": {
+                    "b_has": false
                 }
             }
         }
