@@ -3,7 +3,7 @@ from pathlib import Path
 import hydra
 from pyomd.metadata import MetadataType
 
-from ..load_test_data import load_data
+from ..test_utils import load_data
 from .templates import (
     add_test_function_metadata,
     nmt_has,

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ..load_test_data import load_data
+from ..test_utils import load_data
 from .templates import (
     add_test_function_metadata,
     parse_name_function_tested,

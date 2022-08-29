@@ -88,7 +88,7 @@ def assert_list_match(l1: list, l2: list, msg: str = "") -> None:
 
 ###
 
-TestTemplateMetadata = Callable[[str, dict, MetadataType, bool], None]
+TestTemplateMetadata = Callable[[str, dict, bool], None]
 
 
 def add_test_function_metadata(
@@ -98,6 +98,23 @@ def add_test_function_metadata(
     data: dict,
     meta_type: Union[MetadataType, None] = None,
 ):
+    """Adds a test function to the global environment.
+
+    Tests related to the Metadata object.
+
+    Args:
+        glob:
+            dictionary of global variables (returned by globals())
+        fn:
+            test template function.
+            Takes as arguments:
+                test_id: the test ID
+                data: dictionary of data returned by
+                debug: activate debug mode
+        test_id: the test ID
+        data: dict containing note and test data
+        meta_type: metadata type
+    """
     ft = partial(fn, test_id=test_id, data=data)
     name_f = parse_name_function_tested(fn.__name__)
     if meta_type is None:
@@ -109,10 +126,13 @@ def add_test_function_metadata(
 def prep_test_data(test_id: str, data: dict, name_f: str):
     d_t: dict = data["tests"][f"tests-{name_f}"][test_id]
     inputs: dict = d_t["inputs"]
-    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
+
     note_name: str = d_t["data"]
     d_n: dict = data[note_name]
+
     expected_output: dict = d_t["expected_output"]
+
+    meta_type = get_test_arg_meta_type(test_id=test_id, name_f=name_f, data=data)
     MetaClass = return_metaclass(meta_type)
 
     return inputs, expected_output, d_n, d_t, MetaClass
@@ -388,29 +408,6 @@ def t_erase(test_id: str, data: dict, debug: bool = False) -> None:
         return ers, ers_true
     err_msg = build_error_msg(test_id, d_t)
     assert_str_match(ers, ers_true, msg=err_msg)
-
-
-# def t_has(test_id: str, data: dict, debug: bool = False):
-#     """Test template for Metadata.has."""
-#     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
-#     inputs, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
-#     o_keys = parse_test_arg_order(inputs["o_keys"])
-#     o_values = parse_test_arg_order(inputs["o_values"])
-
-#     m = MetaClass(d_n["content"])
-#     m.order(k=inputs["k"], o_keys=o_keys, o_values=o_values)
-
-#     meta_dict = m.metadata
-#     meta_dict_true: dict[str, list[str]] = expected_output["meta_dict"]
-#     keys_order = list(m.metadata.keys())
-#     keys_order_true: list[str] = expected_output["keys_order"]
-
-#     if debug:
-#         return keys_order, keys_order_true, meta_dict, meta_dict_true
-
-#     err_msg = build_error_msg(test_id, d_t)
-#     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
-#     assert_list_match(keys_order, keys_order_true, msg=err_msg)
 
 
 ### NoteMetadata test templates

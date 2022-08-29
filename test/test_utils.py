@@ -1,14 +1,17 @@
 import json
 import os
 from pathlib import Path
+from typing import Union
 
 PATH_TEST_DATA = Path(__file__).parent / "0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
 
 
-def load_test_notes(path_test_notes: Path) -> dict:
+def load_test_notes(path_test_notes: Union[Path, None]) -> dict:
     """ """
     data = dict()
+    if path_test_notes is None:
+        return data
     note_dirs = os.listdir(path_test_notes)
     for nd in note_dirs:
         path_nd = path_test_notes / nd
@@ -34,7 +37,9 @@ def load_test_definitions(path_test_def: Path) -> dict:
     return test_def
 
 
-def load_data(path_test_def: Path, path_test_notes: Path = PATH_TEST_NOTES) -> dict:
+def load_data(
+    path_test_def: Path, path_test_notes: Union[Path, None] = PATH_TEST_NOTES
+) -> dict:
     data = load_test_notes(path_test_notes)
     data.update(load_test_definitions(path_test_def))
     return data
