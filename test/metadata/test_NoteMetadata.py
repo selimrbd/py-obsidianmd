@@ -6,6 +6,7 @@ from pyomd.metadata import MetadataType
 from ..test_utils import load_data
 from .templates import (
     add_test_function_metadata,
+    nmt_get,
     nmt_has,
     nmt_move,
     nmt_order,
@@ -29,6 +30,7 @@ def main():
         nmt_move,
         nmt_update_content,
         nmt_has,
+        nmt_get,
     ]:
         name_f = parse_name_function_tested(t_fn.__name__)
         test_ids: list[str] = list(data["tests"][f"tests-{name_f}"].keys())

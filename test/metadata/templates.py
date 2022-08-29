@@ -345,6 +345,22 @@ def nmt_has(test_id: str, data: dict, debug: bool = False) -> None:
     assert b_has == b_has_true, f"b_has: {b_has}\nb_has_true: {b_has_true}\n{err_msg}"
 
 
+def nmt_get(test_id: str, data: dict, debug: bool = False) -> None:
+
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs, expected_output, d_n, d_t, _ = prep_test_data(test_id, data, name_f)
+
+    m = NoteMetadata(d_n["content"])
+
+    arg_k = inputs["k"]
+    arg_meta_type = parse_test_arg_meta_type(inputs["meta_type"])
+
+    res = m.get(k=arg_k, meta_type=arg_meta_type)
+    res_true = expected_output["out"]
+    err_msg = build_error_msg(test_id, d_t)
+    assert_list_match(l1=res, l2=res_true, msg=err_msg)
+
+
 def nmt_order_values(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)

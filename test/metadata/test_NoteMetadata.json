@@ -667,6 +667,53 @@
                     "b_has": false
                 }
             }
+        },
+        "tests-get": {
+            "n7_1": {
+                "description": "k not present",
+                "data": "n8",
+                "inputs": {
+                    "k": "xx",
+                    "meta_type": null
+                },
+                "expected_output": {
+                    "out": null
+                }
+            },
+            "n7_2": {
+                "description": "k present only in frontmatter (query: frontmatter)",
+                "data": "n8",
+                "inputs": {
+                    "k": "f2",
+                    "meta_type": null
+                },
+                "expected_output": {
+                    "out": [
+                        "3",
+                        "2",
+                        "1"
+                    ]
+                }
+            },
+            "n7_3": {
+                "description": "k present both in frontmatter and inline",
+                "data": "n8",
+                "inputs": {
+                    "k": "f1",
+                    "meta_type": null
+                },
+                "expected_output": {
+                    "out": [
+                        "z",
+                        "b",
+                        "c",
+                        "a",
+                        "A",
+                        "B",
+                        "C"
+                    ]
+                }
+            }
         }
     }
 }
