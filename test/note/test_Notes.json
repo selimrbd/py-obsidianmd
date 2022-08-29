@@ -6,30 +6,100 @@
                 "description": "tests Notes.__init__",
                 "inputs": {
                     "paths": [
-                        "notes/n7"
+                        "n7"
                     ],
                     "recursive": true
                 },
                 "expected_output": {
-                    "paths_notes": [
-                        "notes/n7/n7.md",
-                        "notes/n7/n7_copy.md"
+                    "paths": [
+                        "n7.md",
+                        "n7_copy.md"
                     ]
                 }
             }
         },
         "tests-filter": {
-            "1": {
-                "description": "Notes.filter: starts_with",
-                "data": "n7",
+            "has_meta": {
+                "description": "Notes.filter: has_meta",
                 "inputs": {
-                    "paths": [],
+                    "paths": [
+                        "n1/n1.md",
+                        "n7/n7.md"
+                    ],
+                    "recursive": true,
                     "starts_with": null,
+                    "ends_with": null,
+                    "pattern": null,
+                    "has_meta": [
+                        [
+                            "i9",
+                            null,
+                            null
+                        ]
+                    ]
+                },
+                "expected_output": {
+                    "paths": [
+                        "n7.md"
+                    ]
+                }
+            },
+            "starts_with": {
+                "description": "Notes.filter: starts_with",
+                "inputs": {
+                    "paths": [
+                        "n1/n1.md",
+                        "n7/n7.md"
+                    ],
+                    "recursive": true,
+                    "starts_with": "n1",
                     "ends_with": null,
                     "pattern": null,
                     "has_meta": null
                 },
-                "expected_output": {}
+                "expected_output": {
+                    "paths": [
+                        "n1.md"
+                    ]
+                }
+            },
+            "ends_with": {
+                "description": "Notes.filter: ends_with",
+                "inputs": {
+                    "paths": [
+                        "n1/n1.md",
+                        "n7/n7.md"
+                    ],
+                    "recursive": true,
+                    "starts_with": null,
+                    "ends_with": "1.md",
+                    "pattern": null,
+                    "has_meta": null
+                },
+                "expected_output": {
+                    "paths": [
+                        "n1.md"
+                    ]
+                }
+            },
+            "pattern": {
+                "description": "Notes.filter: pattern",
+                "inputs": {
+                    "paths": [
+                        "n1/n1.md",
+                        "n7/n7.md"
+                    ],
+                    "recursive": true,
+                    "starts_with": null,
+                    "ends_with": null,
+                    "pattern": "n[6-9]",
+                    "has_meta": null
+                },
+                "expected_output": {
+                    "paths": [
+                        "n7.md"
+                    ]
+                }
             }
         }
     }

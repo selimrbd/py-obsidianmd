@@ -148,11 +148,13 @@ class Notes:
             None. Filters notes from self.notes
         """
         if starts_with is not None:
-            self.notes = [n for n in self.notes if str(n.path).startswith(starts_with)]
+            self.notes = [
+                n for n in self.notes if str(n.path.name).startswith(starts_with)
+            ]
         if ends_with is not None:
-            self.notes = [n for n in self.notes if str(n.path).endswith(ends_with)]
+            self.notes = [n for n in self.notes if str(n.path.name).endswith(ends_with)]
         if pattern is not None:
-            self.notes = [n for n in self.notes if re.match(pattern, str(n.path))]
+            self.notes = [n for n in self.notes if re.match(pattern, str(n.path.name))]
         if has_meta is not None:
             include: list[bool] = []
             for note in self.notes:

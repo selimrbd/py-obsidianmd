@@ -1,8 +1,6 @@
-import difflib
 import inspect
 from functools import partial
 from pathlib import Path
-from string import Template
 from typing import Callable, Type, Union
 
 import pytest
@@ -16,6 +14,10 @@ from pyomd.metadata import (
 )
 
 from ..test_utils import (
+    assert_dict_match,
+    assert_list_match,
+    assert_str_match,
+    build_error_msg,
     get_test_arg_meta_type,
     parse_name_function_tested,
     parse_test_arg_meta_type,
@@ -24,74 +26,6 @@ from ..test_utils import (
 
 PATH_TEST_DATA = Path(__file__).parent / "../0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
-
-### utils
-
-
-def build_error_msg(test_id: str, dict_tests: dict) -> str:
-    templ = "\n-- TEST FAILED --\n"
-    templ += f'test ID: "$test_id"\n'
-    templ += 'test description: "$test_desc"'
-    templ = Template(templ)
-    err_msg = templ.substitute(test_id=test_id, test_desc=dict_tests["description"])
-    return err_msg
-
-
-def assert_dict_match(
-    d1: Union[dict, None], d2: Union[dict, None], msg: str = ""
-) -> None:
-    """
-    assert that 2 dictionaries match. If they dont, print the output VS expected
-    Arguments:
-        - d1: output of function to test
-        - d2: expected result
-        - msg: additional message to display at the beginning of the assertion error
-    """
-    d1 = dict() if d1 is None else d1
-    d2 = dict() if d2 is None else d2
-    err_template = Template(
-        "$msg\n---\ndictionaries don't match.\nkey: '$k'\noutput: '$o'\nexpected result: '$er'\n"
-    )
-    for k in set(d1.keys()).union(set(d2.keys())):
-        o = d1.get(k, None)
-        er = d2.get(k, None)
-        err_msg = err_template.substitute(msg=msg, k=k, o=o, er=er)
-        assert o == er, err_msg
-
-
-def assert_str_match(s1: str, s2: str, msg: str = "") -> None:
-    """
-    assert that 2 strings match. If they dont, print the output VS expected
-    Arguments:
-        - s1: output of function to test
-        - s2: expected result
-    """
-    diffs = difflib.unified_diff(
-        s1.split("\n"),
-        s2.split("\n"),
-        fromfile="output",
-        tofile="expected result",
-        lineterm="",
-    )
-    err_msg = "\n".join(["strings don't match."] + list(diffs))
-    assert s1 == s2, err_msg
-
-
-def assert_list_match(l1: list, l2: list, msg: str = "") -> None:
-    """
-    assert that 2 lists match. If they dont, print the output VS expected
-    Arguments:
-        - l1: output of function to test
-        - l2: expected result
-    """
-    l1 = list() if l1 is None else l1
-    l2 = list() if l2 is None else l2
-    err_template = Template(
-        "$msg\n---\nlists don't match.\noutput: $o\nexpected result: $er\n"
-    )
-    err_msg = err_template.substitute(msg=msg, o=l1, er=l2)
-    assert l1 == l2, err_msg
-
 
 ###
 
