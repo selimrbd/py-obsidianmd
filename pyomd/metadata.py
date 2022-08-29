@@ -550,14 +550,17 @@ class NoteMetadata:
         l: Union[list[str], None] = None,
         meta_type: Union[MetadataType, None] = None,
     ) -> bool:
-        """Checks if metadata contains field k and values l.
+        """Checks if metadata contains field k and values l in a given meta type.
 
         Args:
-            k: metadata field.
-            l: values of the metadata field. If set to None, no values are checked.
-            To check if metadata[k] is empty, set l to an empty list.
-            meta_type: metadata type. If None, it returns true if it finds the expected values
-            in any of the metadata types.
+            k:
+                metadata field.
+            l:
+                values of the metadata field. If set to None, no values are checked.
+                To check if metadata[k] is empty, set l to an empty list.
+            meta_type:
+                metadata type. If None, it returns true if it finds the expected values
+                in any of the metadata types.
         """
         b_has_fm = self.frontmatter.has(k=k, l=l)
         b_has_il = self.inline.has(k=k, l=l)
