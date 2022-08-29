@@ -6,6 +6,8 @@ from typing import Union
 PATH_TEST_DATA = Path(__file__).parent / "0-test-data"
 PATH_TEST_NOTES = PATH_TEST_DATA / "notes"
 
+from pyomd.metadata import MetadataType, Order
+
 
 def load_test_notes(path_test_notes: Union[Path, None]) -> dict:
     """ """
@@ -43,3 +45,46 @@ def load_data(
     data = load_test_notes(path_test_notes)
     data.update(load_test_definitions(path_test_def))
     return data
+
+
+### parse arguments
+
+
+def get_test_arg_meta_type(
+    test_id: str, name_f: str, data: dict
+) -> Union[MetadataType, str, None]:
+    meta_type_str: str = data["tests"].get("default_meta_type", None)
+    meta_type_str = data["tests"][f"tests-{name_f}"][test_id]["inputs"].get(
+        "meta_type", meta_type_str
+    )
+    if meta_type_str is None:
+        return None
+    return parse_test_arg_meta_type(meta_type_str)
+
+
+def parse_test_arg_meta_type(
+    meta_type_str: Union[str, None]
+) -> Union[MetadataType, str, None]:
+    if meta_type_str == ">>MetadataType.FRONTMATTER":
+        meta_type = MetadataType.FRONTMATTER
+    elif meta_type_str == ">>MetadataType.INLINE":
+        meta_type = MetadataType.INLINE
+    elif meta_type_str == ">>MetadataType.ALL":
+        meta_type = MetadataType.ALL
+    else:
+        meta_type = meta_type_str
+    return meta_type
+
+
+def parse_test_arg_order(order_str: str) -> Union[Order, str]:
+    if order_str == ">>Order.ASC":
+        order = Order.ASC
+    elif order_str == ">>Order.DESC":
+        order = Order.DESC
+    else:
+        order: Union[str, Order] = order_str
+    return order
+
+
+def parse_name_function_tested(name_f: str):
+    return name_f.split("_", maxsplit=1)[-1]
