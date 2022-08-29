@@ -115,10 +115,10 @@ class Metadata(ABC):
         return len(meta_dict) > 0
 
     def get(self, k: str) -> Union[list[str], None]:
-        """adds a metadata field, or new values if it already exists
+        """Gets metadata field.
 
-        If overwrite is set to True, the old value is overwritten. Otherwise, new elements are
-        appended.
+        Returns:
+            metadata[k] if k is in the metadata, else None
         """
         return self.metadata.get(k, None)
 
@@ -534,15 +534,36 @@ class NoteMetadata:
         return meta_type
 
     def get(
-        self, k: str, meta_type: MetadataType = MetadataType.DEFAULT
+        self, k: str, meta_type: Union[MetadataType, None] = None
     ) -> Union[list[str], None]:
-        """ """
+        """Gets note metadata.
+
+        Args:
+            k:
+                metadata field name to get
+            meta_type:
+                metadata type to check from. Set to None to check all metadata types
+
+        Returns:
+            If meta_type is set to None, returns frontmatter.metadata[k] + inline.metadata[k]
+        """
         if meta_type == MetadataType.DEFAULT:
             meta_type = self.get_default_metadata(k)
+
+        get_fm = self.frontmatter.get(k=k)
+        get_il = self.inline.get(k=k)
         if meta_type == MetadataType.FRONTMATTER:
-            return self.frontmatter.get(k=k)
+            return get_fm
         if meta_type == MetadataType.INLINE:
-            return self.frontmatter.get(k=k)
+            return get_il
+        if meta_type is None:
+            if (get_fm is None) and (get_il is None):
+                return None
+            if get_fm is None:
+                return get_il
+            if get_il is None:
+                return get_fm
+            return get_fm + get_il
 
     def has(
         self,
