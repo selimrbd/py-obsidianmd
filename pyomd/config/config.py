@@ -1,4 +1,4 @@
-import os
+import os  # pylint: disable=C0114,missing-module-docstring
 import shutil
 from pathlib import Path
 from typing import Union
@@ -19,12 +19,12 @@ class Config:
             path_cfg = path_cwd / "pyomd-config.yaml"
         if path_cfg.exists():
             with open(path_cfg, "r") as f:
-                u_cfg = yaml.load(f, Loader=yaml.Loader)
+                u_cfg = yaml.load(f, Loader=yaml.Loader)  # type: ignore
             # TODO check validity of user config
             cfg = u_cfg
         else:
             with open(PATH_CONFIG_DEFAULT, "r") as f:
-                d_cfg = yaml.load(f, Loader=yaml.Loader)
+                d_cfg = yaml.load(f, Loader=yaml.Loader)  # type: ignore
             cfg = d_cfg
         self.cfg = cfg
 
