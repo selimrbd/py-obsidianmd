@@ -1,0 +1,36 @@
+{
+    "tests": {
+        "default_meta_type": ">>MetadataType.ALL",
+        "tests-__init__": {
+            "1": {
+                "description": "tests Notes.__init__",
+                "inputs": {
+                    "paths": [
+                        "notes/n7"
+                    ],
+                    "recursive": true
+                },
+                "expected_output": {
+                    "paths_notes": [
+                        "notes/n7/n7.md",
+                        "notes/n7/n7_copy.md"
+                    ]
+                }
+            }
+        },
+        "tests-filter": {
+            "1": {
+                "description": "Notes.filter: starts_with",
+                "data": "n7",
+                "inputs": {
+                    "paths": [],
+                    "starts_with": null,
+                    "ends_with": null,
+                    "pattern": null,
+                    "has_meta": null
+                },
+                "expected_output": {}
+            }
+        }
+    }
+}
