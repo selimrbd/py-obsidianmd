@@ -37,7 +37,8 @@ from pathlib import Path
 path_dir = Path('my-knowledge-base')
 
 # create a "Notes" object. Filter to keep only notes having the "type/book" tag
-nts = Notes(paths=[path_dir]).filter(has_meta={'tags': 'type/book'})
+nts = Notes(paths=[path_dir])
+nts.filter(has_meta={'tags': 'type/book'})
 
 # add a new inline metadata field "up" and assign the value of "[[NOTETYPE - Book]]" 
 nts.metadata.add(k='parent', values=["[[NOTETYPE - Book]]"], meta_type=MetadataType.INLINE)
