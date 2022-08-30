@@ -16,6 +16,8 @@ UserInput = Union[str, int, float]
 MetaDict = dict[str, list[str]]
 ParseFunction = Callable[[str], tuple[MetaDict, str]]
 Number = Union[int, float]
+Span = tuple[int, int]
+SpanList = list[Span]
 
 
 class Order(Enum):
@@ -454,6 +456,62 @@ class InlineMetadata(Metadata):
             sep = ""
         return sep
 
+    @staticmethod
+    def _get_spans_to_delete(
+        s: str,
+        r: re.Pattern,
+        r_enc: re.Pattern,
+        meta_dict: dict,
+        debug: bool = False,
+    ) -> SpanList:
+        sp_del: SpanList = list()
+        for m in r.finditer(s):
+            if r_enc.match(m.group()):
+                continue
+            k = m.group(2).strip()
+            if k not in meta_dict:
+                sp_del.append(m.span())
+        return sp_del
+
+    @staticmethod
+    def _delete_span(s: str, span: Span) -> str:
+        s = s[: span[0]] + s[span[1] :]
+        return s
+
+    @staticmethod
+    def _delete_spans(s: str, spans: SpanList):
+        offset = 0
+        for span in spans:
+            p1, p2 = span
+            span_offset = (p1 - offset, p2 - offset)
+            s = InlineMetadata._delete_span(s, span_offset)
+            len_span = p2 - p1
+            offset += len_span
+        return s
+
+    @staticmethod
+    def _get_span_redundant_keys(
+        s: str, r: re.Pattern, r_enc: re.Pattern, debug: bool = False
+    ) -> SpanList:
+        """Returns spans for inline metadata which keys appear earlier in the file content."""
+        found_keys: set[str] = set()
+        spans_del: SpanList = list()
+        for m in r.finditer(s):
+            if r_enc.match(m.group()):
+                continue
+            k = m.group(2).strip()
+            if debug:
+                print(f'"{k}"')
+            if k in found_keys:
+                spans_del.append(m.span())
+                if debug:
+                    print(f'to delete: "{m.group()}"')
+            else:
+                found_keys.add(k)
+                if debug:
+                    print(f"keep: {m.group()}")
+        return spans_del
+
     def update_content_inplace(self, note_content: str) -> Tuple[str, set[str]]:
         """
         Updates inline metadata in place.
@@ -462,62 +520,21 @@ class InlineMetadata(Metadata):
             - updated note_content
             - list of updated fields.
         """
-        # print("DEBUG: UPDATE_CONTENT_INPLACE")
-        Span = tuple[int, int]
-        SpanList = list[Span]
 
-        def get_spans_to_delete(
-            s: str,
-            r: re.Pattern,
-            r_enc: re.Pattern,
-            meta_dict: dict,
-            debug: bool = False,
-        ) -> tuple[SpanList, SpanList]:
-            sp_del: SpanList = list()
-            sp_del_no: SpanList = list()
-            offset = 0
-            for m in re.finditer(r, s):
-                # ignore enclosed metadata
-                if r_enc.match(m.group()):
-                    continue
-                if debug:
-                    print(m)
-                k = m.group(2).strip()
-                if debug:
-                    print(f'key: "{k}"')
-                if k not in meta_dict:
-                    p1, p2 = m.span()
-                    sp = (p1 - offset, p2 - offset)
-                    sp_no = (p1, p2)
-                    sp_del.append(sp)
-                    sp_del_no.append(sp_no)
-
-                    len_sp = p2 - p1
-                    offset += len_sp
-
-            return sp_del, sp_del_no
-
-        def delete_span(s: str, span: Span):
-            s = s[: span[0]] + s[span[1] :]
-            return s
-
-        def delete_spans(s: str, spans: SpanList):
-            for sp in spans:
-                s = delete_span(s, sp)
-            return s
-
-        def sub_span(s: str, span: Span, rep: str):
-            """Replaces a span in string with rep."""
-            s = delete_span(s=s, span=span)
-            s = s[: span[0]] + rep + s[(span[0] + len(rep) - 1) :]
-            return s
+        rgx = re.compile(self.REGEX.pattern + "\n?")
 
         # remove fields that aren't in the metadata dictionary anymore
-        rgx = re.compile(self.REGEX.pattern + "\n?")
-        spans, _ = get_spans_to_delete(
+        spans: SpanList = self._get_spans_to_delete(
             s=note_content, r=rgx, r_enc=self.REGEX_ENCLOSED, meta_dict=self.metadata
         )
-        note_content = delete_spans(note_content, spans)
+        note_content = self._delete_spans(note_content, spans)
+
+        # remove redundant inline metadata
+        spans_redundant = self._get_span_redundant_keys(
+            s=note_content, r=rgx, r_enc=self.REGEX_ENCLOSED
+        )
+        note_content = self._delete_spans(note_content, spans_redundant)
+
         # update fields still in metadata dictionary
         updated_fields: set[str] = set()
         for key in self.metadata:
@@ -553,7 +570,6 @@ class InlineMetadata(Metadata):
         elif how == "bottom":
             new_nc = nc + sep + self.to_string(ignore_k=ignore_k)
         else:
-            new_nc = ""
             raise NotImplementedError
         new_nc = new_nc.strip()
         return new_nc

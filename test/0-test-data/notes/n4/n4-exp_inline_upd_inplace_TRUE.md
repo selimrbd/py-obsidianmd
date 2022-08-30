@@ -20,6 +20,5 @@ tags :: t4, t5, t6, t5
 
 ## blabla
 
-c2 :: foo, foo bar, biz, baz
 
 blibliblou
