@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
-from pyomd.metadata import MetadataType, NoteMetadata
+from pyomd.metadata import MetadataType, NoteMetadata, UserInput
 
 
 class Note:
@@ -77,6 +77,41 @@ class Note:
         print(self.content)
 
 
+class NoteMetadataBatch:
+    """API to modify in batch metadata from a Notes object."""
+
+    def __init__(self, notes: list[Note]):
+        self.notes = notes
+
+    def add(
+        self,
+        k: str,
+        l: Union[UserInput, list[UserInput], None],
+        meta_type: MetadataType = MetadataType.DEFAULT,
+        overwrite: bool = False,
+    ):
+        for note in self.notes:
+            note.metadata.add(k=k, l=l, meta_type=meta_type, overwrite=overwrite)
+
+    def remove(
+        self,
+        k: str,
+        l: Optional[Union[UserInput, list[UserInput]]] = None,
+        meta_type: Union[MetadataType, None] = None,
+    ):
+        for note in self.notes:
+            note.metadata.remove(k=k, l=l, meta_type=meta_type)
+
+    def move(
+        self,
+        k: Union[str, list[str], None] = None,
+        fr: Union[MetadataType, None] = None,
+        to: Union[MetadataType, None] = None,
+    ):
+        for note in self.notes:
+            note.metadata.move(k=k, fr=fr, to=to)
+
+
 class Notes:
     """A group of notes.
 
@@ -85,7 +120,7 @@ class Notes:
             list of Note objects
     """
 
-    def __init__(self, paths: list[Path], recursive: bool = True):
+    def __init__(self, paths: Union[Path, list[Path]], recursive: bool = True):
         """Initializes a Notes object.
 
         Add paths to individual notes or to directories containing multiple notes.
@@ -99,8 +134,9 @@ class Notes:
         """
         self.notes: list[Note] = []
         self.add(paths=paths, recursive=recursive)
+        self.metadata = NoteMetadataBatch(self.notes)
 
-    def add(self, paths: list[Path], recursive: bool = True):
+    def add(self, paths: Union[Path, list[Path]], recursive: bool = True):
         """Adds new notes to the Notes object.
 
         Args:
@@ -110,6 +146,8 @@ class Notes:
                 When given a path to a directory, whether to add notes
                 from sub-directories too
         """
+        if isinstance(paths, Path):
+            paths = [paths]
         for pth in paths:
             assert pth.exists(), f"file or folder doesn't exist: '{pth}'"
             if pth.is_dir():
@@ -164,3 +202,18 @@ class Notes:
                         inc = False
                 include.append(inc)
             self.notes = [n for (n, inc) in zip(self.notes, include) if inc]
+
+    def update_content(
+        self,
+        inline_how: str = "bottom",
+        inline_inplace: bool = True,
+        write: bool = False,
+    ):
+        for note in self.notes:
+            note.update_content(
+                inline_how=inline_how, inline_inplace=inline_inplace, write=write
+            )
+
+    def write(self):
+        for note in self.notes:
+            note.write()
