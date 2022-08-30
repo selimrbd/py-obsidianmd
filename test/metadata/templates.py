@@ -217,6 +217,26 @@ def t_remove(test_id: str, data: dict, debug: bool = False) -> None:
     assert_dict_match(meta_dict, meta_dict_true, msg=err_msg)
 
 
+def t_remove_and_update(test_id: str, data: dict, debug: bool = False) -> None:
+
+    name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
+    inputs, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
+
+    m = MetaClass(d_n["content"])
+    arg_k = inputs["k"]
+    arg_l = inputs["l"]
+    arg_inplace = inputs["inplace"]
+    arg_how = inputs["how"]
+    m.remove(k=arg_k, l=arg_l)  # type: ignore
+    note_content = m.update_content(d_n["content"], inplace=arg_inplace, how=arg_how)
+
+    name_field_true: str = expected_output["field_name"]
+    note_content_true: str = d_n[name_field_true]
+
+    err_msg = build_error_msg(test_id, d_t)
+    assert_str_match(s1=note_content, s2=note_content_true, msg=err_msg)
+
+
 def t_remove_duplicate_values(test_id: str, data: dict, debug: bool = False) -> None:
 
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)

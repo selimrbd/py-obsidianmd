@@ -1,0 +1,11 @@
+Delaiuaze
+
+this is an inline field :: 1, 2, 3
+- another field :: 45
+
+one-word :: 0
+
+today I [ran :: 5km]
+The toy was (price :: expensive)
+
+Lorem Ipsum

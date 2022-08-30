@@ -462,6 +462,52 @@ class InlineMetadata(Metadata):
             - updated note_content
             - list of updated fields.
         """
+        SpanList = list[tuple[int, int]]
+
+        def get_spans_to_delete(
+            s: str,
+            r: re.Pattern,
+            r_enc: re.Pattern,
+            meta_dict: dict,
+            debug: bool = False,
+        ) -> tuple[SpanList, SpanList]:
+            sp_del: SpanList = list()
+            sp_del_no: SpanList = list()
+            offset = 0
+            for m in re.finditer(r, s):
+                # ignore enclosed metadata
+                if r_enc.match(m.group()):
+                    continue
+                if debug:
+                    print(m)
+                k = m.group(2).strip()
+                if debug:
+                    print(f'key: "{k}"')
+                if k not in meta_dict:
+                    p1, p2 = m.span()
+                    sp = (p1 - offset, p2 - offset)
+                    sp_no = (p1, p2)
+                    sp_del.append(sp)
+                    sp_del_no.append(sp_no)
+
+                    len_sp = p2 - p1
+                    offset += len_sp
+
+            return sp_del, sp_del_no
+
+        def delete_spans(s: str, spans: SpanList):
+            for sp in spans:
+                s = s[: sp[0]] + s[sp[1] :]
+            return s
+
+        # remove fields that aren't in the metadata dictionary anymore
+        rgx = re.compile(self.REGEX.pattern + "\n?")
+        spans, _ = get_spans_to_delete(
+            s=note_content, r=rgx, r_enc=self.REGEX_ENCLOSED, meta_dict=self.metadata
+        )
+        note_content = delete_spans(note_content, spans)
+
+        # update fields still in metadata dictionary
         updated_fields: set[str] = set()
         for k in self.metadata:
             new_v = ", ".join(self.metadata[k])
@@ -610,7 +656,7 @@ class NoteMetadata:
         self,
         k: str,
         l: Optional[Union[UserInput, list[UserInput]]] = None,
-        meta_type: Union[MetadataType, None] = MetadataType.FRONTMATTER,
+        meta_type: Union[MetadataType, None] = None,
     ) -> None:
         if meta_type == MetadataType.FRONTMATTER:
             self.frontmatter.remove(k=k, l=l)

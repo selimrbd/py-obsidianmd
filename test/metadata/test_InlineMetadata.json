@@ -177,6 +177,21 @@
                     "field_name": "exp_inline_erase"
                 }
             }
+        },
+        "tests-remove_and_update": {
+            "n5_1": {
+                "description": "remove and ignore enclosed metadata",
+                "data": "n5",
+                "inputs": {
+                    "k": "oneWord",
+                    "l": null,
+                    "how": "bottom",
+                    "inplace": true
+                },
+                "expected_output": {
+                    "field_name": "exp_inline_remove_and_replace"
+                }
+            }
         }
     }
 }
