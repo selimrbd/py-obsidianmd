@@ -124,7 +124,7 @@ class Metadata(ABC):
         """
         return self.metadata.get(k, None)
 
-    def has(self, k: str, l: Union[list[str], None] = None) -> bool:
+    def has(self, k: str, l: Union[list[str], None, str] = None) -> bool:
         """Checks if metadata contains field k and values l.
 
         Args:
@@ -135,6 +135,8 @@ class Metadata(ABC):
         b_has = k in self.metadata
         if l is None:
             return b_has
+        if isinstance(l, str):
+            l = [l]
         if b_has and len(l) == 0:
             b_has = self.metadata[k] == []
         if b_has and len(l) > 0:
@@ -640,7 +642,7 @@ class NoteMetadata:
     def has(
         self,
         k: str,
-        l: Union[list[str], None] = None,
+        l: Union[list[str], None, str] = None,
         meta_type: Union[MetadataType, None] = None,
     ) -> bool:
         """Checks if metadata contains field k and values l in a given meta type.

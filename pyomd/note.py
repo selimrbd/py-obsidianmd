@@ -165,7 +165,9 @@ class Notes:
         starts_with: Optional[str] = None,
         ends_with: Optional[str] = None,
         pattern: Optional[str] = None,
-        has_meta: Optional[list[tuple[str, list[str], MetadataType]]] = None,
+        has_meta: Optional[
+            list[tuple[str, Union[list[str], str, None], Union[MetadataType, None]]]
+        ] = None,
     ):
         """Filters notes.
 
