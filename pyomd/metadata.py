@@ -466,10 +466,7 @@ class InlineMetadata(Metadata):
         for k in self.metadata:
             new_v = ", ".join(self.metadata[k])
             regex_field = re.compile(self.TMP_REGEX.substitute(key=f"{k} *"))
-            print(regex_field.search(note_content))
             for m in regex_field.finditer(note_content):
-                print(f"gotacha: {k}")
-                print(m)
                 updated_fields.add(k)
                 beg = m.group("beg")
                 k = m.group("key")
@@ -613,11 +610,14 @@ class NoteMetadata:
         self,
         k: str,
         l: Optional[Union[UserInput, list[UserInput]]] = None,
-        meta_type: MetadataType = MetadataType.FRONTMATTER,
+        meta_type: Union[MetadataType, None] = MetadataType.FRONTMATTER,
     ) -> None:
         if meta_type == MetadataType.FRONTMATTER:
             self.frontmatter.remove(k=k, l=l)
         if meta_type == MetadataType.INLINE:
+            self.inline.remove(k=k, l=l)
+        if meta_type is None:
+            self.frontmatter.remove(k=k, l=l)
             self.inline.remove(k=k, l=l)
 
     def remove_empty(
