@@ -462,7 +462,9 @@ class InlineMetadata(Metadata):
             - updated note_content
             - list of updated fields.
         """
-        SpanList = list[tuple[int, int]]
+        # print("DEBUG: UPDATE_CONTENT_INPLACE")
+        Span = tuple[int, int]
+        SpanList = list[Span]
 
         def get_spans_to_delete(
             s: str,
@@ -495,9 +497,19 @@ class InlineMetadata(Metadata):
 
             return sp_del, sp_del_no
 
+        def delete_span(s: str, span: Span):
+            s = s[: span[0]] + s[span[1] :]
+            return s
+
         def delete_spans(s: str, spans: SpanList):
             for sp in spans:
-                s = s[: sp[0]] + s[sp[1] :]
+                s = delete_span(s, sp)
+            return s
+
+        def sub_span(s: str, span: Span, rep: str):
+            """Replaces a span in string with rep."""
+            s = delete_span(s=s, span=span)
+            s = s[: span[0]] + rep + s[(span[0] + len(rep) - 1) :]
             return s
 
         # remove fields that aren't in the metadata dictionary anymore
@@ -506,18 +518,19 @@ class InlineMetadata(Metadata):
             s=note_content, r=rgx, r_enc=self.REGEX_ENCLOSED, meta_dict=self.metadata
         )
         note_content = delete_spans(note_content, spans)
-
         # update fields still in metadata dictionary
         updated_fields: set[str] = set()
-        for k in self.metadata:
-            new_v = ", ".join(self.metadata[k])
-            regex_field = re.compile(self.TMP_REGEX.substitute(key=f"{k} *"))
+        for key in self.metadata:
+            # print(f'this is key: "{key}"')
+            new_v = ", ".join(self.metadata[key])
+            regex_field = re.compile(self.TMP_REGEX.substitute(key=f"{key} *"))
             for m in regex_field.finditer(note_content):
-                updated_fields.add(k)
+                updated_fields.add(key)
                 beg = m.group("beg")
                 k = m.group("key")
                 rep = f"{beg}{k.strip()} :: {new_v}"
                 note_content = regex_field.sub(rep, note_content)
+
         return (note_content, updated_fields)
 
     def update_content(
