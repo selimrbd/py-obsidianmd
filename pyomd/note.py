@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
-from pyomd.metadata import MetadataType, NoteMetadata, UserInput
+from pyomd.metadata import MetadataType, NoteMetadata, Order, UserInput
 
 from .exceptions import NoteCreationError, ParsingNoteMetadataError, UpdateContentError
 
@@ -108,9 +108,16 @@ class NoteMetadataBatch:
         l: Union[UserInput, list[UserInput], None],
         meta_type: MetadataType = MetadataType.DEFAULT,
         overwrite: bool = False,
+        allow_duplicates: bool = False,
     ):
         for note in self.notes:
-            note.metadata.add(k=k, l=l, meta_type=meta_type, overwrite=overwrite)
+            note.metadata.add(
+                k=k,
+                l=l,
+                meta_type=meta_type,
+                overwrite=overwrite,
+                allow_duplicates=allow_duplicates,
+            )
 
     def remove(
         self,
@@ -129,6 +136,32 @@ class NoteMetadataBatch:
     ):
         for note in self.notes:
             note.metadata.move(k=k, fr=fr, to=to)
+
+    def remove_duplicate_values(
+        self,
+        k: Union[str, list[str], None] = None,
+        meta_type: Union[MetadataType, None] = None,
+    ):
+        """Remove duplicate values in the note's metadata
+
+        Attributes:
+            - k: key or list of keys on which to perform the duplication removal. If None, do on all keys
+            - meta_type: target Metadata type. If None, does it on all metadata
+        """
+        for note in self.notes:
+            note.metadata.remove_duplicate_values(k=k, meta_type=meta_type)
+
+    def order(
+        self,
+        k: Union[str, list[str], None] = None,
+        o_keys: Union[Order, None] = Order.ASC,
+        o_values: Union[Order, None] = Order.ASC,
+        meta_type: Union[MetadataType, None] = None,
+    ):
+        for note in self.notes:
+            note.metadata.order(
+                k=k, o_keys=o_keys, o_values=o_values, meta_type=meta_type
+            )
 
 
 class Notes:
