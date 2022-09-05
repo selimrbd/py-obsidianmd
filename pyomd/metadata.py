@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -283,8 +284,8 @@ class Frontmatter(Metadata):
         Uses the python-frontmatter library."""
         try:
             fm = frontmatter.loads(note_content)
-        except:
-            raise InvalidFrontmatterError
+        except Exception as e:
+            raise InvalidFrontmatterError(exception=e) from e
 
         meta_dict: MetaDict = fm.metadata
 
@@ -294,12 +295,15 @@ class Frontmatter(Metadata):
 
         # make all elements into list of strings
         for k, v in meta_dict.items():
+            # print(f'K = "{k}"\nV = "{v}"\ntype(V) = "{type(v)}"')
             if isinstance(v, str):
                 meta_dict[k] = [v]
-            if isinstance(v, Number):
-                meta_dict[k] = [str(v)]
-            if isinstance(v, list):
+            elif isinstance(v, list):
                 meta_dict[k] = [str(x) for x in v]
+            elif isinstance(v, Number):
+                meta_dict[k] = [str(v)]
+            elif isinstance(v, datetime.date):
+                meta_dict[k] = [str(v)]
 
         meta_dict = cls.parse_special_fields(
             metadata=meta_dict, meta_type=MetadataType.FRONTMATTER
