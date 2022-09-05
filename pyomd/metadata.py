@@ -149,6 +149,7 @@ class Metadata(ABC):
         k: str,
         l: Union[UserInput, list[UserInput], None],
         overwrite: bool = False,
+        allow_duplicates: bool = False,
     ) -> None:
         """adds a metadata field, or new values if it already exists
 
@@ -166,7 +167,10 @@ class Metadata(ABC):
             self.metadata[k] = nl
         else:
             if k in self.metadata:
-                self.metadata[k] += nl
+                if allow_duplicates:
+                    self.metadata[k] += nl
+                else:
+                    self.metadata[k] += [x for x in nl if x not in self.metadata[k]]
             else:
                 self.metadata[k] = nl
 
@@ -678,14 +682,19 @@ class NoteMetadata:
         l: Union[UserInput, list[UserInput], None],
         meta_type: MetadataType = MetadataType.DEFAULT,
         overwrite: bool = False,
+        allow_duplicates: bool = False,
     ) -> None:
         """ """
         if meta_type == MetadataType.DEFAULT:
             meta_type = self.get_default_metadata(k)
         if meta_type == MetadataType.FRONTMATTER:
-            self.frontmatter.add(k=k, l=l, overwrite=overwrite)
+            self.frontmatter.add(
+                k=k, l=l, overwrite=overwrite, allow_duplicates=allow_duplicates
+            )
         if meta_type == MetadataType.INLINE:
-            self.inline.add(k=k, l=l, overwrite=overwrite)
+            self.inline.add(
+                k=k, l=l, overwrite=overwrite, allow_duplicates=allow_duplicates
+            )
 
     def remove(
         self,
