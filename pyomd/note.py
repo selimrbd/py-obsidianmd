@@ -5,6 +5,8 @@ from typing import Optional, Union
 
 from pyomd.metadata import MetadataType, NoteMetadata, UserInput
 
+from .exceptions import NoteCreationError, ParsingNoteMetadataError, UpdateContentError
+
 
 class Note:
     """A Markdown note.
@@ -18,9 +20,16 @@ class Note:
     def __init__(self, path: Union[Path, str]):
         """Initializes XXX"""
         self.path: Path = Path(path)
-        with open(self.path, "r") as f:
-            self.content: str = f.read()
-        self.metadata: NoteMetadata = NoteMetadata(self.content)
+        try:
+            with open(self.path, "r") as f:
+                self.content: str = f.read()
+        except Exception as e:
+            raise NoteCreationError(path=path, exception=e) from e
+
+        try:
+            self.metadata: NoteMetadata = NoteMetadata(self.content)
+        except Exception as e:
+            raise ParsingNoteMetadataError(path=path, exception=e) from e
 
     def __repr__(self) -> str:
         return f'Note (path: "{self.path}")\n'
@@ -45,9 +54,13 @@ class Note:
                 If write = False, the user needs to call Note.write() subsequently to write changes to disk,
                 otherwise only the self.content attribute is modified (in memory).
         """
-        self.content = self.metadata.update_content(
-            self.content, inline_how=inline_how, inline_inplace=inline_inplace
-        )
+
+        try:
+            self.content = self.metadata.update_content(
+                self.content, inline_how=inline_how, inline_inplace=inline_inplace
+            )
+        except Exception as e:
+            raise UpdateContentError(path=self.path, exception=e)
         if write:
             self.write()
 
@@ -71,6 +84,12 @@ class Note:
         if not is_regex:
             pattern = re.escape(pattern)
         self.content = re.sub(pattern, replace, self.content)
+
+    @staticmethod
+    def is_md_file(path: Path):
+        exist = path.exists()
+        is_md = path.suffix == ".md"
+        return exist and is_md
 
     def print(self):
         """Prints the note content to the screen."""
@@ -154,10 +173,11 @@ class Notes:
                 for root, _, fls in os.walk(pth):  # type: ignore
                     for f_name in fls:  # type: ignore
                         pth_f: Path = Path(root) / f_name  # type: ignore
-                        self.notes.append(Note(path=pth_f))
+                        if Note.is_md_file(pth_f):
+                            self.notes.append(Note(path=pth_f))
                     if not recursive:
                         break
-            else:
+            elif Note.is_md_file(pth):
                 self.notes.append(Note(path=pth))
 
     def filter(
