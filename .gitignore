@@ -7,7 +7,7 @@ pyomd-config.yaml
 
 ## notebooks
 
-dev.ipynb
+dev*.ipynb
 update-vault.ipynb
 
 # Mac stuff
