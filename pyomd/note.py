@@ -85,6 +85,14 @@ class Note:
             pattern = re.escape(pattern)
         self.content = re.sub(pattern, replace, self.content)
 
+    def append(self, str_append: str, allow_repeat: bool = False):
+        """Appends text to the note content."""
+        if allow_repeat:
+            self.content += f"\n{str_append}"
+        else:
+            if len(re.findall(re.escape(str_append), self.content)) == 0:
+                self.content += f"\n{str_append}"
+
     @staticmethod
     def is_md_file(path: Path):
         exist = path.exists()
@@ -268,6 +276,11 @@ class Notes:
             note.update_content(
                 inline_how=inline_how, inline_inplace=inline_inplace, write=write
             )
+
+    def append(self, str_append: str, allow_repeat: bool = False):
+        """Appends text to the note content."""
+        for note in self.notes:
+            note.append(str_append=str_append, allow_repeat=allow_repeat)
 
     def write(self):
         for note in self.notes:
