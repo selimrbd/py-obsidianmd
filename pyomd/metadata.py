@@ -4,6 +4,7 @@ import datetime
 import re
 from abc import ABC, abstractmethod
 from enum import Enum
+from pathlib import Path
 from string import Template
 from typing import Callable, Optional, Tuple, Type, Union
 
@@ -367,6 +368,16 @@ class Frontmatter(Metadata):
         content_no_meta = self.erase(note_content)
         res = self.to_string() + content_no_meta
         return res
+
+    @staticmethod
+    def is_frontmatter_valid(path: Path) -> bool:
+        """Checks if the file frontmatter is valid."""
+        try:
+            with open(path, "r") as f:
+                frontmatter.load(f)  # type: ignore
+        except:
+            return False
+        return True
 
 
 class InlineMetadata(Metadata):
