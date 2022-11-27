@@ -29,7 +29,8 @@ class Config:
         self.cfg = cfg
 
     @classmethod
-    def create_config_file(cls):
-        path_cwd = Path(os.getcwd())
-        path_cfg = path_cwd / "pyomd-config.yaml"
+    def create_config_file(cls, path_cfg: Union[Path, None] = None):
+        if path_cfg is None:
+            path_cwd = Path(os.getcwd())
+            path_cfg = path_cwd / "pyomd-config.yaml"
         shutil.copy(PATH_CONFIG_DEFAULT, path_cfg)
