@@ -5,7 +5,7 @@ A python library for [ObsidianMD](https://obsidian.md/).
 ## Features
 
 **Modify your notes' metadata in batch:**
-  - *Transfer metadata between frontmatter and inline ([dataview](https://github.com/blacksmithgu/obsidian-dataview) style)*
+  - *Transfer metadata between frontmatter and inline ([dataview style](https://github.com/blacksmithgu/obsidian-dataview))*
   - Add and remove metadata fields
   - group all your inline metadata fields at the top/bottom of your notes
   - ...
