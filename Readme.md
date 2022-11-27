@@ -4,8 +4,6 @@ A python library for [ObsidianMD](https://obsidian.md/).
 
 Currently focused on enabling obsidian users to **experiment between different ways of organizing their notes metadata**. See the [full reference here](https://selimrbd.github.io/py-obsidianmd/)
 
-:warning: **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
-
 ## Features
 - add and remove metadata fields in batch
 - move metadata between the frontmatter and inline ([dataview](https://github.com/blacksmithgu/obsidian-dataview) style)
@@ -48,6 +46,10 @@ nts.update_content(write=True)
 
 For a step-by-step example, see [the introduction video](#introduction-video).
 For a list of all the libraries' feature, see the [full reference](https://selimrbd.github.io/py-obsidianmd/)
+
+### warning
+:warning: **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
+
 
 ## License
 
