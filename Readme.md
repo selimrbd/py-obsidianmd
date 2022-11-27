@@ -6,18 +6,17 @@ Currently focused on enabling obsidian users to **experiment between different w
 
 :warning: **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
 
-## Introduction video
-
-<WIP>
-
 ## Features
 - add and remove metadata fields in batch
 - move metadata between the frontmatter and inline ([dataview](https://github.com/blacksmithgu/obsidian-dataview) style)
 - group all your inline metadata fields at the top/bottom of your notes
 - order your metadata fields and values: sort alphabetically, remove duplicates, ...
-
+``
 ## Quickstart
 
+### intro video
+
+  
 ### installation
 Install the library using pip:
 ```zsh
