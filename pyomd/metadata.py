@@ -427,11 +427,20 @@ class InlineMetadata(Metadata):
         )
         return metadata
 
-    def to_string(self, ignore_k: Union[str, list[str], None] = None) -> str:
+    def to_string(
+        self,
+        ignore_k: Union[str, list[str], None] = None,
+        tml: Union[str, Callable] = "standard",
+    ) -> str:
         """Render metadata as a string.
 
         If repr is True, print to screen
         """
+        if tml == "standard":
+            tml = self.tml_standard
+        elif tml == "callout":
+            tml = self.tml_callout
+
         if ignore_k is None:
             ignore_k = list()
         if isinstance(ignore_k, str):
@@ -439,14 +448,12 @@ class InlineMetadata(Metadata):
         meta_dict = {k: v for (k, v) in self.metadata.items() if k not in ignore_k}
         if len(meta_dict) == 0:
             return ""
-        r = ""
-        for k, v in meta_dict.items():
-            r += f"{k}:: {', '.join(v)}\n"
-        r = r[:-1]  # remove last \n
-        return r
+        out = tml(meta_dict)
+        return out
 
     @classmethod
     def erase(cls, note_content: str) -> str:
+
         keep: list[str] = list()
         for l in note_content.split("\n"):
             b_match = re.search(cls.REGEX, l) is not None
@@ -455,18 +462,23 @@ class InlineMetadata(Metadata):
                 continue
             keep.append(l)
         content_no_meta = "\n".join(keep)
+
+        ## artefacts to erase
+        artefacts = [re.escape("> [!info]- metadata") + "(\n\n|$)"]
+        for a in artefacts:
+            content_no_meta = re.sub(a, "", content_no_meta)
         return content_no_meta
 
     @staticmethod
-    def get_sep_newlines(content_no_meta: str, how: str = "bottom") -> str:
-        if how == "top":
+    def get_sep_newlines(content_no_meta: str, position: str = "bottom") -> str:
+        if position == "top":
             if len(content_no_meta) >= 1 and content_no_meta[0] != "\n":
                 sep = "\n\n"
             elif len(content_no_meta) >= 1 and content_no_meta[0:2] != "\n\n":
                 sep = "\n"
             else:
                 sep = ""
-        elif how == "bottom":
+        elif position == "bottom":
             if len(content_no_meta) >= 1 and content_no_meta[-1] != "\n":
                 sep = "\n\n"
             elif len(content_no_meta) >= 2 and content_no_meta[-2:] != "\n\n":
@@ -572,10 +584,14 @@ class InlineMetadata(Metadata):
         return (note_content, updated_fields)
 
     def update_content(
-        self, note_content: str, how: str = "bottom", inplace: bool = True
+        self,
+        note_content: str,
+        position: str = "bottom",
+        inplace: bool = True,
+        tml: Union[str, Callable] = "standard",
     ) -> str:
         """
-        how:
+        position:
             - bottom
             - top
         inplace:
@@ -585,15 +601,40 @@ class InlineMetadata(Metadata):
             nc, ignore_k = self.update_content_inplace(note_content=note_content)
         else:
             nc, ignore_k = self.erase(note_content), None
-        sep = self.get_sep_newlines(nc, how=how)
-        if how == "top":
-            new_nc = self.to_string(ignore_k=ignore_k) + sep + nc
-        elif how == "bottom":
-            new_nc = nc + sep + self.to_string(ignore_k=ignore_k)
+        sep = self.get_sep_newlines(nc, position=position)
+        if position == "top":
+            new_nc = self.to_string(ignore_k=ignore_k, tml=tml) + sep + nc
+        elif position == "bottom":
+            new_nc = nc + sep + self.to_string(ignore_k=ignore_k, tml=tml)
         else:
             raise NotImplementedError
         new_nc = new_nc.strip()
         return new_nc
+
+    @staticmethod
+    def tml_standard(meta_dict: dict = None) -> str:
+        """
+        Args:
+            - meta_dict: dictionary containing inline metadata (k,v pairs)
+        """
+        if meta_dict is None:
+            meta_dict = {}
+        tmp = [f"{k}:: {', '.join(v)}" for k, v in meta_dict.items()]
+        out = "\n".join(tmp)
+        return out
+
+    @staticmethod
+    def tml_callout(meta_dict: dict = None) -> str:
+        """
+        Args:
+            - meta_dict: dictionary containing inline metadata (k,v pairs)
+        """
+        if meta_dict is None:
+            meta_dict = {}
+        tmp = ["> [!info]- metadata"]
+        tmp += [f"> {k} :: {', '.join(v)}" for k, v in meta_dict.items()]
+        out = "\n".join(tmp)
+        return out
 
 
 class NoteMetadata:
@@ -757,11 +798,15 @@ class NoteMetadata:
             raise ValueError(f"Unsupported value for argument meta_type: {meta_type}")
 
     def update_content(
-        self, note_content: str, inline_how: str = "bottom", inline_inplace: bool = True
+        self,
+        note_content: str,
+        inline_position: str = "bottom",
+        inline_inplace: bool = True,
+        inline_tml: Union[str, Callable] = "standard",
     ) -> str:
         str_no_fm = self.frontmatter.erase(note_content)
         res = self.inline.update_content(
-            str_no_fm, how=inline_how, inplace=inline_inplace
+            str_no_fm, position=inline_position, inplace=inline_inplace, tml=inline_tml
         )
         res = self.frontmatter.to_string() + res
         return res
@@ -821,7 +866,7 @@ class NoteMetadata:
         fr: Union[MetadataType, None] = None,
         to: Union[MetadataType, None] = None,
     ):
-        if k is None:
+        if (k is None) and (fr is None) and (to is None):
             for k2 in CONFIG.cfg["fields"]:
                 if "default_meta" in CONFIG.cfg["fields"][k2]:
                     default_meta = MetadataType.get_from_str(
@@ -837,16 +882,19 @@ class NoteMetadata:
                         if default_meta == MetadataType.INLINE
                         else self.inline
                     )
-                    m_to.add(k=k2, l=m_from.metadata[k2])
-                    m_from.remove(k=k2)
+                    if k2 in m_from.metadata:
+                        m_to.add(k=k2, l=m_from.metadata[k2])
+                        m_from.remove(k=k2)
             return
 
         assert (fr is not None) and (to is not None), "args 'fr' and 'to' should be set"
-        if isinstance(k, str):
-            k = [k]
         m_from = self.inline if fr == MetadataType.INLINE else self.frontmatter
         m_to = self.inline if to == MetadataType.INLINE else self.frontmatter
 
+        if k is None:
+            k = list(m_from.metadata.keys())
+        if isinstance(k, str):
+            k = [k]
         for k2 in k:
             if k2 in m_from.metadata:
                 m_to.add(k=k2, l=m_from.metadata[k2])

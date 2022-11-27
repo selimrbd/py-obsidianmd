@@ -545,7 +545,7 @@
                 "description": "NA",
                 "data": "n4",
                 "inputs": {
-                    "inline_how": "bottom",
+                    "inline_position": "bottom",
                     "inline_inplace": false
                 },
                 "expected_output": {
@@ -556,7 +556,7 @@
                 "description": "NA",
                 "data": "n4",
                 "inputs": {
-                    "inline_how": "top",
+                    "inline_position": "top",
                     "inline_inplace": false
                 },
                 "expected_output": {
@@ -567,7 +567,7 @@
                 "description": "update multiple times",
                 "data": "n4",
                 "inputs": {
-                    "inline_how": "top",
+                    "inline_position": "top",
                     "inline_inplace": false,
                     "nb_times": 4
                 },
@@ -579,7 +579,7 @@
                 "description": "update inplace",
                 "data": "n4",
                 "inputs": {
-                    "inline_how": "bottom",
+                    "inline_position": "bottom",
                     "inline_inplace": true
                 },
                 "expected_output": {

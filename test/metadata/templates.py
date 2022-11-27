@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Callable, Type, Union
 
 import pytest
+
 from pyomd.exceptions import InvalidFrontmatterError  # pylance: ignore
 from pyomd.metadata import (
     InlineMetadata,
@@ -152,9 +153,9 @@ def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
 
     m = MetaClass(d_n["content"])
     if isinstance(m, InlineMetadata):
-        arg_how: str = inputs["how"]
+        arg_pos: str = inputs["position"]
         arg_inplace: bool = inputs["inplace"]
-        upd: str = m.update_content(d_n["content"], how=arg_how, inplace=arg_inplace)  # type: ignore
+        upd: str = m.update_content(d_n["content"], position=arg_pos, inplace=arg_inplace)  # type: ignore
     else:
         upd: str = m.update_content(d_n["content"])  # type: ignore
     name_field_true: str = expected_output["field_name"]
@@ -164,7 +165,7 @@ def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
         return upd, upd_true
     err_msg = build_error_msg(test_id, d_t)
     if isinstance(m, InlineMetadata):
-        err_msg = f'arg_how: "{arg_how}"\narg_inplace: "{arg_inplace}"\n' + err_msg
+        err_msg = f'arg_pos: "{arg_pos}"\narg_inplace: "{arg_inplace}"\n' + err_msg
     assert_str_match(upd, upd_true, msg=err_msg)
 
 
@@ -226,9 +227,11 @@ def t_remove_and_update(test_id: str, data: dict, debug: bool = False) -> None:
     arg_k = inputs["k"]
     arg_l = inputs["l"]
     arg_inplace = inputs["inplace"]
-    arg_how = inputs["how"]
+    arg_pos = inputs["position"]
     m.remove(k=arg_k, l=arg_l)  # type: ignore
-    note_content = m.update_content(d_n["content"], inplace=arg_inplace, how=arg_how)
+    note_content = m.update_content(
+        d_n["content"], inplace=arg_inplace, position=arg_pos
+    )
 
     name_field_true: str = expected_output["field_name"]
     note_content_true: str = d_n[name_field_true]
@@ -482,7 +485,7 @@ def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     inputs, expected_output, d_n, d_t, _ = prep_test_data(test_id, data, name_f)
 
     arg_content: str = d_n["content"]
-    arg_inline_how: str = inputs["inline_how"]
+    arg_inline_pos: str = inputs["inline_position"]
     arg_inline_inplace: bool = inputs["inline_inplace"]
     nb_times = int(inputs.get("nb_times", 1))
 
@@ -490,7 +493,7 @@ def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     for _ in range(nb_times):
         upd: str = m.update_content(
             note_content=arg_content,
-            inline_how=arg_inline_how,
+            inline_position=arg_inline_pos,
             inline_inplace=arg_inline_inplace,
         )  # type: ignore
     name_field_true: str = expected_output["field_name"]

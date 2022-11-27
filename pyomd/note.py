@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 from pyomd.metadata import MetadataType, NoteMetadata, Order, UserInput
 
@@ -36,14 +36,15 @@ class Note:
 
     def update_content(
         self,
-        inline_how: str = "bottom",
+        inline_position: str = "bottom",
         inline_inplace: bool = True,
+        inline_tml: Union[str, Callable] = "standard",
         write: bool = False,
     ):
         """Updates the note's content.
 
         Args:
-            inline_how:
+            inline_position:
                 if "bottom" / "top", inline metadata is grouped at the bottom/top of the note.
                 This is always the case for new inline metadata (that didn't exist in the previous note content)
             inline_inplace:
@@ -57,7 +58,10 @@ class Note:
 
         try:
             self.content = self.metadata.update_content(
-                self.content, inline_how=inline_how, inline_inplace=inline_inplace
+                self.content,
+                inline_position=inline_position,
+                inline_inplace=inline_inplace,
+                inline_tml=inline_tml,
             )
         except Exception as e:
             raise UpdateContentError(path=self.path, exception=e)

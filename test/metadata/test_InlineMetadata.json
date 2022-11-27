@@ -120,7 +120,7 @@
                 "description": "add inline meta to the bottom, inplace = False",
                 "data": "n4",
                 "inputs": {
-                    "how": "bottom",
+                    "position": "bottom",
                     "inplace": false
                 },
                 "expected_output": {
@@ -131,7 +131,7 @@
                 "description": "add inline meta to the top, inplace = False",
                 "data": "n4",
                 "inputs": {
-                    "how": "top",
+                    "position": "top",
                     "inplace": false
                 },
                 "expected_output": {
@@ -142,7 +142,7 @@
                 "description": "add inline meta to the top, inplace = False",
                 "data": "n4",
                 "inputs": {
-                    "how": "bottom",
+                    "position": "bottom",
                     "inplace": true
                 },
                 "expected_output": {
@@ -185,7 +185,7 @@
                 "inputs": {
                     "k": "oneWord",
                     "l": null,
-                    "how": "bottom",
+                    "position": "bottom",
                     "inplace": true
                 },
                 "expected_output": {
