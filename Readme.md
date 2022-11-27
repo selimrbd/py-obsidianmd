@@ -2,14 +2,13 @@
 
 A python library for [ObsidianMD](https://obsidian.md/).
 
-Currently focused on enabling obsidian users to **experiment between different ways of organizing their notes metadata**. See the [full reference here](https://selimrbd.github.io/py-obsidianmd/)
-
 ## Features
-- add and remove metadata fields in batch
-- move metadata between the frontmatter and inline ([dataview](https://github.com/blacksmithgu/obsidian-dataview) style)
-- group all your inline metadata fields at the top/bottom of your notes
-- order your metadata fields and values: sort alphabetically, remove duplicates, ...
-``
+- Batch operations on note metadata:
+  - *Transfer metadata between frontmatter and inline ([dataview](https://github.com/blacksmithgu/obsidian-dataview) style)*
+  - Add and remove metadata fields
+  - group all your inline metadata fields at the top/bottom of your notes
+  - ...
+
 ## Quickstart
 
 ### intro video
