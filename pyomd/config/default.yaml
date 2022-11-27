@@ -2,6 +2,10 @@ global:
   default_meta: inline
 
 fields:
+  alias:
+    default_meta: frontmatter
+  aliases:
+    default_meta: frontmatter
   tags:
     default_meta: frontmatter
     frontmatter_separators: [" ", ","]
@@ -10,5 +14,3 @@ fields:
     default_meta: frontmatter
     frontmatter_separators: [" ", ","]
     inline_separators: [" "]
-  up:
-    default_meta: inline
