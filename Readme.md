@@ -5,6 +5,10 @@ A python library for [ObsidianMD](https://obsidian.md/) for modifying your notes
 :warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss.
 
 
+## Presentation video
+
+[![Watch the video](https://img.youtube.com/vi/CzmDQyxJS88/hqdefault.jpg)](https://www.youtube.com/watch?v=CzmDQyxJS88)
+
 ## Quickstart
 
 ```bash
@@ -64,6 +68,6 @@ Contributions are welcome ! Different ways you can contribute:
 For more details, see the [contribution guidelines](CONTRIBUTING.md).
 
 ## Support
-<a href=""><img src="./docs/imgs/donate-paypal.png" width="150" height="100" /></a>
+<a href="https://www.paypal.com/donate/?hosted_button_id=R5NYTS46CQMSS"><img src="./docs/imgs/donate-paypal.png" width="150" height="100" /></a>
 <br>
 <a href="https://ko-fi.com/selimrbd"><img src="./docs/imgs/support-kofi.png" width="200" height="50" /></a>
