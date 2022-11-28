@@ -1,16 +1,9 @@
 # py-obsidianmd
 
-A python library for [ObsidianMD](https://obsidian.md/).
+A python library for [ObsidianMD](https://obsidian.md/) for modifying your notes in batch.
 
 :warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss.
 
-## Features
-
-**Modify your notes' metadata in batch:**
-  - *Transfer metadata between frontmatter and inline ([dataview style](https://github.com/blacksmithgu/obsidian-dataview))*
-  - Add and remove metadata fields
-  - group all your inline metadata fields at the top/bottom of your notes
-  - ...
 
 ## Quickstart
 
@@ -27,7 +20,9 @@ path_dir = Path('/path/to/obsidian/folder')
 notes = Notes(path_dir)
 ```
 
-### move metadata between frontmatter and inline
+You can test the library on this [example vault](https://github.com/selimrbd/example-vault)
+
+## move metadata between frontmatter and inline
 
 ```python
 notes.metadata.move(fr=MetadataType.FRONTMATTER, to=MetadataType.INLINE)
@@ -36,7 +31,7 @@ notes.write()
 ```
 ![](./docs/imgs/pyomd-1.gif)
 
-### regroup inline metadata inside a callout
+## regroup inline metadata inside a callout
 
 ```python
 notes.update_content(inline_inplace=False, inline_position="top", inline_tml="callout") #type: ignore
@@ -44,7 +39,7 @@ notes.write()
 ```
 ![](./docs/imgs/pyomd-2.gif)
 
-### add and remove metadata 
+## add and remove metadata 
 ```python
 notes.filter(has_meta=[("tags", "type/book", MetadataType.INLINE)])
 
@@ -69,4 +64,6 @@ Contributions are welcome ! Different ways you can contribute:
 For more details, see the [contribution guidelines](CONTRIBUTING.md).
 
 ## Support
-<WIP>
+<a href=""><img src="./docs/imgs/donate-paypal.png" width="150" height="100" /></a>
+<br>
+<a href="https://ko-fi.com/selimrbd"><img src="./docs/imgs/support-kofi.png" width="200" height="50" /></a>
