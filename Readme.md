@@ -30,7 +30,7 @@ You can test the library on this [example vault](https://github.com/selimrbd/exa
 
 ```python
 notes.metadata.move(fr=MetadataType.FRONTMATTER, to=MetadataType.INLINE)
-notes.update_content(inline_position="top", inline_tml="callout", inline_inplace=False) #type: ignore
+notes.update_content(inline_inplace=False, inline_position="top", inline_tml="standard") #type: ignore
 notes.write()
 ```
 ![](./docs/imgs/pyomd-1.gif)
@@ -68,6 +68,9 @@ Contributions are welcome ! Different ways you can contribute:
 For more details, see the [contribution guidelines](CONTRIBUTING.md).
 
 ## Support
+
+If you found this library useful and wish to support it's development, you can do so using the links below (paypal or Ko-fi). Thanks a bunch !
+
 <a href="https://www.paypal.com/donate/?hosted_button_id=R5NYTS46CQMSS"><img src="./docs/imgs/donate-paypal.png" width="150" height="100" /></a>
 <br>
 <a href="https://ko-fi.com/selimrbd"><img src="./docs/imgs/support-kofi.png" width="200" height="50" /></a>
