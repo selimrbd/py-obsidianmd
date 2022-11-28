@@ -2,6 +2,8 @@
 
 A python library for [ObsidianMD](https://obsidian.md/).
 
+:warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss.
+
 ## Features
 
 **Modify your notes' metadata in batch:**
@@ -12,43 +14,47 @@ A python library for [ObsidianMD](https://obsidian.md/).
 
 ## Quickstart
 
-### intro video
-
-  
-### installation
-Install the library using pip:
-```zsh
+```bash
 pip install py-obsidianmd
 ```
 
-### example vault
-You can test the libraries functionalities on an example vault, "example-pkb" provided in this repository (examples/vaults/example-pkb). Here are some of the operations you can do:
-
-### Add metadata to a group of notes
-
 ```python
+from pathlib import Path
 from pyomd import Notes
 from pyomd.metadata import MetadataType
-from pathlib import Path
 
-path_dir = Path('my-knowledge-base')
-
-# create a "Notes" object. Filter to keep only notes having the "type/book" tag
-nts = Notes(paths=[path_dir])
-nts.filter(has_meta={'tags': 'type/book'})
-
-# add a new inline metadata field "up" and assign the value of "[[NOTETYPE - Book]]" 
-nts.metadata.add(k='parent', values=["[[NOTETYPE - Book]]"], meta_type=MetadataType.INLINE)
-
-# update the notes content and write them to disk
-nts.update_content(write=True)
+path_dir = Path('/path/to/obsidian/folder')
+notes = Notes(path_dir)
 ```
 
-For a step-by-step example, see [the introduction video](#introduction-video).
-For a list of all the libraries' feature, see the [full reference](https://selimrbd.github.io/py-obsidianmd/)
+### move metadata between frontmatter and inline
 
-### warning
-:warning: **Consider backing up your vault** or committing it to git before testing it, to avoid any risk of data loss.
+```python
+notes.metadata.move(fr=MetadataType.FRONTMATTER, to=MetadataType.INLINE)
+notes.update_content(inline_position="top", inline_tml="callout", inline_inplace=False) #type: ignore
+notes.write()
+```
+![](./docs/imgs/pyomd-1.gif)
+
+### regroup inline metadata inside a callout
+
+```python
+notes.update_content(inline_inplace=False, inline_position="top", inline_tml="callout") #type: ignore
+notes.write()
+```
+![](./docs/imgs/pyomd-2.gif)
+
+### add and remove metadata 
+```python
+notes.filter(has_meta=[("tags", "type/book", MetadataType.INLINE)])
+
+notes.metadata.add(k="type", l="[[book]]", meta_type=MetadataType.INLINE)
+notes.metadata.remove(k="tags", l="type/book", meta_type=MetadataType.INLINE)
+
+notes.update_content(inline_inplace=False, inline_position="top", inline_tml="callout") #type: ignore
+notes.write()
+```
+![](./docs/imgs/pyomd-3.gif)
 
 
 ## License
@@ -56,7 +62,7 @@ For a list of all the libraries' feature, see the [full reference](https://selim
 [BSD 3](LICENSE.txt)
 
 ## Contributing
-Contributions are more than welcome. Different ways you can contribute:
+Contributions are welcome ! Different ways you can contribute:
 - **Write an issue**: report a bug, suggest an enhancement, ...
 - **Submit a pull request** to solve an open issue
 
