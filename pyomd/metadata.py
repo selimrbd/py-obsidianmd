@@ -588,7 +588,7 @@ class InlineMetadata(Metadata):
         note_content: str,
         position: str = "bottom",
         inplace: bool = True,
-        tml: Union[str, Callable] = "standard",
+        tml: Union[str, Callable] = "standard",  # type: ignore
     ) -> str:
         """
         position:
@@ -612,7 +612,7 @@ class InlineMetadata(Metadata):
         return new_nc
 
     @staticmethod
-    def tml_standard(meta_dict: dict = None) -> str:
+    def tml_standard(meta_dict: dict = None) -> str:  # type: ignore
         """
         Args:
             - meta_dict: dictionary containing inline metadata (k,v pairs)
@@ -802,7 +802,7 @@ class NoteMetadata:
         note_content: str,
         inline_position: str = "bottom",
         inline_inplace: bool = True,
-        inline_tml: Union[str, Callable] = "standard",
+        inline_tml: Union[str, Callable] = "standard",  # type: ignore
     ) -> str:
         str_no_fm = self.frontmatter.erase(note_content)
         res = self.inline.update_content(

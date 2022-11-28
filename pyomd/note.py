@@ -38,7 +38,7 @@ class Note:
         self,
         inline_position: str = "bottom",
         inline_inplace: bool = True,
-        inline_tml: Union[str, Callable] = "standard",
+        inline_tml: Union[str, Callable] = "standard",  # type: ignore
         write: bool = False,
     ):
         """Updates the note's content.
@@ -272,13 +272,17 @@ class Notes:
 
     def update_content(
         self,
-        inline_how: str = "bottom",
+        inline_position: str = "bottom",
         inline_inplace: bool = True,
+        inline_tml: Union[str, Callable] = "standard",  # type: ignore
         write: bool = False,
     ):
         for note in self.notes:
             note.update_content(
-                inline_how=inline_how, inline_inplace=inline_inplace, write=write
+                inline_position=inline_position,
+                inline_inplace=inline_inplace,
+                inline_tml=inline_tml,
+                write=write,
             )
 
     def append(self, str_append: str, allow_repeat: bool = False):
