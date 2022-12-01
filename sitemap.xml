@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://selimrbd.github.io/py-obsidianmd/examples/</loc>
+         <loc>https://selimrbd.github.io/py-obsidianmd/overview/examples/</loc>
          <lastmod>2022-12-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://selimrbd.github.io/py-obsidianmd/overview/</loc>
+         <loc>https://selimrbd.github.io/py-obsidianmd/overview/overview/</loc>
          <lastmod>2022-12-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://selimrbd.github.io/py-obsidianmd/reference/</loc>
+         <loc>https://selimrbd.github.io/py-obsidianmd/overview/reference/</loc>
          <lastmod>2022-12-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://selimrbd.github.io/py-obsidianmd/reference/metadata/</loc>
+         <loc>https://selimrbd.github.io/py-obsidianmd/overview/reference/metadata/</loc>
          <lastmod>2022-12-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://selimrbd.github.io/py-obsidianmd/reference/note/</loc>
+         <loc>https://selimrbd.github.io/py-obsidianmd/overview/reference/note/</loc>
          <lastmod>2022-12-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
