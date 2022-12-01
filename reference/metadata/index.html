@@ -821,6 +821,26 @@
   
       <p>A note's frontmatter.</p>
 
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>self.metadata</code></td>
+          <td>
+                <code><span title="pyomd.metadata.MetaDict">MetaDict</span></code>
+          </td>
+          <td><p>metadata dictionary</p></td>
+        </tr>
+    </tbody>
+  </table>
+
 
         <details class="quote">
           <summary>Source code in <code>pyomd/metadata.py</code></summary>
@@ -931,8 +951,18 @@
 <span class="normal">381</span>
 <span class="normal">382</span>
 <span class="normal">383</span>
-<span class="normal">384</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Frontmatter</span><span class="p">(</span><span class="n">Metadata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A note&#39;s frontmatter.&quot;&quot;&quot;</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Frontmatter</span><span class="p">(</span><span class="n">Metadata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A note&#39;s frontmatter.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        self.metadata MetaDict:</span>
+<span class="sd">            metadata dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">REGEX</span> <span class="o">=</span> <span class="s2">&quot;(?s)(^---</span><span class="se">\n</span><span class="s2">).*?(</span><span class="se">\n</span><span class="s2">---</span><span class="se">\n</span><span class="s2">)&quot;</span>
 
@@ -1074,15 +1104,15 @@
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">303</span>
-<span class="normal">304</span>
-<span class="normal">305</span>
-<span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">308</span>
 <span class="normal">309</span>
 <span class="normal">310</span>
-<span class="normal">311</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">is_frontmatter_valid</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Checks if the file frontmatter is valid.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1114,12 +1144,7 @@
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
 <span class="normal">290</span>
@@ -1128,7 +1153,12 @@
 <span class="normal">293</span>
 <span class="normal">294</span>
 <span class="normal">295</span>
-<span class="normal">296</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Render metadata as a string.</span>
 
 <span class="sd">    If repr is True, print to screen</span>
@@ -1188,8 +1218,9 @@
         <tr>
           <td><code>self.metadata</code></td>
           <td>
+                <code><span title="pyomd.metadata.MetaDict">MetaDict</span></code>
           </td>
-          <td></td>
+          <td><p>metadata dictionary</p></td>
         </tr>
     </tbody>
   </table>
@@ -1197,12 +1228,7 @@
 
         <details class="quote">
           <summary>Source code in <code>pyomd/metadata.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">387</span>
-<span class="normal">388</span>
-<span class="normal">389</span>
-<span class="normal">390</span>
-<span class="normal">391</span>
-<span class="normal">392</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">392</span>
 <span class="normal">393</span>
 <span class="normal">394</span>
 <span class="normal">395</span>
@@ -1457,11 +1483,18 @@
 <span class="normal">644</span>
 <span class="normal">645</span>
 <span class="normal">646</span>
-<span class="normal">647</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">InlineMetadata</span><span class="p">(</span><span class="n">Metadata</span><span class="p">):</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">InlineMetadata</span><span class="p">(</span><span class="n">Metadata</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A note&#39;s inline metadata (dataview style).</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        self.metadata:</span>
+<span class="sd">        self.metadata MetaDict:</span>
+<span class="sd">            metadata dictionary</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">TMP_REGEX</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?P&lt;beg&gt;.*?)(?P&lt;key&gt;$key)::(?P&lt;values&gt;.*)&quot;</span><span class="p">)</span>
@@ -1750,13 +1783,7 @@
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">401</span>
-<span class="normal">402</span>
-<span class="normal">403</span>
-<span class="normal">404</span>
-<span class="normal">405</span>
-<span class="normal">406</span>
-<span class="normal">407</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">407</span>
 <span class="normal">408</span>
 <span class="normal">409</span>
 <span class="normal">410</span>
@@ -1772,7 +1799,13 @@
 <span class="normal">420</span>
 <span class="normal">421</span>
 <span class="normal">422</span>
-<span class="normal">423</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ignore_k</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tml</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
@@ -1829,13 +1862,7 @@
 </details>
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">431</span>
 <span class="normal">432</span>
 <span class="normal">433</span>
 <span class="normal">434</span>
@@ -1855,7 +1882,13 @@
 <span class="normal">448</span>
 <span class="normal">449</span>
 <span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_content</span><span class="p">(</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_content</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">note_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">position</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span><span class="p">,</span>
@@ -3191,13 +3224,7 @@ DEFAULT: default location where to define new metadata</p>
 
         <details class="quote">
           <summary>Source code in <code>pyomd/metadata.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">650</span>
-<span class="normal">651</span>
-<span class="normal">652</span>
-<span class="normal">653</span>
-<span class="normal">654</span>
-<span class="normal">655</span>
-<span class="normal">656</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">656</span>
 <span class="normal">657</span>
 <span class="normal">658</span>
 <span class="normal">659</span>
@@ -3451,7 +3478,13 @@ DEFAULT: default location where to define new metadata</p>
 <span class="normal">907</span>
 <span class="normal">908</span>
 <span class="normal">909</span>
-<span class="normal">910</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadata</span><span class="p">:</span>
+<span class="normal">910</span>
+<span class="normal">911</span>
+<span class="normal">912</span>
+<span class="normal">913</span>
+<span class="normal">914</span>
+<span class="normal">915</span>
+<span class="normal">916</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadata</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;All the note&#39;s metadata (frontmatter + inline).&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -3795,13 +3828,7 @@ DEFAULT: default location where to define new metadata</p>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">680</span>
-<span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span>
-<span class="normal">684</span>
-<span class="normal">685</span>
-<span class="normal">686</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">686</span>
 <span class="normal">687</span>
 <span class="normal">688</span>
 <span class="normal">689</span>
@@ -3823,7 +3850,13 @@ DEFAULT: default location where to define new metadata</p>
 <span class="normal">705</span>
 <span class="normal">706</span>
 <span class="normal">707</span>
-<span class="normal">708</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MetadataType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetaValues</span><span class="p">:</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MetadataType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetaValues</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve note metadata from key.</span>
 
 <span class="sd">    Args:</span>
@@ -3920,13 +3953,7 @@ in any of the metadata types.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">710</span>
-<span class="normal">711</span>
-<span class="normal">712</span>
-<span class="normal">713</span>
-<span class="normal">714</span>
-<span class="normal">715</span>
-<span class="normal">716</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">716</span>
 <span class="normal">717</span>
 <span class="normal">718</span>
 <span class="normal">719</span>
@@ -3947,7 +3974,13 @@ in any of the metadata types.</p></td>
 <span class="normal">734</span>
 <span class="normal">735</span>
 <span class="normal">736</span>
-<span class="normal">737</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">has</span><span class="p">(</span>
+<span class="normal">737</span>
+<span class="normal">738</span>
+<span class="normal">739</span>
+<span class="normal">740</span>
+<span class="normal">741</span>
+<span class="normal">742</span>
+<span class="normal">743</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">has</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">l</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4024,13 +4057,7 @@ in any of the metadata types.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">786</span>
-<span class="normal">787</span>
-<span class="normal">788</span>
-<span class="normal">789</span>
-<span class="normal">790</span>
-<span class="normal">791</span>
-<span class="normal">792</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">792</span>
 <span class="normal">793</span>
 <span class="normal">794</span>
 <span class="normal">795</span>
@@ -4044,7 +4071,13 @@ in any of the metadata types.</p></td>
 <span class="normal">803</span>
 <span class="normal">804</span>
 <span class="normal">805</span>
-<span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_duplicate_values</span><span class="p">(</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span>
+<span class="normal">811</span>
+<span class="normal">812</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_duplicate_values</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">k</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">meta_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MetadataType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4087,18 +4120,18 @@ in any of the metadata types.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">773</span>
-<span class="normal">774</span>
-<span class="normal">775</span>
-<span class="normal">776</span>
-<span class="normal">777</span>
-<span class="normal">778</span>
-<span class="normal">779</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">779</span>
 <span class="normal">780</span>
 <span class="normal">781</span>
 <span class="normal">782</span>
 <span class="normal">783</span>
-<span class="normal">784</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_empty</span><span class="p">(</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span>
+<span class="normal">787</span>
+<span class="normal">788</span>
+<span class="normal">789</span>
+<span class="normal">790</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_empty</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">meta_type</span><span class="p">:</span> <span class="n">MetadataType</span> <span class="o">=</span> <span class="n">MetadataType</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -4132,20 +4165,20 @@ in any of the metadata types.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">808</span>
-<span class="normal">809</span>
-<span class="normal">810</span>
-<span class="normal">811</span>
-<span class="normal">812</span>
-<span class="normal">813</span>
-<span class="normal">814</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">814</span>
 <span class="normal">815</span>
 <span class="normal">816</span>
 <span class="normal">817</span>
 <span class="normal">818</span>
 <span class="normal">819</span>
 <span class="normal">820</span>
-<span class="normal">821</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_content</span><span class="p">(</span>
+<span class="normal">821</span>
+<span class="normal">822</span>
+<span class="normal">823</span>
+<span class="normal">824</span>
+<span class="normal">825</span>
+<span class="normal">826</span>
+<span class="normal">827</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_content</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">note_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">inline_position</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span><span class="p">,</span>
@@ -4192,13 +4225,7 @@ in any of the metadata types.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>pyomd/metadata.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">913</span>
-<span class="normal">914</span>
-<span class="normal">915</span>
-<span class="normal">916</span>
-<span class="normal">917</span>
-<span class="normal">918</span>
-<span class="normal">919</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">919</span>
 <span class="normal">920</span>
 <span class="normal">921</span>
 <span class="normal">922</span>
@@ -4257,7 +4284,13 @@ in any of the metadata types.</p></td>
 <span class="normal">975</span>
 <span class="normal">976</span>
 <span class="normal">977</span>
-<span class="normal">978</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadataBatch</span><span class="p">:</span>
+<span class="normal">978</span>
+<span class="normal">979</span>
+<span class="normal">980</span>
+<span class="normal">981</span>
+<span class="normal">982</span>
+<span class="normal">983</span>
+<span class="normal">984</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadataBatch</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;API to modify in batch metadata from a Notes object.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Note</span><span class="p">]):</span>
@@ -4379,19 +4412,19 @@ in any of the metadata types.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">954</span>
-<span class="normal">955</span>
-<span class="normal">956</span>
-<span class="normal">957</span>
-<span class="normal">958</span>
-<span class="normal">959</span>
-<span class="normal">960</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">960</span>
 <span class="normal">961</span>
 <span class="normal">962</span>
 <span class="normal">963</span>
 <span class="normal">964</span>
 <span class="normal">965</span>
-<span class="normal">966</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_duplicate_values</span><span class="p">(</span>
+<span class="normal">966</span>
+<span class="normal">967</span>
+<span class="normal">968</span>
+<span class="normal">969</span>
+<span class="normal">970</span>
+<span class="normal">971</span>
+<span class="normal">972</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_duplicate_values</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">k</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">meta_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MetadataType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
