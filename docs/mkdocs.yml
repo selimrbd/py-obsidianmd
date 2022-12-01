@@ -1,8 +1,8 @@
 site_name: py-obsidianmd
-site_url: https://selimrbd.github.io/py-obsidianmd/
+site_url: https://selimrbd.github.io/py-obsidianmd/overview
 
 nav:
-  - Overview: overview.md
+  - Overview: index.md
   - Examples: examples.md
   - Reference:
       - note: reference/note.md
