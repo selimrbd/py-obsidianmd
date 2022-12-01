@@ -393,12 +393,12 @@ notes = Notes(path_dir)
 notes.update_content(inline_inplace=False, inline_position=&quot;top&quot;, inline_tml=&quot;standard&quot;) #type: ignore
 notes.write()
 </code></pre>
-<p><img alt="" src="../imgs/pyomd-1.gif" /></p>
+<p><img alt="" src="../assets/example-gifs/pyomd-1.gif" /></p>
 <h2 id="regroup-inline-metadata-inside-a-callout">regroup inline metadata inside a callout</h2>
 <pre><code class="language-python">notes.update_content(inline_inplace=False, inline_position=&quot;top&quot;, inline_tml=&quot;callout&quot;) #type: ignore
 notes.write()
 </code></pre>
-<p><img alt="" src="../imgs/pyomd-2.gif" /></p>
+<p><img alt="" src="../assets/example-gifs/pyomd-2.gif" /></p>
 <h2 id="add-and-remove-metadata">add and remove metadata</h2>
 <pre><code class="language-python">notes.filter(has_meta=[(&quot;tags&quot;, &quot;type/book&quot;, MetadataType.INLINE)])
 
@@ -408,7 +408,7 @@ notes.metadata.remove(k=&quot;tags&quot;, l=&quot;type/book&quot;, meta_type=Met
 notes.update_content(inline_inplace=False, inline_position=&quot;top&quot;, inline_tml=&quot;callout&quot;) #type: ignore
 notes.write()
 </code></pre>
-<p><img alt="" src="../imgs/pyomd-3.gif" /></p>
+<p><img alt="" src="../assets/example-gifs/pyomd-3.gif" /></p>
 
 
 
