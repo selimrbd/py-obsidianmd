@@ -91,9 +91,9 @@ def t_parse(test_id: str, data: dict, debug: bool = False) -> None:
     if "exception" in expected_output:
         exception: Type[Exception] = globals()[expected_output["exception"]]
         with pytest.raises(exception):
-            MetaClass.parse(d_n["content"])
+            MetaClass._parse(d_n["content"])
     else:
-        meta_dict = MetaClass.parse(d_n["content"])
+        meta_dict = MetaClass._parse(d_n["content"])
         meta_dict_true = expected_output["meta_dict"]
 
         if debug:
@@ -155,9 +155,9 @@ def t_update_content(test_id: str, data: dict, debug: bool = False) -> None:
     if isinstance(m, InlineMetadata):
         arg_pos: str = inputs["position"]
         arg_inplace: bool = inputs["inplace"]
-        upd: str = m.update_content(d_n["content"], position=arg_pos, inplace=arg_inplace)  # type: ignore
+        upd: str = m._update_content(d_n["content"], position=arg_pos, inplace=arg_inplace)  # type: ignore
     else:
-        upd: str = m.update_content(d_n["content"])  # type: ignore
+        upd: str = m._update_content(d_n["content"])  # type: ignore
     name_field_true: str = expected_output["field_name"]
     upd_true: str = d_n[name_field_true]
 
@@ -174,7 +174,7 @@ def t_exists(test_id: str, data: dict, debug: bool = False) -> None:
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
 
-    exists: bool = MetaClass.exists(d_n["content"])  # type: ignore
+    exists: bool = MetaClass._exists(d_n["content"])  # type: ignore
     exists_true: str = expected_output["exists"]
 
     if debug:
@@ -229,7 +229,7 @@ def t_remove_and_update(test_id: str, data: dict, debug: bool = False) -> None:
     arg_inplace = inputs["inplace"]
     arg_pos = inputs["position"]
     m.remove(k=arg_k, l=arg_l)  # type: ignore
-    note_content = m.update_content(
+    note_content = m._update_content(
         d_n["content"], inplace=arg_inplace, position=arg_pos
     )
 
@@ -321,7 +321,7 @@ def t_erase(test_id: str, data: dict, debug: bool = False) -> None:
     name_f = parse_name_function_tested(inspect.currentframe().f_code.co_name)
     _, expected_output, d_n, d_t, MetaClass = prep_test_data(test_id, data, name_f)
 
-    ers: str = MetaClass.erase(d_n["content"])  # type: ignore
+    ers: str = MetaClass._erase(d_n["content"])  # type: ignore
     name_field_true: str = expected_output["field_name"]
     ers_true: str = d_n[name_field_true]
 
@@ -491,7 +491,7 @@ def nmt_update_content(test_id: str, data: dict, debug: bool = False) -> None:
 
     m = NoteMetadata(arg_content)
     for _ in range(nb_times):
-        upd: str = m.update_content(
+        upd: str = m._update_content(
             note_content=arg_content,
             inline_position=arg_inline_pos,
             inline_inplace=arg_inline_inplace,
