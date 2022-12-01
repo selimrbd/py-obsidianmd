@@ -16,7 +16,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://selimrbd.github.io/py-obsidianmd/test1/</loc>
+         <loc>https://selimrbd.github.io/py-obsidianmd/reference/metadata/</loc>
+         <lastmod>2022-12-01</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://selimrbd.github.io/py-obsidianmd/reference/note/</loc>
          <lastmod>2022-12-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
