@@ -1,13 +1,14 @@
 # py-obsidianmd
 
 A python library for [ObsidianMD](https://obsidian.md/) for modifying your notes in batch.
+See the [full documentation](https://selimrbd.github.io/py-obsidianmd/)
 
 :warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss.
 
 
 ## Presentation video
 
-[![Watch the video](https://img.youtube.com/vi/CzmDQyxJS88/hqdefault.jpg)](https://www.youtube.com/watch?v=CzmDQyxJS88)
+[![Watch the video](https://img.youtube.com/vi/gRPBAKiu37Y/hqdefault.jpg)](https://www.youtube.com/watch?v=gRPBAKiu37Y)
 
 ## Quickstart
 
@@ -33,7 +34,7 @@ notes.metadata.move(fr=MetadataType.FRONTMATTER, to=MetadataType.INLINE)
 notes.update_content(inline_inplace=False, inline_position="top", inline_tml="standard") #type: ignore
 notes.write()
 ```
-![](./docs/imgs/pyomd-1.gif)
+![](./docs/docs/assets/example-gifs/pyomd-1.gif)
 
 ## regroup inline metadata inside a callout
 
@@ -41,7 +42,7 @@ notes.write()
 notes.update_content(inline_inplace=False, inline_position="top", inline_tml="callout") #type: ignore
 notes.write()
 ```
-![](./docs/imgs/pyomd-2.gif)
+![](./docs/docs/assets/example-gifs/pyomd-2.gif)
 
 ## add and remove metadata 
 ```python
@@ -53,8 +54,7 @@ notes.metadata.remove(k="tags", l="type/book", meta_type=MetadataType.INLINE)
 notes.update_content(inline_inplace=False, inline_position="top", inline_tml="callout") #type: ignore
 notes.write()
 ```
-![](./docs/imgs/pyomd-3.gif)
-
+![](./docs/docs/assets/example-gifs/pyomd-3.gif)
 
 ## License
 
@@ -71,6 +71,6 @@ For more details, see the [contribution guidelines](CONTRIBUTING.md).
 
 If you found this library useful and wish to support it's development, you can do so using the links below (paypal or Ko-fi). Thanks a bunch !
 
-<a href="https://www.paypal.com/donate/?hosted_button_id=R5NYTS46CQMSS"><img src="./docs/imgs/donate-paypal.png" width="150" height="100" /></a>
+<a href="https://www.paypal.com/donate/?hosted_button_id=R5NYTS46CQMSS"><img src="./docs/docs/assets/donate-paypal.png" width="150" height="100" /></a>
 <br>
-<a href="https://ko-fi.com/selimrbd"><img src="./docs/imgs/support-kofi.png" width="200" height="50" /></a>
+<a href="https://ko-fi.com/selimrbd"><img src="./docs/docs/assets/donate-kofi.png" width="200" height="50" /></a>
