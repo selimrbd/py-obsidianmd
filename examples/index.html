@@ -65,6 +65,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#example-vault" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -167,9 +172,66 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Examples
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Examples
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-vault" class="md-nav__link">
+    Example Vault
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#move-metadata-between-frontmatter-and-inline" class="md-nav__link">
+    move metadata between frontmatter and inline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regroup-inline-metadata-inside-a-callout" class="md-nav__link">
+    regroup inline metadata inside a callout
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-and-remove-metadata" class="md-nav__link">
+    add and remove metadata
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -255,6 +317,49 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example-vault" class="md-nav__link">
+    Example Vault
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#move-metadata-between-frontmatter-and-inline" class="md-nav__link">
+    move metadata between frontmatter and inline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regroup-inline-metadata-inside-a-callout" class="md-nav__link">
+    regroup inline metadata inside a callout
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-and-remove-metadata" class="md-nav__link">
+    add and remove metadata
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -270,7 +375,40 @@
 
   <h1>Examples</h1>
 
-<p>Example 1</p>
+<h2 id="example-vault">Example Vault</h2>
+<p>To try out the library, you can use <a href="https://github.com/selimrbd/example-vault">this example vault</a> containing book and movie reviews.</p>
+<h2 id="setup">Setup</h2>
+<p>First, create a <code>Notes</code> object by pointing to one of your vault's directories:</p>
+<pre><code class="language-python">from pathlib import Path
+from pyomd import Notes, Note
+
+path_dir = Path(&quot;/path/to/your/directory&quot;)
+notes = Notes(path_dir)
+
+## You can also create a single note object, if you only need to modify 1 note
+# note = Note(path_dir)
+</code></pre>
+<h2 id="move-metadata-between-frontmatter-and-inline">move metadata between frontmatter and inline</h2>
+<pre><code class="language-python">notes.metadata.move(fr=MetadataType.FRONTMATTER, to=MetadataType.INLINE)
+notes.update_content(inline_inplace=False, inline_position=&quot;top&quot;, inline_tml=&quot;standard&quot;) #type: ignore
+notes.write()
+</code></pre>
+<p><img alt="" src="../imgs/pyomd-1.gif" /></p>
+<h2 id="regroup-inline-metadata-inside-a-callout">regroup inline metadata inside a callout</h2>
+<pre><code class="language-python">notes.update_content(inline_inplace=False, inline_position=&quot;top&quot;, inline_tml=&quot;callout&quot;) #type: ignore
+notes.write()
+</code></pre>
+<p><img alt="" src="../imgs/pyomd-2.gif" /></p>
+<h2 id="add-and-remove-metadata">add and remove metadata</h2>
+<pre><code class="language-python">notes.filter(has_meta=[(&quot;tags&quot;, &quot;type/book&quot;, MetadataType.INLINE)])
+
+notes.metadata.add(k=&quot;type&quot;, l=&quot;[[book]]&quot;, meta_type=MetadataType.INLINE)
+notes.metadata.remove(k=&quot;tags&quot;, l=&quot;type/book&quot;, meta_type=MetadataType.INLINE)
+
+notes.update_content(inline_inplace=False, inline_position=&quot;top&quot;, inline_tml=&quot;callout&quot;) #type: ignore
+notes.write()
+</code></pre>
+<p><img alt="" src="../imgs/pyomd-3.gif" /></p>
 
 
 
