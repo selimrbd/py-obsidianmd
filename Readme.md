@@ -1,6 +1,7 @@
 # py-obsidianmd
 
-A python library for [ObsidianMD](https://obsidian.md/) for modifying your notes in batch.
+A python library for modifying [Obsidian](https://obsidian.md/) notes in batch.
+
 See the [full documentation](https://selimrbd.github.io/py-obsidianmd/)
 
 :warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss.
