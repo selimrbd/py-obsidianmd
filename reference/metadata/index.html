@@ -15,7 +15,7 @@
     
     
       
-        <title>metadata module - py-obsidianmd</title>
+        <title>metadata - py-obsidianmd</title>
       
     
     
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              metadata module
+              metadata
             
           </span>
         </div>
@@ -194,7 +194,7 @@
   
     <li class="md-nav__item">
       <a href="../note/" class="md-nav__link">
-        note module
+        note
       </a>
     </li>
   
@@ -215,12 +215,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          metadata module
+          metadata
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        metadata module
+        metadata
       </a>
       
         
@@ -439,6 +439,13 @@
           <li class="md-nav__item">
   <a href="#pyomd.metadata.NoteMetadata.remove_empty" class="md-nav__link">
     remove_empty()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyomd.metadata.NoteMetadata.update_content" class="md-nav__link">
+    update_content()
   </a>
   
 </li>
@@ -721,6 +728,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pyomd.metadata.NoteMetadata.update_content" class="md-nav__link">
+    update_content()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -768,7 +782,7 @@
                   
 
 
-  <h1>metadata module</h1>
+  <h1>metadata</h1>
 
 <div class="doc doc-object doc-module">
 
@@ -776,7 +790,7 @@
 <a id="pyomd.metadata"></a>
   <div class="doc doc-contents first">
   
-      <p>Module containing all metadata-related objects.</p>
+      <p>Metadata-related objects.</p>
 
   
 
@@ -3436,7 +3450,8 @@ DEFAULT: default location where to define new metadata</p>
 <span class="normal">906</span>
 <span class="normal">907</span>
 <span class="normal">908</span>
-<span class="normal">909</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadata</span><span class="p">:</span>
+<span class="normal">909</span>
+<span class="normal">910</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadata</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;All the note&#39;s metadata (frontmatter + inline).&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -3601,6 +3616,7 @@ DEFAULT: default location where to define new metadata</p>
         <span class="n">inline_inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">inline_tml</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update the note&#39;s metadata (frontmatter and inline).&quot;&quot;&quot;</span>
         <span class="n">str_no_fm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frontmatter</span><span class="o">.</span><span class="n">_erase</span><span class="p">(</span><span class="n">note_content</span><span class="p">)</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline</span><span class="o">.</span><span class="n">update_content</span><span class="p">(</span>
             <span class="n">str_no_fm</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">inline_position</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="n">inline_inplace</span><span class="p">,</span> <span class="n">tml</span><span class="o">=</span><span class="n">inline_tml</span>
@@ -4100,6 +4116,55 @@ in any of the metadata types.</p></td>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyomd.metadata.NoteMetadata.update_content" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">update_content</span><span class="p">(</span><span class="n">note_content</span><span class="p">,</span> <span class="n">inline_position</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">inline_inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inline_tml</span><span class="o">=</span><span class="s1">&#39;standard&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Update the note's metadata (frontmatter and inline).</p>
+
+      <details class="quote">
+        <summary>Source code in <code>pyomd/metadata.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span>
+<span class="normal">811</span>
+<span class="normal">812</span>
+<span class="normal">813</span>
+<span class="normal">814</span>
+<span class="normal">815</span>
+<span class="normal">816</span>
+<span class="normal">817</span>
+<span class="normal">818</span>
+<span class="normal">819</span>
+<span class="normal">820</span>
+<span class="normal">821</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_content</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">note_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">inline_position</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span><span class="p">,</span>
+    <span class="n">inline_inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">inline_tml</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Update the note&#39;s metadata (frontmatter and inline).&quot;&quot;&quot;</span>
+    <span class="n">str_no_fm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frontmatter</span><span class="o">.</span><span class="n">_erase</span><span class="p">(</span><span class="n">note_content</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline</span><span class="o">.</span><span class="n">update_content</span><span class="p">(</span>
+        <span class="n">str_no_fm</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">inline_position</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="n">inline_inplace</span><span class="p">,</span> <span class="n">tml</span><span class="o">=</span><span class="n">inline_tml</span>
+    <span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frontmatter</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">return</span> <span class="n">res</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
 
 
   </div>
@@ -4127,8 +4192,7 @@ in any of the metadata types.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>pyomd/metadata.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">912</span>
-<span class="normal">913</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">913</span>
 <span class="normal">914</span>
 <span class="normal">915</span>
 <span class="normal">916</span>
@@ -4192,7 +4256,8 @@ in any of the metadata types.</p></td>
 <span class="normal">974</span>
 <span class="normal">975</span>
 <span class="normal">976</span>
-<span class="normal">977</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadataBatch</span><span class="p">:</span>
+<span class="normal">977</span>
+<span class="normal">978</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoteMetadataBatch</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;API to modify in batch metadata from a Notes object.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Note</span><span class="p">]):</span>
@@ -4314,8 +4379,7 @@ in any of the metadata types.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>pyomd/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">953</span>
-<span class="normal">954</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">954</span>
 <span class="normal">955</span>
 <span class="normal">956</span>
 <span class="normal">957</span>
@@ -4326,7 +4390,8 @@ in any of the metadata types.</p></td>
 <span class="normal">962</span>
 <span class="normal">963</span>
 <span class="normal">964</span>
-<span class="normal">965</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_duplicate_values</span><span class="p">(</span>
+<span class="normal">965</span>
+<span class="normal">966</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_duplicate_values</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">k</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">meta_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MetadataType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4434,7 +4499,7 @@ in any of the metadata types.</p></td>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../note/" class="md-footer__link md-footer__link--prev" aria-label="Previous: note module" rel="prev">
+        <a href="../note/" class="md-footer__link md-footer__link--prev" aria-label="Previous: note" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -4443,7 +4508,7 @@ in any of the metadata types.</p></td>
               <span class="md-footer__direction">
                 Previous
               </span>
-              note module
+              note
             </div>
           </div>
         </a>
