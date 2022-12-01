@@ -1,8 +1,16 @@
 site_name: py-obsidianmd
 site_url: https://selimrbd.github.io/py-obsidianmd/
+
 nav:
-  - Home: index.md
-  - About: about.md
+  - Overview: overview.md
+  - Examples: examples.md
+  - Reference:
+      - note: reference/note.md
+      - metadata: reference/metadata.md
+
+plugins:
+  - mkdocstrings
+
 theme:
   name: material
   favicon: assets/obsidian.ico
