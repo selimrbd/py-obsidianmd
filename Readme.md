@@ -4,7 +4,8 @@ A python library for modifying [Obsidian](https://obsidian.md/) notes in batch.
 
 See the [full documentation](https://selimrbd.github.io/py-obsidianmd/)
 
-:warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss.
+:warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss. You can test the library on this [example vault](https://github.com/selimrbd/example-vault)
+
 
 
 ## Presentation video
@@ -25,8 +26,6 @@ from pyomd.metadata import MetadataType
 path_dir = Path('/path/to/obsidian/folder')
 notes = Notes(path_dir)
 ```
-
-You can test the library on this [example vault](https://github.com/selimrbd/example-vault)
 
 ## move metadata between frontmatter and inline
 
