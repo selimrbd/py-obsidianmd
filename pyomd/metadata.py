@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import datetime
-import re
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
@@ -11,6 +10,7 @@ from string import Template
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Type, Union
 
 import frontmatter  # type: ignore
+import regex as re
 
 from pyomd.config import CONFIG
 
@@ -421,11 +421,15 @@ class InlineMetadata(Metadata):
             metadata dictionary
     """
 
+    KEY_PART_REGEX = r"([0-9\p{Letter}\w\s_/-]+)"
+    MARKUP_CHARS_REGEX = r'[_*~`]*'
+    FULL_LINE_KEY_REGEX = r"[^0-9\w\p{Letter}]*" + KEY_PART_REGEX + MARKUP_CHARS_REGEX
+
     TMP_REGEX = Template(r"(?P<beg>.*?)(?P<key>$key)::(?P<values>.*)")
     TMP_REGEX_ENCLOSED = Template(
         r"(?P<beg>.*?)(?P<open>[(\[])(?P<key>$key)::(?P<values>.*?)(?P<close>[)\]])(?P<end>.*)"
     )
-    REGEX = re.compile(TMP_REGEX.substitute(key="[A-z][A-z0-9_ -]*"))
+    REGEX = re.compile(TMP_REGEX.substitute(key=FULL_LINE_KEY_REGEX))
     REGEX_ENCLOSED = re.compile(TMP_REGEX_ENCLOSED.substitute(key=".*?"))
 
     def to_string(
@@ -513,7 +517,7 @@ class InlineMetadata(Metadata):
 
         tmp: dict[str, list[str]] = dict()
         for m in matches:
-            k = m.group("key").strip()
+            k = re.sub(cls.MARKUP_CHARS_REGEX, '', m.group("key")).strip()  # Remove markup characters and strip whitespace
             v = m.group("values")
             tmp[k] = tmp.get(k, "") + ", " + v
         metadata: MetaDict = {
