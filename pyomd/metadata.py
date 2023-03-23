@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import datetime
-import re
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
@@ -11,6 +10,7 @@ from string import Template
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Type, Union
 
 import frontmatter  # type: ignore
+import regex as re
 
 from pyomd.config import CONFIG
 
