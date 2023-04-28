@@ -17,7 +17,7 @@ class Note:
         path:
             path to the note.
         metadata:
-            NoteMetadata object.
+            an object which is an instance of the `NoteMetadata` class
         content:
             The note's textual content (including all types of metadata).
     """
@@ -147,7 +147,7 @@ class Notes:
         self.notes:
             list of Note objects
         self.metadata:
-            NoteMetadataBatch object
+            an object which is an instance of the `NoteMetadataBatch` class
     """
 
     def __init__(self, paths: Union[Path, list[Path]], recursive: bool = True):
