@@ -179,9 +179,11 @@ class Notes:
                 When given a path to a directory, whether to add notes
                 from sub-directories too
         """
+        file_count = 0
         if isinstance(paths, Path):
             paths = [paths]
         for pth in paths:
+            print("pth: " + str(pth))
             assert pth.exists(), f"file or folder doesn't exist: '{pth}'"
             if pth.is_dir():
                 for root, _, fls in os.walk(pth):  # type: ignore
@@ -189,10 +191,15 @@ class Notes:
                         pth_f: Path = Path(root) / f_name  # type: ignore
                         if Note._is_md_file(pth_f):
                             self.notes.append(Note(path=pth_f))
+                            print(f"{{pth_f}\nPath length: len(str(pth_f))}")
+                            file_count += 1
                     if not recursive:
                         break
             elif Note._is_md_file(pth):
                 self.notes.append(Note(path=pth))
+                print(f"{{pth_f}\nPath length: len(str(pth_f))}")
+                file_count += 1
+        print(f"Added {file_count} files")
 
     def append(self, str_append: str, allow_repeat: bool = False):
         """Appends text to the note content.

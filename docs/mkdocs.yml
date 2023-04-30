@@ -15,3 +15,8 @@ theme:
   name: material
   favicon: assets/obsidian.ico
   logo: assets/obsidian.png
+  
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
