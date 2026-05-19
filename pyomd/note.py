@@ -30,7 +30,7 @@ class Note:
         """
         self.path: Path = Path(path)
         try:
-            with open(self.path, "r") as f:
+            with open(self.path, "r", encoding='utf-8') as f:
                 self.content: str = f.read()
         except Exception as e:
             raise NoteCreationError(path=path, exception=e) from e
@@ -130,7 +130,7 @@ class Note:
                 path to the note. If None, overwrites the current note content.
         """
         p = self.path if path is None else path
-        with open(p, "w") as f:
+        with open(p, "w", encoding='utf-8') as f:
             f.write(self.content)
 
     @staticmethod
