@@ -301,6 +301,20 @@ class Frontmatter(Metadata):
 
     REGEX = "(?s)(^---\n).*?(\n---\n)"
 
+    def _quotifyLink(self, value) -> str:
+        """ Add quotes around Obsidian internal links found in metadata
+            property values
+
+            Returns:
+                String: value in double quotes if value is an internal link; otherwise,
+                the original value
+        """
+        if value.startswith("[[") and value.endswith("]]"):
+            return f"\"{value}\""
+        else:
+            return value
+
+
     def to_string(self) -> str:
         """Render metadata as a string.
 
@@ -312,9 +326,14 @@ class Frontmatter(Metadata):
         metadata_repr = ""
         for k, v in self.metadata.items():
             if len(v) == 1:
-                metadata_repr += f"{k}: {v[0]}\n"
+                metadata_repr += f"{k}: {self._quotifyLink(v[0])}\n"
+            elif len(v) == 0:
+                metadata_repr += f"{k}: \n"
             else:
-                metadata_repr += f'{k}: [ {", ".join(v)} ]\n'
+                metadata_repr += f'{k}: ['
+                for v1 in v:
+                    metadata_repr += f'{self._quotifyLink(v1)}'
+                    metadata_repr += "]\n" if v1 is v[-1] else ', '
         out = "---\n" + metadata_repr + "---\n"
         return out
 
