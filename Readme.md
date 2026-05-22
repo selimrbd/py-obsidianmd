@@ -6,7 +6,33 @@ See the [full documentation](https://selimrbd.github.io/py-obsidianmd/)
 
 :warning: **Consider backing up your vault** before using the library, to avoid any risk of data loss. You can test the library on this [example vault](https://github.com/selimrbd/example-vault)
 
+## Fork Notes
 
+- Added an encoding parameter to write() function:
+
+```python
+note = Note(note_path)
+note.append('Some modifications')
+note.write(encoding='UTF-8')
+```
+
+- replaced deprecated `pkg_resources` with `importlib`
+- removed `hydra` import
+
+### Installation Instructions
+
+Build from github:
+
+```shell
+pip install git+https://github.com/psycore8/py-obsidianmd.git
+```
+
+Import sources:
+
+```python
+from pyomd import Note
+from pyomd.metadata import MetadataType
+```
 
 ## Presentation video
 

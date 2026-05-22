@@ -122,7 +122,7 @@ class Note:
         if write:
             self.write()
 
-    def write(self, path: Union[Path, None] = None):
+    def write(self, path: Union[Path, None] = None, encoding='ANSI'):
         """Writes the note's content to disk.
 
         Args:
@@ -130,7 +130,7 @@ class Note:
                 path to the note. If None, overwrites the current note content.
         """
         p = self.path if path is None else path
-        with open(p, "w") as f:
+        with open(p, "w", encoding=encoding) as f:
             f.write(self.content)
 
     @staticmethod

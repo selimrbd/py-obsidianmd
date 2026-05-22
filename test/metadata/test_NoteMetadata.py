@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import hydra
+#import hydra
 from pyomd.metadata import MetadataType
 
 from ..test_utils import load_data
